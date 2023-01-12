@@ -1,0 +1,104 @@
+// import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+// import logger from "redux-logger";
+
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { persistStore, persistReducer } from "redux-persist";
+import thunk from "redux-thunk";
+
+import authReducer from "./Features/auth";
+import userDataReducer from "./Features/userData";
+import coinsReducer from "./Features/coins";
+import userApisReducer from "./Features/userApis";
+import loadedAdReducer from "./Features/loadedAd";
+import tipsMenuReducer from "./Features/tipsMenu";
+import searchResultReducer from "./Features/searchResult";
+import favArrayReducer from "./Features/favArray";
+import searchPageReducer from "./Features/searchPage";
+import currentArrayReducer from "./Features/currentArray";
+import previousArrayReducer from "./Features/previousArray";
+import lastSearchInputReducer from "./Features/lastSearchInput";
+import dailyWallpapersReducer from "./Features/dailyWallpapers";
+import permanentWallpapersReducer from "./Features/permanentWallpapers";
+import colorsArrayReducer from "./Features/colorsArray";
+import tipsMenuWallpaperReducer from "./Features/tipsMenuWallpaper";
+import deleteAccountModalReducer from "./Features/deleteAccountModal";
+
+const rootReducer = combineReducers({
+  //   test: testReducer,
+  auth: authReducer,
+  userData: userDataReducer,
+  coins: coinsReducer,
+  userApis: userApisReducer,
+  loadedAd: loadedAdReducer,
+  tipsMenu: tipsMenuReducer,
+  searchResult: searchResultReducer,
+  favArray: favArrayReducer,
+  searchPage: searchPageReducer,
+  currentArray: currentArrayReducer,
+  previousArray: previousArrayReducer,
+  lastSearchInput: lastSearchInputReducer,
+  dailyWallpapers: dailyWallpapersReducer,
+  permanentWallpapers: permanentWallpapersReducer,
+  colorsArray: colorsArrayReducer,
+  tipsMenuWallpaper: tipsMenuWallpaperReducer,
+  deleteAccountModal: deleteAccountModalReducer,
+});
+
+const persistConfig = {
+  key: "root",
+  storage: AsyncStorage,
+  blacklist: [
+    "coins",
+    "loadedAdReducer",
+    "tipsMenuReducer",
+    // "colorsArray",
+    // "favArray",
+    // "searchResult",
+    "deleteAccountModal",
+  ],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: [thunk],
+});
+
+export const persistor = persistStore(store);
+
+// export const store = configureStore({
+//   reducer: {
+//     auth: authReducer,
+//     userData: userDataReducer,
+//     coins: coinsReducer,
+//   },
+//   middleware: (getDefaultMiddleware) =>
+//     getDefaultMiddleware({
+//       immutableCheck: false,
+//     }),
+// });
+
+//-----------------------------------------------
+
+// import { createStore, combineReducers, applyMiddleware } from "redux";
+// import thunk from "redux-thunk";
+// import { persistStore, persistReducer } from "redux-persist";
+// import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+
+// const rootReducer = combineReducers({
+//   test: testReducer,
+// });
+
+// const persistConfig = {
+//   key: "root",
+//   storage,
+//   blacklist: [],
+// };
+
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// export const store = createStore(persistedReducer, applyMiddleware(thunk));
+
+// export const persistor = persistStore(store);
