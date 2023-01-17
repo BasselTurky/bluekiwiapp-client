@@ -12,11 +12,13 @@ import {
   Image,
   Animated,
   Easing,
+  PermissionsAndroid,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SecureStore from "expo-secure-store";
+import Toast, { BaseToast } from "react-native-toast-message";
 
 import GoBackSVG from "../../../Components/GoBackSVG";
 import FavoriteIconSVG from "../../../Components/FavoriteIconSVG";
@@ -62,6 +64,16 @@ export default function WallpaperApi({ navigation }) {
     (state) => state.tipsMenuWallpaper.value
   );
   const [isDisabled, setIsDisabled] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState(false);
+
+  const errorToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+      text2: "Error",
+      visibilityTime: 3000,
+    });
+  };
 
   const [color, setColor] = React.useState("grey");
   const [iniColor, setIniColor] = React.useState(
@@ -179,6 +191,8 @@ export default function WallpaperApi({ navigation }) {
   useEffect(() => {
     getDailyWallpapers();
   }, [dailyWallpapers]);
+
+  // check permissions
 
   return (
     <SafeAreaProvider>
@@ -349,38 +363,28 @@ export default function WallpaperApi({ navigation }) {
                 }}
                 renderItem={({ item, index }) => {
                   return (
-                    <WallpaperCard item={item} />
-                    // <View
-                    //   style={{
-                    //     backgroundColor: "black",
-                    //     height: "100%",
-                    //     width: "100%",
-                    //     borderRadius: 30,
-                    //     overflow: "hidden",
-                    //   }}
-                    // >
-                    //   <Image
-                    //     style={{
-                    //       width: "100%",
-                    //       height: "100%",
-                    //       // borderRadius: 20,
-                    //     }}
-                    //     resizeMode="contain"
-                    //     source={{
-                    //       uri: item.img_link,
-                    //     }}
-                    //   />
-                    // </View>
+                    <WallpaperCard
+                      item={item}
+                      toast={Toast}
+                      errorToast={errorToast}
+                    />
                   );
                 }}
               />
             </View>
           </View>
 
+          <Toast
+            topOffset={insets.top + 5}
+            // config={toastConfig}
+            onPress={() => {
+              Toast.hide();
+            }}
+          />
           <Button
             title="hello"
             onPress={() => {
-              console.log(colorsArray);
+              console.log(dailyWallpapers);
             }}
           />
         </AnimatedImageBackground>

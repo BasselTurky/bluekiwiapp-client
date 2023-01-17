@@ -51,7 +51,9 @@ export default function NoteApi({ navigation }) {
   function downloadImage() {
     try {
       let image_URL =
-        "https://drive.google.com/uc?id=1swNMMHZhVkAnUnazhCmhKuGf0A_KphyQ";
+        // "https://drive.google.com/uc?id=1swNMMHZhVkAnUnazhCmhKuGf0A_KphyQ";
+        "https://pixabay.com/images/download/flower-7705484_1920.jpg?attachment";
+      // https://pixabay.com/images/download/flower-7705484_1920.jpg
 
       const { config, fs } = RNFetchBlob;
       let PictureDir = fs.dirs.PictureDir;
@@ -111,7 +113,7 @@ export default function NoteApi({ navigation }) {
         <GoBackSVG fill={"#fff"} width={24} height={24} />
       </TouchableOpacity>
 
-      <PanGestureHandler onGestureEvent={panGestureEvent}>
+      {/* <PanGestureHandler onGestureEvent={panGestureEvent}>
         <Animated.View
           style={[
             {
@@ -123,14 +125,14 @@ export default function NoteApi({ navigation }) {
             rStyle,
           ]}
         ></Animated.View>
-      </PanGestureHandler>
-      {/* <Text>Hello</Text>
+      </PanGestureHandler> */}
+      <Text>Hello</Text>
       <Button
         title="download"
         onPress={() => {
           checkPermissions();
         }}
-      /> */}
+      />
     </ImageBackground>
   );
 }

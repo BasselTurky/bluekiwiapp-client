@@ -13,7 +13,13 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 
+import { setAuth } from "../../../Features/auth";
 import * as SecureStore from "expo-secure-store";
+
+async function deleteValueFor(key) {
+  await SecureStore.deleteItemAsync(key);
+}
+
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 

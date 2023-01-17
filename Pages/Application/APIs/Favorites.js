@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Dimensions,
   FlatList,
+  Image,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,6 +56,9 @@ const height = Dimensions.get("window").height;
 const viewHeight = height * 0.5;
 const item_height = height * 0.4;
 const item_width = width * 0.9;
+
+const scrollWidth = 50;
+const scrollHeight = 50;
 
 import { Button as PaperButton } from "react-native-paper";
 export default function Favorites({
@@ -124,13 +128,16 @@ export default function Favorites({
   const adjustedTranslateX = useDerivedValue(() => {
     // const adjusted = Math.min(Math.max(translateX.value, 0), width - 100);
 
-    const adjusted = Math.min(Math.max(translateX.value, 0), width - 100);
+    const adjusted = Math.min(
+      Math.max(translateX.value, 0),
+      width - scrollWidth
+    );
     // if (favoCarouselRef.current && ratio) {
     //   favoCarouselRef.current._scrollTo(adjusted * ratio);
     // }
     scrollTo(favoCarouselRef, adjusted * ratio, 0, false);
 
-    return Math.min(Math.max(translateX.value, 0), width - 100);
+    return Math.min(Math.max(translateX.value, 0), width - scrollWidth);
   });
 
   // const offset_handler = (event, context) => {
@@ -291,18 +298,21 @@ export default function Favorites({
             >
               <Carousel
                 ref={favoCarouselRef}
+                onSnapToItem={(index) => {
+                  console.log(index);
+                }}
                 onContentSizeChange={(w, h) => {
                   try {
                     // setFlatlistWidth(w);
-                    console.log(w, " ", h);
-                    let r = (w - width) / (width - 100); // 100 > scroll width
+                    // console.log(w, " ", h);
+                    let r = (w - width) / (width - scrollWidth); // 100 > scroll width
                     setRatio(r);
                   } catch (error) {
                     console.log(error);
                   }
                 }}
                 onScroll={(event) => {
-                  console.log(event.nativeEvent);
+                  // console.log(event.nativeEvent);
 
                   // if (width === widthState) {
                   //   setWidthState(width - 1);
@@ -402,37 +412,64 @@ export default function Favorites({
                 }}
               />
             </View>
+          ) : (
+            <View>
+              <Text
+                style={{
+                  marginTop: 50,
+                  fontSize: 18,
+                  fontFamily: "Righteous_400Regular",
+                  color: "#404040",
+                }}
+              >
+                No favorites available.
+              </Text>
+            </View>
+          )}
+          {favArray[userData.email].length ? (
+            <View
+              style={{
+                // width: width - 100,
+                // backgroundColor: "yellow",
+                width: "100%",
+                // alignSelf: "flex-end",
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomColor: "#40404033",
+                borderRadius: 20,
+                // borderStyle: "dotted",
+                // zIndex: 2,
+                // elevation: 1,
+              }}
+            >
+              <PanGestureHandler onGestureEvent={panGestureEvent}>
+                <Animated.View
+                  // onLayout={(event) => {
+                  //   console.log(event.nativeEvent.layout.x);
+                  // }}
+                  style={[
+                    {
+                      width: scrollWidth,
+                      height: scrollHeight,
+                      backgroundColor: "skyblue",
+                      borderRadius: 20,
+                      elevation: 8,
+                      overflow: "hidden",
+                    },
+                    rStyle,
+                  ]}
+                >
+                  <Image
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    source={require("../../../assets/icon.png")}
+                  />
+                </Animated.View>
+              </PanGestureHandler>
+            </View>
           ) : null}
-          <View
-            style={{
-              // width: width - 100,
-              // backgroundColor: "yellow",
-              width: "100%",
-              // alignSelf: "flex-end",
-              // borderBottomWidth: 1,
-              // borderBottomColor: "grey",
-              // borderRadius: 10,
-              elevation: 1,
-            }}
-          >
-            <PanGestureHandler onGestureEvent={panGestureEvent}>
-              <Animated.View
-                // onLayout={(event) => {
-                //   console.log(event.nativeEvent.layout.x);
-                // }}
-                style={[
-                  {
-                    width: 100,
-                    height: 100,
-                    backgroundColor: "skyblue",
-                    borderRadius: 20,
-                    elevation: 8,
-                  },
-                  rStyle,
-                ]}
-              ></Animated.View>
-            </PanGestureHandler>
-          </View>
+
           {/* <Button
             title="scroll"
             onPress={() => {

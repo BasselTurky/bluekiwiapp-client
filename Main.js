@@ -206,13 +206,14 @@ export default function Main() {
             // initialParams={{ setLogin: setLogin }}
             options={{
               animation: "slide_from_bottom",
-              title: "Login",
-              headerStyle: { backgroundColor: "skyblue" },
-              headerTintColor: "#fff",
-              headerTitleAlign: "center",
-              headerTitleStyle: {
-                fontWeight: "bold",
-              },
+              // title: "Login",
+              // headerStyle: { backgroundColor: "skyblue" },
+              // headerTintColor: "#fff",
+              // headerTitleAlign: "center",
+              // headerTitleStyle: {
+              //   fontWeight: "bold",
+              // },
+              navigationBarColor: "rgba(0,0,0,0)",
               headerShown: false,
             }}
           />
@@ -221,14 +222,15 @@ export default function Main() {
             component={Register}
             options={{
               animation: "slide_from_right",
-              title: "Register",
-              headerStyle: { backgroundColor: "skyblue" },
+              // title: "Register",
+              // headerStyle: { backgroundColor: "skyblue" },
 
-              headerTintColor: "#fff",
-              headerTitleAlign: "center",
-              headerTitleStyle: {
-                fontWeight: "bold",
-              },
+              // headerTintColor: "#fff",
+              // headerTitleAlign: "center",
+              // headerTitleStyle: {
+              //   fontWeight: "bold",
+              // },
+              navigationBarColor: "rgba(0,0,0,0)",
               headerShown: false,
             }}
           />
@@ -237,13 +239,14 @@ export default function Main() {
             component={ForgotPassword}
             options={{
               animation: "slide_from_right",
-              title: "Forgot Password",
-              headerStyle: { backgroundColor: "skyblue" },
-              headerTintColor: "#fff",
-              headerTitleAlign: "center",
-              headerTitleStyle: {
-                fontWeight: "bold",
-              },
+              // title: "Forgot Password",
+              // headerStyle: { backgroundColor: "skyblue" },
+              // headerTintColor: "#fff",
+              // headerTitleAlign: "center",
+              // headerTitleStyle: {
+              //   fontWeight: "bold",
+              // },
+              navigationBarColor: "rgba(0,0,0,0)",
               headerShown: false,
             }}
           />

@@ -541,8 +541,8 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
         {/* <Button
           title="Show"
           onPress={() => {
-            console.log(height);
-            console.log(height * 0.04);
+            console.log(searchResult);
+            // console.log(height * 0.04);
           }}
         /> */}
         {/* <Button

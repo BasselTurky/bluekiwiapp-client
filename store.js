@@ -23,6 +23,7 @@ import permanentWallpapersReducer from "./Features/permanentWallpapers";
 import colorsArrayReducer from "./Features/colorsArray";
 import tipsMenuWallpaperReducer from "./Features/tipsMenuWallpaper";
 import deleteAccountModalReducer from "./Features/deleteAccountModal";
+import pagesReducer from "./Features/pages";
 
 const rootReducer = combineReducers({
   //   test: testReducer,
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   colorsArray: colorsArrayReducer,
   tipsMenuWallpaper: tipsMenuWallpaperReducer,
   deleteAccountModal: deleteAccountModalReducer,
+  pages: pagesReducer,
 });
 
 const persistConfig = {
@@ -55,6 +57,8 @@ const persistConfig = {
     // "colorsArray",
     // "favArray",
     // "searchResult",
+    // "searchPage",
+    // "lastSearchInput",
     "deleteAccountModal",
   ],
 };

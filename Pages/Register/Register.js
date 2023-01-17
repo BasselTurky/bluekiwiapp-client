@@ -7,15 +7,31 @@ import {
   Keyboard,
   TouchableOpacity,
   TextInput,
+  KeyboardAvoidingView,
+  Dimensions,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Toast from "react-native-toast-message";
 
 import { Button as PaperButton } from "react-native-paper";
 
-export default function Register({ navigation }) {
-  const [name, setName] = useState("");
+import GoBackSVG from "../../Components/GoBackSVG";
 
+import { s } from "react-native-size-matters";
+
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+
+var width = Dimensions.get("window").width;
+var height = Dimensions.get("window").height;
+
+export default function Register({ navigation }) {
+  const insets = useSafeAreaInsets();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -44,8 +60,8 @@ export default function Register({ navigation }) {
       name === "" ||
       email === "" ||
       password === "" ||
-      confirmPassword === "" ||
-      paypal === ""
+      confirmPassword === ""
+      // paypal === ""
     ) {
       //   console.log("Fields can't be empty!!");
       errorToast("Fields can't be empty!!");
@@ -80,7 +96,7 @@ export default function Register({ navigation }) {
             name: name,
             email: email,
             password: password,
-            paypal: paypal,
+            // paypal: paypal,
           }),
         }
       );
@@ -100,7 +116,7 @@ export default function Register({ navigation }) {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        setPaypal("");
+        // setPaypal("");
         setTimeout(() => {
           navigation.navigate("Login");
         }, 6000);
@@ -116,78 +132,148 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.container}>
-        <Text style={styles.header}>Registeration</Text>
-        {/* <Form /> */}
-        <TextInput
-          ref={nameInput}
-          onSubmitEditing={() => {
-            emailInput.current?.focus();
+    <SafeAreaProvider>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#36485f",
+            // alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: s(50),
+            minHeight: "100%",
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
           }}
-          value={name}
-          onChangeText={(val) => {
-            setName(val);
-          }}
-          style={styles.textinput}
-          placeholder="Name"
-          placeholderTextColor={"#c7d8e6"}
-          returnKeyType="next"
-        />
+        >
+          <View
+            style={{
+              marginTop: s(height * 0.12),
+              // backgroundColor: "pink",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: s(25),
+                color: "#fff",
+                paddingBottom: s(8),
+                // backgroundColor: "green",
+                // fontWeight: "bold",
+                // fontFamily: "ChelaOne_400Regular",
+                // fontFamily: "Graduate_400Regular",
+                // justifyContent: "center",
+                // alignItems: "center",
+                // fontFamily: "PinyonScript_400Regular",
+                // fontFamily: "GrandHotel_400Regular",
+                fontFamily: "Playfair",
+                // alignSelf: "center",
+                borderBottomColor: "#199187",
+                borderBottomWidth: 1,
+                textShadowColor: "#9ac8ec",
+                // textShadowColor: "#2196F3",
+                textShadowOffset: {
+                  width: 2,
+                  height: 2,
+                },
+                textShadowRadius: 10,
+              }}
+            >
+              Registeration
+            </Text>
+          </View>
 
-        <TextInput
-          ref={emailInput}
-          onSubmitEditing={() => {
-            passwordInput.current?.focus();
-          }}
-          value={email}
-          onChangeText={(val) => {
-            setEmail(val);
-          }}
-          style={styles.textinput}
-          placeholder="E-mail address"
-          placeholderTextColor={"#c7d8e6"}
-          returnKeyType="next"
-          autoCapitalize="none"
-          autoComplete="email"
-          textContentType="emailAddress"
-          keyboardType="email-address"
-        />
-        <TextInput
-          ref={passwordInput}
-          onSubmitEditing={() => {
-            confirmPasswordInput.current?.focus();
-          }}
-          value={password}
-          onChangeText={(val) => {
-            setPassword(val);
-          }}
-          style={styles.textinput}
-          placeholder="Password..."
-          placeholderTextColor={"#c7d8e6"}
-          returnKeyType="next"
-          secureTextEntry
-        />
-        <TextInput
-          ref={confirmPasswordInput}
-          onSubmitEditing={() => {
-            paypalInput.current?.focus();
-          }}
-          value={confirmPassword}
-          onChangeText={(val) => {
-            setConfirmPassword(val);
-          }}
-          style={styles.textinput}
-          placeholder="Confirm password..."
-          placeholderTextColor={"#c7d8e6"}
-          returnKeyType="next"
-          secureTextEntry
-        />
-        <TextInput
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              top: insets.top,
+              bottom: insets.bottom,
+              right: 0,
+              left: 0,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <KeyboardAvoidingView
+              behavior="padding"
+              enabled={true}
+              keyboardVerticalOffset={s(90)}
+              style={{
+                width: "100%",
+              }}
+            >
+              <TextInput
+                ref={nameInput}
+                onSubmitEditing={() => {
+                  emailInput.current?.focus();
+                }}
+                value={name}
+                onChangeText={(val) => {
+                  setName(val);
+                }}
+                style={styles.textinput}
+                placeholder="Name"
+                placeholderTextColor={"#c7d8e6"}
+                returnKeyType="next"
+              />
+              <TextInput
+                ref={emailInput}
+                onSubmitEditing={() => {
+                  passwordInput.current?.focus();
+                }}
+                value={email}
+                onChangeText={(val) => {
+                  setEmail(val);
+                }}
+                style={styles.textinput}
+                placeholder="E-mail address"
+                placeholderTextColor={"#c7d8e6"}
+                returnKeyType="next"
+                autoCapitalize="none"
+                autoComplete="email"
+                textContentType="emailAddress"
+                keyboardType="email-address"
+              />
+              <TextInput
+                ref={passwordInput}
+                onSubmitEditing={() => {
+                  confirmPasswordInput.current?.focus();
+                }}
+                value={password}
+                onChangeText={(val) => {
+                  setPassword(val);
+                }}
+                style={styles.textinput}
+                placeholder="Password..."
+                placeholderTextColor={"#c7d8e6"}
+                returnKeyType="next"
+                secureTextEntry
+              />
+              <TextInput
+                ref={confirmPasswordInput}
+                // onSubmitEditing={() => {
+                //   paypalInput.current?.focus();
+                // }}
+                value={confirmPassword}
+                onChangeText={(val) => {
+                  setConfirmPassword(val);
+                }}
+                style={styles.textinput}
+                placeholder="Confirm password..."
+                placeholderTextColor={"#c7d8e6"}
+                returnKeyType="done"
+                secureTextEntry
+              />
+            </KeyboardAvoidingView>
+          </View>
+
+          {/* <Form /> */}
+
+          {/* <TextInput
           ref={paypalInput}
           value={paypal}
           onChangeText={(val) => {
@@ -197,36 +283,72 @@ export default function Register({ navigation }) {
           placeholder="Paypal username: e.g. @kiwismith.."
           placeholderTextColor={"#c7d8e6"}
           returnKeyType="done"
-        />
-
-        <PaperButton
-          onPress={sendRegisterDataToServer}
-          style={styles.buttonStyle}
-          contentStyle={styles.buttonContent}
-          //   labelStyle={styles.buttonLabel}
-          mode="contained"
-          uppercase={false}
-          //   icon="account-box"
-        >
-          <Text style={styles.innerText}>Sign up</Text>
-        </PaperButton>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Login");
-          }}
-        >
-          <View style={styles.goback}>
-            <Text style={{ color: "#c4c4c4" }}>Back to Login page</Text>
+        /> */}
+          <View
+            style={{
+              marginBottom: s(height * 0.08),
+            }}
+          >
+            <PaperButton
+              onPress={sendRegisterDataToServer}
+              style={styles.buttonStyle}
+              contentStyle={styles.buttonContent}
+              //   labelStyle={styles.buttonLabel}
+              mode="contained"
+              uppercase={false}
+              //   icon="account-box"
+            >
+              <Text
+                style={{
+                  fontSize: s(14),
+                  color: "white",
+                  // fontFamily: "PlayfairBold",
+                  fontFamily: "Graduate_400Regular",
+                }}
+              >
+                Sign up
+              </Text>
+            </PaperButton>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            >
+              <View
+                style={{
+                  alignSelf: "flex-end",
+                  marginTop: s(28),
+                  flexDirection: "row",
+                  // justifyContent: "center",
+                  alignItems: "center",
+                  // backgroundColor: "grey",
+                }}
+              >
+                <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
+                <Text
+                  style={{
+                    fontSize: s(13),
+                    color: "#c4c4c4",
+                    fontFamily: "PlayfairBold",
+                    marginLeft: s(8),
+                    paddingBottom: s(2),
+                  }}
+                >
+                  Back to Login page
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-        <Toast
-          topOffset={20}
-          onPress={() => {
-            Toast.hide();
-          }}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+
+          <Toast
+            topOffset={20}
+            onPress={() => {
+              Toast.hide();
+            }}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaProvider>
   );
 }
 
@@ -249,15 +371,19 @@ const styles = StyleSheet.create({
   },
   textinput: {
     alignSelf: "stretch",
-    height: 40,
-    marginBottom: 30,
+    height: s(38),
+    marginBottom: s(8),
     color: "#fff",
     borderBottomColor: "#f8f8f8",
     borderBottomWidth: 1,
+    fontFamily: "Playfair",
+    fontSize: s(13),
+    marginHorizontal: s(50),
+    color: "#fff",
   },
 
   buttonStyle: {
-    marginTop: 10,
+    marginTop: s(8),
   },
   buttonContent: {
     alignItems: "center",
@@ -284,6 +410,7 @@ const styles = StyleSheet.create({
   innerText: {
     fontSize: 18,
     color: "white",
+    fontFamily: "PlayfairBold",
   },
   goback: {
     alignSelf: "flex-end",

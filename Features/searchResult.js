@@ -10,6 +10,9 @@ const searchResult = createSlice({
       state.value = [...action.payload];
       //   state.value = [...state.value, ...action.payload];
     },
+    addToSearchResult: (state, action) => {
+      state.value.push(...action.payload);
+    },
     updateSearchResult: (state, action) => {
       state.value[action.payload.index].fav = action.payload.value;
     },
@@ -26,7 +29,11 @@ const searchResult = createSlice({
   },
 });
 
-export const { setSearchResult, updateSearchResult, resetFavInSearchResult } =
-  searchResult.actions;
+export const {
+  setSearchResult,
+  updateSearchResult,
+  resetFavInSearchResult,
+  addToSearchResult,
+} = searchResult.actions;
 
 export default searchResult.reducer;
