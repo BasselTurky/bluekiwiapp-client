@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
-import { s } from "react-native-size-matters";
+// import { s } from "react-native-size-matters";
 
 import * as SecureStore from "expo-secure-store";
 import { v4 as uuid } from "uuid";
@@ -26,12 +26,8 @@ import { useDispatch } from "react-redux";
 import { setAuth } from "../../Features/auth";
 import moment from "moment";
 
-import Modal from "react-native-modal";
-
 import { useHeaderHeight } from "@react-navigation/elements";
 
-import ModalCloseIconSVG from "../../Components/ModalCloseIconSVG";
-import TrashIconSVG from "../../Components/TrashIconSVG";
 import CheckIcon from "../../Components/CheckIcon";
 
 import {
@@ -46,6 +42,12 @@ var height = Dimensions.get("window").height;
 async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
 }
+
+// function s(size) {
+//   return (width / 350) * size;
+// }
+
+import { s } from "../../utils/scaling";
 
 export default function Login({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -137,7 +139,8 @@ export default function Login({ navigation }) {
         let data = await response.json();
 
         if (data.type === "error") {
-          errorToast(data.message + "t");
+          // ErrorID: E007
+          errorToast(data.message);
           return;
         } else if (data.type === "success") {
           await save("token", data.token);
@@ -160,12 +163,13 @@ export default function Login({ navigation }) {
 
           return;
         } else {
-          errorToast("Something went wrong");
+          errorToast("ErrorID: E006");
           return;
         }
       } catch (error) {
-        console.log(error);
-        errorToast("Couldn't reach the server");
+        console.log("ErrorID E005: ", error);
+        // alert('Error ID: E001')
+        errorToast("ErrorID: E005");
         return;
       }
     }
@@ -212,6 +216,7 @@ export default function Login({ navigation }) {
       ) {
         // stop loading, diplay try again message
         setIsLoading(false);
+        // ErrorID: E010
         errorToast(data.message);
         set_modal_content_state("content");
         return;
@@ -228,12 +233,12 @@ export default function Login({ navigation }) {
       //     return
       //   }
       else {
-        errorToast("Szomething went wrong!!!");
+        errorToast("ErrorID: E009");
         return;
       }
     } catch (error) {
-      console.log(error);
-      errorToast("Couldn't reach the server");
+      console.log("ErrorID E008: ", error);
+      errorToast("ErrorID: E008");
       return;
     }
   }
@@ -392,31 +397,39 @@ export default function Login({ navigation }) {
               // backgroundColor: "grey",
             }}
           >
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ForgotPassword")}
+            <View
               style={{
-                alignSelf: "flex-end",
                 marginBottom: s(32),
-                // marginTop: 10,
+                flexDirection: "row-reverse",
               }}
             >
-              <Text
-                style={{
-                  fontSize: s(12),
-                  // fontSize: 14,
-                  color: "#c4c4c4",
-                  fontFamily: "PlayfairBold",
-                }}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPassword")}
+                style={
+                  {
+                    // alignSelf: "flex-end",
+                    // marginTop: 10,
+                  }
+                }
               >
-                Forgot your password?
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: s(12),
+                    // fontSize: 14,
+                    color: "#c4c4c4",
+                    fontFamily: "PlayfairBold",
+                  }}
+                >
+                  Forgot your password?
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             <PaperButton
               onPress={sendLoginDataToServer}
               style={styles.buttonStyle}
               contentStyle={styles.buttonContent}
-              //   labelStyle={styles.buttonLabel}
+              labelStyle={styles.buttonLabel}
               mode="contained"
               uppercase={false}
               //   icon="account-box"
@@ -437,29 +450,40 @@ export default function Login({ navigation }) {
               </Text>
             </PaperButton>
 
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Register");
-              }}
+            <View
               style={{
-                alignSelf: "flex-end",
+                // alignSelf: "flex-end",
                 marginTop: s(26),
                 // marginTop: 30,
+                // backgroundColor: "pink",
+                flexDirection: "row-reverse",
               }}
             >
-              <Text
-                style={{
-                  fontSize: s(12),
-                  color: "#c4c4c4",
-                  fontFamily: "PlayfairBold",
-                  //   alignSelf: "flex-end",
-                  //   marginTop: 30,
-                  //   backgroundColor: "white",
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Register");
                 }}
+                style={
+                  {
+                    // backgroundColor: "green",
+                  }
+                }
               >
-                Don't have an account? Register here!
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: s(12),
+                    color: "#c4c4c4",
+                    fontFamily: "PlayfairBold",
+                    //   alignSelf: "flex-end",
+                    //   marginTop: 30,
+                    //   backgroundColor: "white",
+                  }}
+                >
+                  Don't have an account? Register here!
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             {/* <Button
               title="Show"
               onPress={() => {
@@ -618,6 +642,32 @@ export default function Login({ navigation }) {
                     }}
                   >
                     <PaperButton
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setShowLayer(false);
+                        toggleMenu(0);
+                      }}
+                      style={[
+                        styles.m_buttonStyle,
+                        { backgroundColor: "#fff" },
+                      ]}
+                      contentStyle={styles.m_buttonContent}
+                      labelStyle={styles.m_buttonLabel}
+                      // color="green"
+                      mode="contained"
+                      uppercase={false}
+                    >
+                      <Text
+                        style={{
+                          fontSize: s(14),
+                          fontFamily: "PlayfairBold",
+                          color: "#454545",
+                        }}
+                      >
+                        Cancel
+                      </Text>
+                    </PaperButton>
+                    <PaperButton
                       onPress={handleVerification}
                       style={[
                         styles.m_buttonStyle,
@@ -643,32 +693,6 @@ export default function Login({ navigation }) {
                           Verify
                         </Text>
                       )}
-                    </PaperButton>
-                    <PaperButton
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowLayer(false);
-                        toggleMenu(0);
-                      }}
-                      style={[
-                        styles.m_buttonStyle,
-                        { backgroundColor: "#fff" },
-                      ]}
-                      contentStyle={styles.m_buttonContent}
-                      labelStyle={styles.m_buttonLabel}
-                      // color="green"
-                      mode="contained"
-                      uppercase={false}
-                    >
-                      <Text
-                        style={{
-                          fontSize: s(14),
-                          fontFamily: "PlayfairBold",
-                          color: "#454545",
-                        }}
-                      >
-                        Cancel
-                      </Text>
                     </PaperButton>
                   </View>
                 </View>
@@ -756,19 +780,42 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
+  // buttonStyle: {
+  //   marginTop: s(8),
+  // },
+  // buttonContent: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   // paddingVertical: 3,
+  //   // paddingHorizontal: 10,
+  //   borderRadius: 4,
+  //   elevation: 3,
+  //   backgroundColor: "#59cbbd",
+  //   width: "100%",
+
+  //   // backgroundColor: "#3b4650",
+  // },
+
   buttonStyle: {
-    marginTop: s(8),
+    width: "100%",
+    height: s(38),
+    elevation: 5,
+    alignSelf: "center",
+    marginBottom: s(8),
+    backgroundColor: "#59cbbd",
   },
   buttonContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    // paddingVertical: 3,
-    // paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "#59cbbd",
-
-    // backgroundColor: "#3b4650",
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
+    // backgroundColor: "pink",
+  },
+  buttonLabel: {
+    padding: 0,
+    margin: 0,
+    width: "100%",
+    // backgroundColor: "green",
   },
   //   buttonLabel: {
   //     fontSize: 34,

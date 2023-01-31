@@ -20,8 +20,8 @@ const dailyWallpapers = createSlice({
       // update downloads +1
 
       for (let i = 0; i < state.value.value.length; i++) {
-        if (state.value.value[i].wallpapers_id === action.payload) {
-          state.value.value[i].downloads += 1;
+        if (state.value.value[i].wallpaper_id === action.payload) {
+          state.value.value[i].downloads = state.value.value[i].downloads + 1;
         }
       }
     },

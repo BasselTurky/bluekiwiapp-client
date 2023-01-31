@@ -83,50 +83,53 @@ export default function Register({ navigation }) {
     //   errorToast("Please enter valid email format");
     // }
     else {
-      console.log("pass");
-      let response = await fetch(
-        `${global.server_address}/auth/register-data`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password,
-            // paypal: paypal,
-          }),
+      try {
+        let response = await fetch(
+          `${global.server_address}/auth/register-data`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: name,
+              email: email,
+              password: password,
+              // paypal: paypal,
+            }),
+          }
+        );
+        let data = await response.json();
+        // console.log(data);
+
+        if (data.type === "success") {
+          // console.log(data.message);
+          Toast.show({
+            type: "success",
+            text1: data.message,
+            text2: "Registeration Complete",
+            visibilityTime: 6000,
+          });
+
+          setName("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+          // setPaypal("");
+          setTimeout(() => {
+            navigation.navigate("Login");
+          }, 6000);
+        } else if (data.type === "error") {
+          // ErrorID: E013
+          // ErrorID: E014
+          errorToast(data.message);
+        } else {
+          errorToast("ErrorID: E012");
         }
-      );
-      let data = await response.json();
-      console.log(data);
-
-      if (data.type === "success") {
-        console.log(data.message);
-        Toast.show({
-          type: "success",
-          text1: data.message,
-          text2: "Registeration Complete",
-          visibilityTime: 6000,
-        });
-
-        setName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        // setPaypal("");
-        setTimeout(() => {
-          navigation.navigate("Login");
-        }, 6000);
-
-        // display succes info
-      } else if (data.type === "error") {
-        console.log(data.message);
-        errorToast(data.message);
-      } else {
-        console.log("Something went wrong : backend register-data");
+      } catch (error) {
+        console.log("ErrorID E011: ", error);
+        errorToast("ErrorID: E011");
       }
     }
   };
@@ -293,7 +296,7 @@ export default function Register({ navigation }) {
               onPress={sendRegisterDataToServer}
               style={styles.buttonStyle}
               contentStyle={styles.buttonContent}
-              //   labelStyle={styles.buttonLabel}
+              labelStyle={styles.buttonLabel}
               mode="contained"
               uppercase={false}
               //   icon="account-box"
@@ -309,35 +312,42 @@ export default function Register({ navigation }) {
                 Sign up
               </Text>
             </PaperButton>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Login");
+            <View
+              style={{
+                flexDirection: "row-reverse",
+                marginTop: s(28),
               }}
             >
-              <View
-                style={{
-                  alignSelf: "flex-end",
-                  marginTop: s(28),
-                  flexDirection: "row",
-                  // justifyContent: "center",
-                  alignItems: "center",
-                  // backgroundColor: "grey",
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Login");
                 }}
               >
-                <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
-                <Text
+                <View
                   style={{
-                    fontSize: s(13),
-                    color: "#c4c4c4",
-                    fontFamily: "PlayfairBold",
-                    marginLeft: s(8),
-                    paddingBottom: s(2),
+                    // alignSelf: "flex-end",
+
+                    flexDirection: "row",
+                    // justifyContent: "center",
+                    alignItems: "center",
+                    // backgroundColor: "grey",
                   }}
                 >
-                  Back to Login page
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
+                  <Text
+                    style={{
+                      fontSize: s(13),
+                      color: "#c4c4c4",
+                      fontFamily: "PlayfairBold",
+                      marginLeft: s(8),
+                      paddingBottom: s(2),
+                    }}
+                  >
+                    Back to Login page
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Toast
@@ -382,31 +392,51 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
+  // buttonStyle: {
+  //   marginTop: s(8),
+  // },
+  // buttonContent: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   // paddingVertical: 3,
+  //   // paddingHorizontal: 10,
+  //   borderRadius: 4,
+  //   elevation: 3,
+  //   backgroundColor: "#59cbbd",
+  //   // backgroundColor: "#3b4650",
+  // },
+  // buttonLabel: {
+  //   fontSize: 34,
+  //   // backgroundColor: "green",
+  //   // customLabelSize: 20,
+  //   width: "90%",
+  //   height: "100%",
+  //   paddingVertical: 5,
+  //   paddingLeft: 15,
+  //   marginVertical: 0,
+  //   marginHorizontal: 0,
+  //   // textAlign: "left",
+  // },
   buttonStyle: {
-    marginTop: s(8),
+    width: "100%",
+    height: s(38),
+    elevation: 5,
+    alignSelf: "center",
+    marginBottom: s(8),
+    backgroundColor: "#59cbbd",
   },
   buttonContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    // paddingVertical: 3,
-    // paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "#59cbbd",
-    // backgroundColor: "#3b4650",
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
   },
   buttonLabel: {
-    fontSize: 34,
-    // backgroundColor: "green",
-    // customLabelSize: 20,
-    width: "90%",
-    height: "100%",
-    paddingVertical: 5,
-    paddingLeft: 15,
-    marginVertical: 0,
-    marginHorizontal: 0,
-    // textAlign: "left",
+    padding: 0,
+    margin: 0,
+    width: "100%",
   },
+
   innerText: {
     fontSize: 18,
     color: "white",

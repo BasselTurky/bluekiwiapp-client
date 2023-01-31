@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialStateValue = {
-  wallpaper_api: 0,
-  animated_api: 0,
   image_api: 0,
-  cities_guide_api: 0,
-  tasks_note: 0,
+  wallpaper_api: 0,
+  archive_api: 0,
   giveaways: 0,
 };
 

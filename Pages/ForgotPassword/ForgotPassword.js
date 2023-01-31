@@ -63,6 +63,8 @@ export default function ForgotPassword({ navigation }) {
         let data = await response.json();
 
         if (data.type === "error") {
+          // ErrorID: E017
+          // ErrorID: E018
           errorToast(data.message);
         } else if (data.type === "success") {
           setEmail("");
@@ -73,12 +75,12 @@ export default function ForgotPassword({ navigation }) {
             visibilityTime: 3000,
           });
         } else {
-          errorToast("Couldn't reach the server!");
+          errorToast("ErrorID: E016");
         }
       }
     } catch (error) {
-      console.log("Error L63: ", error);
-      errorToast("Couldn't reach the server!");
+      console.log("ErrorID: E015: ", error);
+      errorToast("ErrorID: E015");
     }
   };
   return (
@@ -191,7 +193,7 @@ export default function ForgotPassword({ navigation }) {
               onPress={resetPasswordHandler}
               style={styles.buttonStyle}
               contentStyle={styles.buttonContent}
-              //   labelStyle={styles.buttonLabel}
+              labelStyle={styles.buttonLabel}
               mode="contained"
               uppercase={false}
               //   icon="account-box"
@@ -207,35 +209,42 @@ export default function ForgotPassword({ navigation }) {
                 Submit
               </Text>
             </PaperButton>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Login");
+            <View
+              style={{
+                flexDirection: "row-reverse",
+                marginTop: s(28),
               }}
             >
-              <View
-                style={{
-                  alignSelf: "flex-end",
-                  marginTop: s(28),
-                  flexDirection: "row",
-                  // justifyContent: "center",
-                  alignItems: "center",
-                  // backgroundColor: "grey",
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Login");
                 }}
               >
-                <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
-                <Text
+                <View
                   style={{
-                    fontSize: s(13),
-                    color: "#c4c4c4",
-                    fontFamily: "PlayfairBold",
-                    marginLeft: s(8),
-                    paddingBottom: s(2),
+                    // alignSelf: "flex-end",
+
+                    flexDirection: "row",
+                    // justifyContent: "center",
+                    alignItems: "center",
+                    // backgroundColor: "grey",
                   }}
                 >
-                  Back to Login page
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
+                  <Text
+                    style={{
+                      fontSize: s(13),
+                      color: "#c4c4c4",
+                      fontFamily: "PlayfairBold",
+                      marginLeft: s(8),
+                      paddingBottom: s(2),
+                    }}
+                  >
+                    Back to Login page
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Toast
@@ -280,31 +289,51 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
+  // buttonStyle: {
+  //   marginTop: s(17),
+  // },
+  // buttonContent: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   paddingVertical: 1,
+  //   // paddingHorizontal: 10,
+  //   borderRadius: 4,
+  //   elevation: 3,
+  //   backgroundColor: "#59cbbd",
+  //   // backgroundColor: "#3b4650",
+  // },
+  // buttonLabel: {
+  //   fontSize: 34,
+  //   // backgroundColor: "green",
+  //   // customLabelSize: 20,
+  //   width: "90%",
+  //   height: "100%",
+  //   paddingVertical: 5,
+  //   paddingLeft: 15,
+  //   marginVertical: 0,
+  //   marginHorizontal: 0,
+  //   // textAlign: "left",
+  // },
   buttonStyle: {
+    width: "100%",
+    height: s(38),
+    elevation: 5,
+    alignSelf: "center",
     marginTop: s(17),
+    backgroundColor: "#59cbbd",
   },
   buttonContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 1,
-    // paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "#59cbbd",
-    // backgroundColor: "#3b4650",
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
   },
   buttonLabel: {
-    fontSize: 34,
-    // backgroundColor: "green",
-    // customLabelSize: 20,
-    width: "90%",
-    height: "100%",
-    paddingVertical: 5,
-    paddingLeft: 15,
-    marginVertical: 0,
-    marginHorizontal: 0,
-    // textAlign: "left",
+    padding: 0,
+    margin: 0,
+    width: "100%",
   },
+
   innerText: {
     fontSize: 16,
     color: "white",

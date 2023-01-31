@@ -10,7 +10,7 @@ const coins = createSlice({
       state.value = action.payload;
     },
     addCoin: (state, action) => {
-      state.value = state.value + 1;
+      state.value = state.value + 2;
     },
     consumeCoins: (state, action) => {
       state.value = state.value - action.payload;

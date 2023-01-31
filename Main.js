@@ -13,7 +13,7 @@ import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
 
-import Application from "./Pages/Application/Application";
+import Application from "./Pages/Application/ApplicationNav/Application";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
@@ -134,7 +134,7 @@ export default function Main() {
 
           // remove error condition
           if (data.type === "expired" || data.type === "error") {
-            console.log("Error L96: ", data.message);
+            console.log("Error ID: E004: ", data.message);
             // Clear session, restart start from login page
 
             dispatch(setAuth(false));
@@ -150,8 +150,9 @@ export default function Main() {
             await SplashScreen.hideAsync();
           } else {
             // Clear session, restart start from login page
-            console.log("Something went wrong! L111");
-
+            console.log("ErrorID E003");
+            alert("Error ID: E003");
+            // To do: Edit
             dispatch(setAuth(false));
             await deleteValueFor("token");
             // setLoading(false);
@@ -159,7 +160,8 @@ export default function Main() {
           }
         } else {
           // Clear session, restart start from login page
-          console.log("Something went wrong! L120");
+          console.log("ErrorID E002");
+          alert("Error ID: E002");
 
           dispatch(setAuth(false));
           await deleteValueFor("token");
@@ -169,7 +171,8 @@ export default function Main() {
       }
     } catch (error) {
       // Clear session, restart start from login page
-      console.log("TryCatch Error: ", error);
+      console.log("ErrorID E001: ", error);
+      alert("Error ID: E001");
 
       dispatch(setAuth(false));
       await deleteValueFor("token");

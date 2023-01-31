@@ -16,7 +16,7 @@ import {
   Easing,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-
+import { z, zx } from "../../../utils/scaling";
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -48,7 +48,7 @@ import GoBackSVG from "../../../Components/GoBackSVG";
 import AdAlert from "../../../Components/AdAlertSVG";
 import KiwiCoinSVG from "../../../Components/KiwiCoinSVG";
 import WatchSVG from "../../../Components/WatchSVG";
-import MaskCircle from "../components/MaskCircle";
+
 import ExclamationIcon from "../../../Components/ExclamationIcon";
 import DashIcon from "../../../Components/DashIcon";
 
@@ -78,6 +78,7 @@ export default function AdsView({ navigation }) {
   const tipsMenu = useSelector((state) => state.tipsMenu.value);
   const [isDisabled, setIsDisabled] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [showLoading, setShowLoading] = useState(false);
 
   // const xlast = tipsMenu ? -(width * 0.8) : 0;
   // const ylast = height * 0.28;
@@ -91,7 +92,7 @@ export default function AdsView({ navigation }) {
   function toggleMenu() {}
   Animated.timing(animateMenuX, {
     // toValue: { x: 0, y: yInt },
-    toValue: tipsMenu ? xInt : 0,
+    toValue: tipsMenu ? 0 : xInt,
     duration: 1000,
     useNativeDriver: false,
     easing: Easing.out(Easing.sin),
@@ -125,10 +126,10 @@ export default function AdsView({ navigation }) {
     isEarnedReward,
     load,
     show,
-  } = useRewardedAd(TestIds.REWARDED, {
-    // keywords: ["trading", "software", "online trading"],
+  } = useRewardedAd("ca-app-pub-4213110958189376/7153602373", {
+    keywords: ["trading", "software", "online trading"],
   });
-
+  // TestIds.REWARDED
   // "ca-app-pub-4213110958189376/7153602373"
   const errorToast = (message) => {
     Toast.show({
@@ -141,6 +142,7 @@ export default function AdsView({ navigation }) {
 
   async function gainReward() {
     try {
+      let currentToken = await SecureStore.getItemAsync("token");
       let response = await fetch(`${global.server_address}/api/save-coin`, {
         method: "POST",
         headers: {
@@ -148,14 +150,14 @@ export default function AdsView({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: userData.email,
-          device_id: userData.device_id,
+          token: currentToken,
         }),
       });
 
       let data = await response.json();
 
       if (data.type === "error") {
+        // ErrorID: E034
         errorToast(data.message);
       } else if (data.type === "wrong-device") {
         deleteValueFor("token");
@@ -163,25 +165,32 @@ export default function AdsView({ navigation }) {
       } else if (data.type === "success") {
         dispatch(addCoin());
       } else {
-        console.log(data);
-        errorToast("Something went wrong!");
+        errorToast("ErrorID: E033");
       }
     } catch (error) {
-      console.log(error);
-      errorToast("Something went wrong!");
+      console.log("ErrorID: E032: ", error);
+      errorToast("ErrorID: E032");
     }
   }
 
   useEffect(() => {
     // start loading the ad
-    load();
-  }, [load]);
-
-  useEffect(() => {
-    if (isClosed) {
-      load();
+    // load();
+    try {
+      if (isLoaded) {
+        show();
+      }
+    } catch (error) {
+      console.log("ErrorID: E035: ", error);
+      errorToast("ErrorID: E035");
     }
-  }, [isClosed, load]);
+  }, [isLoaded]);
+
+  // useEffect(() => {
+  //   if (isClosed) {
+  //     load();
+  //   }
+  // }, [isClosed, load]);
 
   useEffect(() => {
     if (isOpened) {
@@ -191,6 +200,7 @@ export default function AdsView({ navigation }) {
 
   useEffect(() => {
     if (isClosed) {
+      setShowLoading(false);
       let total = Date.now() - timer;
       console.log(total);
       if (total >= 15000) {
@@ -203,10 +213,11 @@ export default function AdsView({ navigation }) {
   return (
     <SafeAreaProvider>
       <ImageBackground
-        // source={require("../../../assets/HomeBackground.png")}
-        source={require("../../../assets/ads-view-img2.png")}
+        source={require("../../../assets/pixel4.jpg")}
+        // source={require("../../../assets/ads-view-img2.png")}
         resizeMode="cover"
         style={styles.container}
+        blurRadius={2}
       >
         <View
           style={{
@@ -224,11 +235,12 @@ export default function AdsView({ navigation }) {
               {
                 position: "absolute",
                 width: width * 0.8,
-                height: height * 0.54,
+                // height: zx(400),
+                paddingBottom: z(22),
                 backgroundColor: "rgba(0,0,0,0.4)",
                 left: 0,
-                borderBottomRightRadius: 20,
-                borderTopRightRadius: 20,
+                borderBottomRightRadius: z(20),
+                borderTopRightRadius: z(20),
                 transform: [
                   {
                     translateX: animateMenuX,
@@ -266,18 +278,23 @@ export default function AdsView({ navigation }) {
             <TouchableOpacity
               style={styles.watchButton}
               activeOpacity={0.7}
-              disabled={isLoaded ? false : true}
+              // disabled={isLoaded ? false : true}
               onPress={() => {
-                show();
+                load();
+                setShowLoading(true);
+                // show();
+
                 // timing = Date.now();
                 // console.log("started at ", timing);
               }}
             >
-              {isLoaded ? (
+              {showLoading ? (
+                <ActivityIndicator size={"large"} color={"#7caac2"} />
+              ) : (
                 <Text
                   style={{
-                    marginHorizontal: 10,
-                    fontSize: 18,
+                    marginHorizontal: z(10),
+                    fontSize: z(18),
 
                     color: "white",
                     fontFamily: "Righteous_400Regular",
@@ -285,8 +302,6 @@ export default function AdsView({ navigation }) {
                 >
                   Watch now
                 </Text>
-              ) : (
-                <ActivityIndicator size={"large"} color={"#7caac2"} />
               )}
             </TouchableOpacity>
           </View>
@@ -352,7 +367,7 @@ export default function AdsView({ navigation }) {
               }}
               activeOpacity={0.7}
             >
-              {!tipsMenu ? (
+              {tipsMenu ? (
                 <DashIcon fill={"#fff"} width={18} height={18} />
               ) : (
                 <ExclamationIcon fill={"#fff"} width={18} height={18} />
@@ -375,7 +390,8 @@ export default function AdsView({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffcb76",
+    backgroundColor: "#000",
+    // backgroundColor: "#669cb7",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
@@ -438,28 +454,29 @@ const styles = StyleSheet.create({
   watchButton: {
     marginTop: 10,
     flexDirection: "row",
-    width: 160,
-    height: 60,
+    width: z(160),
+    height: z(60),
     // width: 112,
     // height: 112,
     // borderRadius: 160,
     // borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: z(10),
     // borderColor: "grey",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.3)",
     // backgroundColor: "#8fbdff",
-    paddingHorizontal: 5,
+    paddingHorizontal: z(5),
     elevation: 5,
     zIndex: 5,
   },
   tips: {
-    fontSize: height * 0.04 < 24 ? 16 : 18,
+    // fontSize: height * 0.04 < 24 ? 16 : 18,
+    fontSize: z(18),
     color: "white",
     fontFamily: "Righteous_400Regular",
     paddingHorizontal: 15,
-    paddingTop: height * 0.03,
+    paddingTop: z(22),
   },
 });
 
