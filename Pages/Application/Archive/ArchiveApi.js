@@ -304,11 +304,11 @@ export default function ArchiveApi({ navigation }) {
                 flex: 1,
                 alignItems: "center",
                 // justifyContent: "center",
-                paddingTop:
-                  height * 0.04 < 24
-                    ? insets.top + height * 0.005
-                    : insets.top + height * 0.015,
-                // paddingTop: insets.top + 10,
+                // paddingTop:
+                //   height * 0.04 < 24
+                //     ? insets.top + height * 0.005
+                //     : insets.top + height * 0.015,
+                paddingTop: insets.top,
                 paddingBottom: insets.bottom,
                 backgroundColor: "#C88781",
               },

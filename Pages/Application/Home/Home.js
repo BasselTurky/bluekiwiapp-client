@@ -1,4 +1,5 @@
 //<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+import "react-native-gesture-handler";
 import {
   StyleSheet,
   Text,
@@ -10,6 +11,7 @@ import {
   ImageBackground,
   Dimensions,
   Image,
+  Keyboard,
 } from "react-native";
 import { z } from "../../../utils/scaling";
 import React, { useState, useEffect } from "react";
@@ -19,6 +21,9 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+
+import { DrawerLayout } from "react-native-gesture-handler";
+import DrawerView from "./components/DrawerView";
 
 import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +36,7 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
 
 import KiwiCoinSVG from "../../../Components/KiwiCoinSVG";
+import CoinsStack from "../../../Components/CoinsStack";
 import PlusIconSVG from "../../../Components/PlusIconSVG";
 import ArchiveIcon from "../../../Components/ArchiveIcon";
 
@@ -247,267 +253,303 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
   try {
     return (
       <SafeAreaProvider>
-        <View
-          // source={require("../../assets/splashx2.png")}
-          // resizeMode="cover"
-          style={styles.container}
+        <DrawerLayout
+          // hideStatusBar={true}
+          onDrawerStateChanged={(state) => {
+            if (state === "Dragging") {
+              Keyboard.dismiss();
+            } else if (state === "Settling") {
+              Keyboard.dismiss();
+            }
+          }}
+          onDrawerSlide={(position) => {
+            if (position === 0) {
+              Keyboard.dismiss();
+            }
+          }}
+          drawerWidth={z(350)}
+          drawerPosition="right"
+          drawerType="front"
+          keyboardDismissMode="on-drag"
+          renderNavigationView={() => {
+            return <DrawerView Toast={Toast} errorToast={errorToast} />;
+          }}
         >
-          <Image
-            // source={{ uri }}
-            source={require("../../../assets/pixel4.jpg")}
-            // blurRadius={2}
-            style={[
-              {
-                width: "100%",
-                height: "100%",
-                resizeMode: "cover",
-              },
-              StyleSheet.absoluteFill,
-            ]}
-          />
           <View
-            style={{
-              // height: 40,
-              width: "100%",
-              // backgroundColor: "pink",
-              position: "absolute",
-              top:
-                height * 0.04 < 24
-                  ? insets.top + height * 0.02
-                  : insets.top + height * 0.04,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
+            // source={require("../../assets/splashx2.png")}
+            // resizeMode="cover"
+            style={styles.container}
           >
-            <TouchableOpacity
-              style={
-                // styles.profileIcon
+            <Image
+              // source={{ uri }}
+              source={require("../../../assets/001.jpg")}
+              blurRadius={2}
+              style={[
                 {
-                  elevation: 5,
-                  borderRadius: 50,
-                  marginLeft: 17,
-                  width: 40,
-                  height: 40,
-                  borderRadius: 50,
-                  backgroundColor: "#83c4ff",
-
-                  overflow: "hidden",
-                }
-              }
-              // activeOpacity={0.7}
-              onPress={() => {
-                navigation.navigate("ProfilePage");
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // backgroundColor: "blue",
-                }}
-              >
-                {/* <BlurView
-                style={[StyleSheet.absoluteFill]}
-                blurAmount={20}
-                blurRadius={2}
-                blurType={"light"}
-                overlayColor={"rgba(0,0,0,0.1)"}
-              /> */}
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 22,
-                  }}
-                >
-                  {userData ? userData.name.charAt(0).toUpperCase() : "B"}
-                </Text>
-              </View>
-
-              {/* <ProfileSVG fill={"white"} height={38} width={38} /> */}
-
-              {/* <Image
-              source={require("../../assets/splashProfile.png")}
-              res
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 50,
-              }}
-            /> */}
-            </TouchableOpacity>
-
+                  width: "100%",
+                  height: "100%",
+                  resizeMode: "cover",
+                },
+                StyleSheet.absoluteFill,
+              ]}
+            />
             <View
               style={{
+                // height: 40,
+                width: "100%",
+                // backgroundColor: "pink",
+                position: "absolute",
+                top:
+                  height * 0.04 < 24
+                    ? insets.top + height * 0.02
+                    : insets.top + height * 0.04,
                 flexDirection: "row",
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
               <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  right: 126,
-                }}
-                activeOpacity={0.7}
+                style={
+                  // styles.profileIcon
+                  {
+                    elevation: 5,
+                    borderRadius: 50,
+                    marginLeft: 17,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 50,
+                    backgroundColor: "#83c4ff",
+
+                    overflow: "hidden",
+                  }
+                }
+                // activeOpacity={0.7}
                 onPress={() => {
-                  navigation.navigate("AdsView");
+                  navigation.navigate("ProfilePage");
                 }}
               >
-                <PlusIconSVG height={30} width={30} />
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // backgroundColor: "blue",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 22,
+                    }}
+                  >
+                    {userData ? userData.name.charAt(0).toUpperCase() : "B"}
+                  </Text>
+                </View>
               </TouchableOpacity>
-
-              <View style={[styles.score, { position: "absolute", right: 36 }]}>
-                <Text style={styles.scoreText}>
-                  {remainingdDigits(coins)}
-                  {coins}
-                </Text>
-              </View>
 
               <View
                 style={{
-                  position: "absolute",
-                  right: 17,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  // backgroundColor: "green",
                 }}
               >
-                <KiwiCoinSVG height={38} width={38} />
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    right: 126,
+                  }}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    navigation.navigate("AdsView");
+                  }}
+                >
+                  <PlusIconSVG height={30} width={30} />
+                </TouchableOpacity>
+
+                <View
+                  style={[styles.score, { position: "absolute", right: 36 }]}
+                >
+                  <Text style={styles.scoreText}>
+                    {remainingdDigits(coins)}
+                    {coins}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    position: "absolute",
+                    right: 17,
+                  }}
+                >
+                  <CoinsStack height={z(50)} width={z(50)} />
+                </View>
               </View>
             </View>
-          </View>
 
-          {/* download webview start*/}
+            {/* download webview start*/}
 
-          <View
-            style={{
-              position: "absolute",
-              left: 0,
-              bottom: 0,
-              width: 1,
-              height: 1,
-            }}
-          >
-            <WebView
-              ref={viewRef}
+            <View
               style={{
-                // flex: 0,
+                position: "absolute",
+                left: 0,
+                bottom: 0,
                 width: 1,
-                // width: 300,
+                height: 1,
               }}
-              // containerStyle={{
-              //   flex: 1,
-              // }}
-              userAgent={
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
-              }
-              source={{
-                uri: pageUrl,
-              }}
-              onLoad={() => {
-                setIsWebviewLoaded(true);
-                console.log("loaded");
-              }}
-              javaScriptEnabled
-              onMessage={(event) => {
-                // const htmlString = event.nativeEvent.data;
-                // console.log(htmlString);
-                let eventObj = JSON.parse(event.nativeEvent.data);
-                let message = eventObj.message;
-                let data = eventObj.data;
-                console.log(eventObj);
-                if (data) {
-                  setIsViewLogin(true);
-                } else {
-                  setIsViewLogin(false);
+            >
+              <WebView
+                ref={viewRef}
+                style={{
+                  // flex: 0,
+                  width: 1,
+                  // width: 300,
+                }}
+                // containerStyle={{
+                //   flex: 1,
+                // }}
+                userAgent={
+                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+                }
+                source={{
+                  uri: pageUrl,
+                }}
+                onLoad={() => {
+                  setIsWebviewLoaded(true);
+                  console.log("loaded");
+                }}
+                javaScriptEnabled
+                onMessage={(event) => {
+                  // const htmlString = event.nativeEvent.data;
+                  // console.log(htmlString);
+                  let eventObj = JSON.parse(event.nativeEvent.data);
+                  let message = eventObj.message;
+                  let data = eventObj.data;
+                  console.log(eventObj);
+                  if (data) {
+                    setIsViewLogin(true);
+                  } else {
+                    setIsViewLogin(false);
 
-                  // start();
+                    // start();
 
-                  setTimeout(() => {
-                    open_login();
                     setTimeout(() => {
-                      insert_auth();
+                      open_login();
                       setTimeout(() => {
-                        click_login();
+                        insert_auth();
+                        setTimeout(() => {
+                          click_login();
 
-                        if (attempts < 3) {
-                          setTimeout(() => {
-                            check_login();
-                            setAttempts(attempts + 1);
-                          }, 3000);
-                        }
+                          if (attempts < 3) {
+                            setTimeout(() => {
+                              check_login();
+                              setAttempts(attempts + 1);
+                            }, 3000);
+                          }
+                        }, 1000);
                       }, 1000);
                     }, 1000);
-                  }, 1000);
-                }
-              }}
-            />
-          </View>
+                  }
+                }}
+              />
+            </View>
 
-          {/* download webview end*/}
+            {/* download webview end*/}
 
-          <View style={[styles.row]}>
-            <ApiButton
-              navigation={navigation}
-              api={"wallpaper_api"}
-              apiText={"Wallpapers"}
-              navigationPage={"WallpaperApi"}
-              requiredCoins={0}
+            <View style={[styles.row]}>
+              <ApiButton
+                navigation={navigation}
+                api={"wallpaper_api"}
+                apiText={"Wallpapers"}
+                navigationPage={"WallpaperApi"}
+                requiredCoins={0}
+              >
+                {/* <WallpaperIcon width={z(42)} height={z(42)} fill={"white"} /> */}
+                <Image
+                  source={require("../../../assets/frame26.png")}
+                  resizeMode="contain"
+                  style={{
+                    width: "90%",
+                    // height: z(44),
+
+                    // backgroundColor: "green",
+                  }}
+                />
+              </ApiButton>
+
+              <ApiButton
+                navigation={navigation}
+                // viewRef={viewRef}
+                // pageUrl={pageUrl}
+                // setPageUrl={setPageUrl}
+                isWebviewLoaded={isWebviewLoaded}
+                isViewLogin={isViewLogin}
+                api={"image_api"}
+                apiText={"Gallery"}
+                navigationPage={"ImageApiPage"}
+                requiredCoins={10}
+              >
+                {/* <ImagesIcon width={z(42)} height={z(42)} fill={"white"} /> */}
+                <Image
+                  source={require("../../../assets/frame25.png")}
+                  resizeMode="contain"
+                  style={{
+                    width: "90%",
+                    // height: z(44),
+
+                    // backgroundColor: "green",
+                  }}
+                />
+              </ApiButton>
+            </View>
+
+            <View
+              style={[
+                {
+                  marginTop: 20,
+                },
+                styles.row,
+              ]}
             >
-              <WallpaperIcon width={z(42)} height={z(42)} fill={"white"} />
-            </ApiButton>
+              <ApiButton
+                navigation={navigation}
+                api={"archive_api"}
+                apiText={"Archive"}
+                navigationPage={"ArchiveApiPage"}
+                requiredCoins={5}
+              >
+                {/* <ArchiveIcon width={z(42)} height={z(42)} fill={"white"} /> */}
+                <Image
+                  source={require("../../../assets/Archive2.png")}
+                  resizeMode="contain"
+                  style={{
+                    width: "70%",
+                    // height: z(44),
 
-            <ApiButton
-              navigation={navigation}
-              // viewRef={viewRef}
-              // pageUrl={pageUrl}
-              // setPageUrl={setPageUrl}
-              isWebviewLoaded={isWebviewLoaded}
-              isViewLogin={isViewLogin}
-              api={"image_api"}
-              apiText={"Gallery"}
-              navigationPage={"ImageApiPage"}
-              requiredCoins={10}
-            >
-              <ImagesIcon width={z(42)} height={z(42)} fill={"white"} />
-            </ApiButton>
-          </View>
+                    // backgroundColor: "green",
+                  }}
+                />
+                {/* <CitiesGuideIcon width={z(42)} height={z(42)} /> */}
+              </ApiButton>
 
-          <View
-            style={[
-              {
-                marginTop: 20,
-              },
-              styles.row,
-            ]}
-          >
-            <ApiButton
-              navigation={navigation}
-              api={"archive_api"}
-              apiText={"Wallpapers Archive"}
-              navigationPage={"ArchiveApiPage"}
-              requiredCoins={5}
-            >
-              <ArchiveIcon width={z(42)} height={z(42)} fill={"white"} />
-              {/* <CitiesGuideIcon width={z(42)} height={z(42)} /> */}
-            </ApiButton>
-
-            <ApiButton
-              navigation={navigation}
-              api={"tasks_note"}
-              apiText={"My Note"}
-              navigationPage={"NoteApi"}
-              requiredCoins={5}
-            >
-              <MyNoteIcon width={z(42)} height={z(42)} fill={"white"} />
-            </ApiButton>
-          </View>
-          {/* <Button
+              <ApiButton
+                navigation={navigation}
+                api={"tasks_note"}
+                apiText={"My Note"}
+                navigationPage={"NoteApi"}
+                requiredCoins={5}
+              >
+                <MyNoteIcon width={z(42)} height={z(42)} fill={"white"} />
+              </ApiButton>
+            </View>
+            {/* <Button
           title="Show"
           onPress={() => {
             console.log(searchResult);
             // console.log(height * 0.04);
           }}
         /> */}
-          {/* <Button
+            {/* <Button
         title="show"
         onPress={async () => {
           // console.log(currentArray);
@@ -522,7 +564,7 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
           console.log(searchResult);
         }}
       /> */}
-          {/* <View
+            {/* <View
         style={[
           {
             marginTop: 20,
@@ -538,15 +580,25 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
           requiredCoins={5}
         />
       </View> */}
+          </View>
+        </DrawerLayout>
+        <Toast
+          topOffset={20}
+          // config={toastConfig}
+          onPress={() => {
+            Toast.hide();
+          }}
+        />
 
-          <Toast
-            topOffset={20}
-            // config={toastConfig}
-            onPress={() => {
-              Toast.hide();
-            }}
-          />
-        </View>
+        {/* <View
+          style={{
+            position: "absolute",
+            backgroundColor: "green",
+            width: 300,
+            height: 300,
+            zIndex: 100,
+          }}
+        ></View> */}
       </SafeAreaProvider>
     );
   } catch (error) {

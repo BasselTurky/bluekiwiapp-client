@@ -154,14 +154,25 @@ export default function ApiButton({
         justifyContent: "center",
       }}
     >
+      <View
+        style={{
+          position: "absolute",
+          borderRadius: z(25),
+          width: z(130),
+          height: z(150),
+          backgroundColor: "rgba(0,0,0,0.15)",
+          right: -4,
+          bottom: -5,
+        }}
+      ></View>
       <TouchableOpacity
         activeOpacity={0.8}
         style={{
-          // backgroundColor: "#fff",
+          backgroundColor: "#e2e9ee",
           padding: z(5),
-          borderRadius: z(110),
-          width: z(110),
-          height: z(110),
+          borderRadius: z(20),
+          width: z(130),
+          height: z(150),
           justifyContent: "center",
           alignItems: "center",
           zIndex: 2,
@@ -178,41 +189,47 @@ export default function ApiButton({
           }
         }}
       >
-        <BlurView
+        {/* <BlurView
           style={[StyleSheet.absoluteFill]}
           blurAmount={40}
           blurRadius={2}
           blurType={"light"}
           overlayColor={"rgba(0,0,0,0.1)"}
-        />
+        /> */}
         <View
           style={{
+            height: z(100),
             zIndex: 4,
-            // alignItems: "center",
-            // justifyContent: "center",
+            // backgroundColor: "yellow",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            // paddingHorizontal: z(2),
           }}
         >
           {children}
         </View>
-      </TouchableOpacity>
-      <Text
-        style={{
-          paddingVertical: 2,
-          textAlign: "center",
-          width: z(100),
-          color: "white",
-          fontSize: z(18),
-          // backgroundColor: "pink",
-          // fontFamily: "ChelaOne_400Regular",
-          // fontFamily: "Graduate_400Regular",
+        <Text
+          style={{
+            flex: 1,
+            paddingVertical: 2,
+            textAlign: "center",
+            width: "100%",
+            color: "black",
+            fontSize: z(14),
+            // backgroundColor: "pink",
+            // fontFamily: "ChelaOne_400Regular",
+            // fontFamily: "Graduate_400Regular",
 
-          // fontFamily: "PinyonScript_400Regular",
-          fontFamily: "GrandHotel_400Regular",
-          // fontFamily: "PlayfairBold",
-        }}
-      >
-        {apiText}
-      </Text>
+            // fontFamily: "PinyonScript_400Regular",
+            // fontFamily: "GrandHotel_400Regular",
+            // fontFamily: "PlayfairBold",
+          }}
+        >
+          {apiText}
+        </Text>
+      </TouchableOpacity>
+
       {/* {userApis[api] == false ? (
         <TouchableWithoutFeedback
           onPress={() => {

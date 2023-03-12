@@ -47,7 +47,7 @@ async function save(key, value) {
 //   return (width / 350) * size;
 // }
 
-import { s } from "../../utils/scaling";
+import { s, z } from "../../utils/scaling";
 
 export default function Login({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -400,7 +400,9 @@ export default function Login({ navigation }) {
             <View
               style={{
                 marginBottom: s(32),
-                flexDirection: "row-reverse",
+                // flexDirection: "row-reverse",
+                // backgroundColor: "blue",
+                alignSelf: "flex-end",
               }}
             >
               <TouchableOpacity
@@ -414,10 +416,10 @@ export default function Login({ navigation }) {
               >
                 <Text
                   style={{
-                    fontSize: s(12),
+                    fontSize: z(14),
                     // fontSize: 14,
                     color: "#c4c4c4",
-                    fontFamily: "PlayfairBold",
+                    // fontFamily: "PlayfairBold",
                   }}
                 >
                   Forgot your password?
@@ -471,9 +473,9 @@ export default function Login({ navigation }) {
               >
                 <Text
                   style={{
-                    fontSize: s(12),
+                    fontSize: z(15),
                     color: "#c4c4c4",
-                    fontFamily: "PlayfairBold",
+                    // fontFamily: "PlayfairBold",
                     //   alignSelf: "flex-end",
                     //   marginTop: 30,
                     //   backgroundColor: "white",
@@ -936,6 +938,7 @@ const styles = StyleSheet.create({
   m_buttonLabel: {
     padding: 0,
     margin: 0,
+    width: "100%",
   },
 });
 

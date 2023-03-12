@@ -41,6 +41,9 @@ import { setAuth } from "../../../Features/auth";
 
 import ErrorView from "../../Error/ErrorView";
 
+import PlusIconSVG from "../../../Components/PlusIconSVG";
+import CoinsStack from "../../../Components/CoinsStack";
+
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -65,6 +68,7 @@ export default function WallpaperApi({ navigation }) {
   const dispatch = useDispatch();
   const dailyWallpapers = useSelector((state) => state.dailyWallpapers.value);
   const colorsArray = useSelector((state) => state.colorsArray.value);
+  const coins = useSelector((state) => state.coins.value);
 
   const tipsMenuWallpaper = useSelector(
     (state) => state.tipsMenuWallpaper.value
@@ -223,6 +227,19 @@ export default function WallpaperApi({ navigation }) {
     getDailyWallpapers();
   }, [dailyWallpapers]);
 
+  function remainingdDigits(number) {
+    var length = (Math.log(number) * Math.LOG10E + 1) | 0;
+
+    let remaining = 3 - length;
+
+    let result = "";
+    for (let i = 0; i < remaining; i++) {
+      result = result.concat("0");
+    }
+
+    return result;
+  }
+
   // check permissions
   try {
     return (
@@ -279,7 +296,55 @@ export default function WallpaperApi({ navigation }) {
                 <GoBackSVG fill={"#fff"} width={15} height={15} />
               </TouchableOpacity>
 
-              <TouchableOpacity
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  // backgroundColor: "green",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    // position: "absolute",
+                    // right: 126,
+                    marginRight: 70,
+                  }}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    navigation.navigate("AdsView");
+                  }}
+                >
+                  <PlusIconSVG height={30} width={30} />
+                </TouchableOpacity>
+
+                <View
+                  style={[
+                    styles.score,
+                    {
+                      position: "absolute",
+                      right: 26,
+                    },
+                  ]}
+                >
+                  <Text style={styles.scoreText}>
+                    {remainingdDigits(coins)}
+                    {coins}
+                  </Text>
+                </View>
+
+                <View
+                  style={
+                    {
+                      // position: "absolute",
+                      // right: 17,
+                    }
+                  }
+                >
+                  <CoinsStack height={z(50)} width={z(50)} />
+                </View>
+              </View>
+
+              {/* <TouchableOpacity
                 style={{
                   // zIndex: 2,
                   // position: "absolute",
@@ -313,10 +378,10 @@ export default function WallpaperApi({ navigation }) {
                 ) : (
                   <ExclamationIcon fill={"#fff"} width={18} height={18} />
                 )}
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
-            <Animated.View
+            {/* <Animated.View
               style={[
                 {
                   position: "absolute",
@@ -351,8 +416,8 @@ export default function WallpaperApi({ navigation }) {
                 that month will be added to the Archive and will require a
                 higher amount of coins to download.
               </Text>
-              {/* <Text style={styles.tips}>Coins are bind to the account</Text> */}
-            </Animated.View>
+         
+            </Animated.View> */}
 
             <View
               style={{
@@ -502,6 +567,33 @@ const styles = StyleSheet.create({
     fontFamily: "Righteous_400Regular",
     paddingHorizontal: z(15),
     paddingTop: z(22),
+  },
+
+  score: {
+    width: 80,
+    height: 30,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderWidth: 2,
+    borderColor: "#36485f",
+
+    borderRadius: 10,
+
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingLeft: 10,
+    // elevation: 5,
+    // position: "absolute",
+    // top: 61,
+    // right: 36,
+    // borderColor: "#ffd69e",
+  },
+  scoreText: {
+    fontFamily: "Righteous_400Regular",
+    fontSize: 16,
+    color: "#36485f",
+    // position: "absolute",
+    // top: -6,
+    // left: 10,
   },
 });
 

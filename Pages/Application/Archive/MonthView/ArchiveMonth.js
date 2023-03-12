@@ -40,6 +40,11 @@ import Animated, {
   useAnimatedRef,
 } from "react-native-reanimated";
 
+import { z } from "../../../../utils/scaling";
+import { useSelector, useDispatch } from "react-redux";
+import PlusIconSVG from "../../../../Components/PlusIconSVG";
+import CoinsStack from "../../../../Components/CoinsStack";
+
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -51,6 +56,8 @@ const scrollHeight = 50;
 
 export default function ArchiveMonth({ navigation, data, month, route }) {
   const insets = useSafeAreaInsets();
+
+  const coins = useSelector((state) => state.coins.value);
 
   const [ratio, setRatio] = React.useState(null);
 
@@ -100,6 +107,20 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
       visibilityTime: 3000,
     });
   };
+
+  function remainingdDigits(number) {
+    var length = (Math.log(number) * Math.LOG10E + 1) | 0;
+
+    let remaining = 3 - length;
+
+    let result = "";
+    for (let i = 0; i < remaining; i++) {
+      result = result.concat("0");
+    }
+
+    return result;
+  }
+
   try {
     return (
       <SafeAreaProvider>
@@ -121,7 +142,7 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
                   height * 0.04 < 24
                     ? insets.top + height * 0.005
                     : insets.top + height * 0.015,
-                // paddingTop: insets.top + 10,
+                // paddingTop: insets.top,
                 paddingBottom: insets.bottom,
                 backgroundColor: "#C88781",
               },
@@ -134,6 +155,8 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
                 flexDirection: "row",
                 justifyContent: "space-between",
                 paddingHorizontal: 17,
+                // backgroundColor: "pink",
+                alignItems: "center",
               }}
             >
               <TouchableOpacity
@@ -155,6 +178,54 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
               >
                 <GoBackSVG fill={"#fff"} width={15} height={15} />
               </TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  // backgroundColor: "green",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    // position: "absolute",
+                    // right: 126,
+                    marginRight: 70,
+                  }}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    navigation.navigate("AdsView");
+                  }}
+                >
+                  <PlusIconSVG height={30} width={30} />
+                </TouchableOpacity>
+
+                <View
+                  style={[
+                    styles.score,
+                    {
+                      position: "absolute",
+                      right: 26,
+                    },
+                  ]}
+                >
+                  <Text style={styles.scoreText}>
+                    {remainingdDigits(coins)}
+                    {coins}
+                  </Text>
+                </View>
+
+                <View
+                  style={
+                    {
+                      // position: "absolute",
+                      // right: 17,
+                    }
+                  }
+                >
+                  <CoinsStack height={z(50)} width={z(50)} />
+                </View>
+              </View>
             </View>
             {/* <Text> {route.params.month}</Text> */}
             {/* <Button
@@ -319,4 +390,31 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  score: {
+    width: 80,
+    height: 30,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderWidth: 2,
+    borderColor: "#36485f",
+
+    borderRadius: 10,
+
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingLeft: 10,
+    // elevation: 5,
+    // position: "absolute",
+    // top: 61,
+    // right: 36,
+    // borderColor: "#ffd69e",
+  },
+  scoreText: {
+    fontFamily: "Righteous_400Regular",
+    fontSize: 16,
+    color: "#36485f",
+    // position: "absolute",
+    // top: -6,
+    // left: 10,
+  },
+});
