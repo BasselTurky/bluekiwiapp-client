@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WebView } from "react-native-webview";
 
@@ -9,6 +9,8 @@ import { setIsViewLogin } from "../../../Features/isViewLogin";
 export default React.memo(function HomeWebview({
   viewRef,
   mainWebviewUrlRef,
+  //   isViewLoginRef,
+  //   isWebviewLoadedRef,
   //   setIsWebviewLoaded,
   //   setIsViewLogin,
 }) {
@@ -159,6 +161,14 @@ export default React.memo(function HomeWebview({
         `);
   }
 
+  useEffect(() => {
+    return () => {
+      mainWebviewUrlRef.current = "https://pixabay.com";
+      dispatch(setIsViewLogin(false));
+      dispatch(setIsWebviewLoaded(false));
+    };
+  }, [mainWebviewUrlRef]);
+
   return (
     <View
       style={{
@@ -181,9 +191,13 @@ export default React.memo(function HomeWebview({
         source={{
           uri: mainWebviewUrlRef.current,
         }}
-        onLoadEnd={() => {
+        onLoadEnd={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.log("onLoadEnd URL: ", nativeEvent.url);
+          console.log("onLoadEnd Description: ", nativeEvent.description);
           console.log("loaded: ", mainWebviewUrlRef.current);
           dispatch(setIsWebviewLoaded(true));
+          //   isWebviewLoadedRef.current = true;
           if (mainWebviewUrlRef.current === "https://pixabay.com") {
             checkProfile();
           }
@@ -197,6 +211,7 @@ export default React.memo(function HomeWebview({
               // found profile
               console.log("already login");
               dispatch(setIsViewLogin(true));
+              //   isViewLoginRef.current = true;
             } else {
               // didn't find profile
               // inject again in 100ms if count != 5
@@ -292,6 +307,7 @@ export default React.memo(function HomeWebview({
               // found profile
               console.log("found profile: login success");
               dispatch(setIsViewLogin(true));
+              //   isViewLoginRef.current = true;
             } else {
               // didn't find profile
               // inject again in 100ms if count != 5

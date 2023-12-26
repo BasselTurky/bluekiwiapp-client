@@ -9,106 +9,21 @@ import {
   Image,
   Keyboard,
 } from "react-native";
-import { z } from "../../../utils/scaling";
-import React, { useState, useEffect } from "react";
-import ErrorView from "../../Error/ErrorView";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { DrawerLayout } from "react-native-gesture-handler";
-import DrawerView from "./components/DrawerView";
-
-import { useDispatch, useSelector } from "react-redux";
-
-import { useToast } from "react-native-toast-notifications";
-import MyNoteIcon from "../../../Components/MyNoteIcon";
-
-import ApiButton from "./components/ApiButton";
-
-import { WebView } from "react-native-webview";
-
-import { createUserFav } from "../../../Features/favArray";
-import { setPageUrl } from "../../../Features/pageUrl";
-import { setSearchResult } from "../../../Features/searchResult";
-import { setPages } from "../../../Features/pages";
-const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
+import React, { useState, useEffect, useRef } from "react";
 
 import HomeView from "./HomeView";
 import HomeWebview from "./HomeWebview";
 
-export default function Home({
+export default React.memo(function Home({
   navigation,
   viewRef,
   mainWebviewUrlRef,
-  // pageUrl, // change to redux
-  // setPageUrl,
-  // isWebviewLoaded,
-  // setIsWebviewLoaded,
-  // isViewLogin,
-  // setIsViewLogin,
 }) {
   console.log("Home");
-  // const insets = useSafeAreaInsets();
-  // const toast = useToast();
-  // const drawerRef = React.useRef();
 
-  // const [attempts, setAttempts] = useState(0);
+  // const isViewLoginRef = useRef(false);
+  // const isWebviewLoadedRef = useRef(false);
 
-  // const dispatch = useDispatch();
-  // const userData = useSelector((state) => state.userData.value);
-  // const coins = useSelector((state) => state.coins.value);
-  // const favArray = useSelector((state) => state.favArray.value);
-  // const pageUrl = useSelector((state) => state.pageUrl.value);
-
-  // useEffect(() => {
-  //   if (isWebviewLoaded) {
-  //     setTimeout(() => {
-  //       // check_login();
-  //       fullLoginWebview();
-  //       console.log("login attempt");
-  //       console.log(pageUrl);
-  //     }, 500);
-  //   }
-  // }, [isWebviewLoaded]);
-
-  // useEffect(() => {
-  //   if (isViewLogin) {
-  //     // login steps with delay
-  //     console.log("Webview login success");
-  //   }
-  // }, [isViewLogin]);
-
-  // useEffect(() => {
-  //   if (userData) {
-  //     let email = userData.email;
-  //     // console.log(userData.email);
-  //     // console.log(favArray);
-  //     // let userKey = favArray[email];
-  //     // if (favArray) {
-  //     // console.log(favArray, "sss");
-  //     if (!favArray[email]) {
-  //       dispatch(createUserFav(email));
-  //     }
-  //     // }
-  //   }
-  // }, [userData]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     // clear search result
-  //     dispatch(setSearchResult(null));
-  //     dispatch(setPageUrl("https://pixabay.com"));
-  //     dispatch(
-  //       setPages({
-  //         current: "",
-  //         total: "",
-  //       })
-  //     );
-  //   };
-  // }, []);
-
-  // console.log("Home");
-  // try {
   return (
     <View
       style={{
@@ -119,24 +34,18 @@ export default function Home({
         navigation={navigation}
         viewRef={viewRef}
         mainWebviewUrlRef={mainWebviewUrlRef}
-        // isWebviewLoaded={isWebviewLoaded}
-        // setIsWebviewLoaded={setIsWebviewLoaded}
-        // isViewLogin={isViewLogin}
-        // setIsViewLogin={setIsViewLogin}
+        // isViewLoginRef={isViewLoginRef}
+        // isWebviewLoadedRef={isWebviewLoadedRef}
       />
       <HomeWebview
         viewRef={viewRef}
         mainWebviewUrlRef={mainWebviewUrlRef}
-        // setIsWebviewLoaded={setIsWebviewLoaded}
-        // setIsViewLogin={setIsViewLogin}
+        // isViewLoginRef={isViewLoginRef}
+        // isWebviewLoadedRef={isWebviewLoadedRef}
       />
     </View>
   );
-  // } catch (error) {
-  //   console.log("ErrorID: E022: ", error);
-  //   return <ErrorView Error={"ErrorID: E022"} />;
-  // }
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -1098,3 +1007,85 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
 //   );
 //   // console.log("injected");
 // }
+
+// const [attempts, setAttempts] = useState(0);
+
+// const dispatch = useDispatch();
+// const userData = useSelector((state) => state.userData.value);
+// const coins = useSelector((state) => state.coins.value);
+// const favArray = useSelector((state) => state.favArray.value);
+// const pageUrl = useSelector((state) => state.pageUrl.value);
+
+// useEffect(() => {
+//   if (isWebviewLoaded) {
+//     setTimeout(() => {
+//       // check_login();
+//       fullLoginWebview();
+//       console.log("login attempt");
+//       console.log(pageUrl);
+//     }, 500);
+//   }
+// }, [isWebviewLoaded]);
+
+// useEffect(() => {
+//   if (isViewLogin) {
+//     // login steps with delay
+//     console.log("Webview login success");
+//   }
+// }, [isViewLogin]);
+
+// useEffect(() => {
+//   if (userData) {
+//     let email = userData.email;
+//     // console.log(userData.email);
+//     // console.log(favArray);
+//     // let userKey = favArray[email];
+//     // if (favArray) {
+//     // console.log(favArray, "sss");
+//     if (!favArray[email]) {
+//       dispatch(createUserFav(email));
+//     }
+//     // }
+//   }
+// }, [userData]);
+
+// useEffect(() => {
+//   return () => {
+//     // clear search result
+//     dispatch(setSearchResult(null));
+//     dispatch(setPageUrl("https://pixabay.com"));
+//     dispatch(
+//       setPages({
+//         current: "",
+//         total: "",
+//       })
+//     );
+//   };
+// }, []);
+
+// console.log("Home");
+// try {
+
+// import { z } from "../../../utils/scaling";
+
+// import ErrorView from "../../Error/ErrorView";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+// import { DrawerLayout } from "react-native-gesture-handler";
+// import DrawerView from "./components/DrawerView";
+
+// import { useDispatch, useSelector } from "react-redux";
+
+// import { useToast } from "react-native-toast-notifications";
+// import MyNoteIcon from "../../../Components/MyNoteIcon";
+
+// import ApiButton from "./components/ApiButton";
+
+// import { WebView } from "react-native-webview";
+
+// import { createUserFav } from "../../../Features/favArray";
+// import { setPageUrl } from "../../../Features/pageUrl";
+// import { setSearchResult } from "../../../Features/searchResult";
+// import { setPages } from "../../../Features/pages";
+// const width = Dimensions.get("window").width;
+// const height = Dimensions.get("window").height;

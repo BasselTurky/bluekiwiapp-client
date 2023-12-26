@@ -15,6 +15,7 @@ import React, { useState, useEffect } from "react";
 import { z } from "../../../../utils/scaling";
 import { setAuth } from "../../../../Features/auth";
 import * as SecureStore from "expo-secure-store";
+import { ActivityIndicator } from "react-native-paper";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -35,6 +36,8 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function ApiButton({
   navigation,
+  // isViewLoginRef,
+  // isWebviewLoadedRef,
   api,
   apiText,
   navigationPage,
@@ -72,85 +75,6 @@ export default function ApiButton({
     });
   };
 
-  // const animatedLock = React.useRef(
-  //   new Animated.ValueXY({ x: 17, y: 12 })
-  // ).current;
-
-  // const startAnimation = (animatedRef, xValue, yValue, api) => {
-  //   Animated.timing(animatedRef, {
-  //     toValue: { x: xValue, y: yValue },
-  //     duration: 1000,
-  //     useNativeDriver: false,
-  //     easing: Easing.out(Easing.sin),
-  //   }).start(({ finished }) => {
-  //     if (finished) {
-  //       setTimeout(() => {
-  //         dispatch(updateUserApis({ api: api, booleanValue: 1 }));
-
-  //         Toast.show({
-  //           type: "success",
-  //           text1: "New feature unlocked",
-  //           // text2: "Registeration Complete",
-  //           visibilityTime: 3000,
-  //         });
-  //       }, 500);
-  //     }
-  //   });
-  // };
-
-  // async function unlockApi(animatedRef, xValue, yValue, api, required_coins) {
-  //   try {
-  //     setUnlockLayer(false);
-
-  //     let currentToken = await SecureStore.getItemAsync("token");
-
-  //     let response = await fetch(`${global.server_address}/api/update-apis`, {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         api: api,
-  //         token: currentToken,
-  //         required_coins,
-  //       }),
-  //     });
-
-  //     let data = await response.json();
-  //     console.log(data);
-
-  //     if (data.type === "not_enough") {
-  //       errorToast(data.message);
-  //     } else if (data.type === "wrong-device") {
-  //       deleteValueFor("token");
-  //       dispatch(setAuth(false));
-  //     } else if (data.type === "success") {
-  //       console.log("here");
-
-  //       startAnimation(animatedRef, xValue, yValue, api);
-  //       dispatch(consumeCoins(required_coins));
-  //     } else if (data.type === "error") {
-  //       // ErrorID: E025
-  //       errorToast(data.message);
-  //     } else {
-  //       errorToast("ErrorID: E024");
-  //     }
-  //   } catch (error) {
-  //     console.log("ErrorID: E023: ", error);
-  //     errorToast("ErrorID: E023");
-  //   }
-
-  //   // send post with email, token|device id
-  //   // check available coins
-  //   // if less than 10 > toast error
-  //   // if more > take 10 and update api in db
-
-  //   // start animation
-  //   // after animation ends
-  //   // update state
-  // }
-
   return (
     <View
       style={{
@@ -167,6 +91,7 @@ export default function ApiButton({
           backgroundColor: "rgba(0,0,0,0.15)",
           right: -4,
           bottom: -5,
+          // overflow: "hidden",
         }}
       ></View>
       <TouchableOpacity
@@ -226,9 +151,108 @@ export default function ApiButton({
         >
           {apiText}
         </Text>
-      </TouchableOpacity>
 
-      {/* {userApis[api] == false ? (
+        {api === "image_api" && !isViewLogin ? (
+          <View
+            style={{
+              ...StyleSheet.absoluteFill,
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 10,
+              backgroundColor: "rgba(0,0,0,0.1)",
+            }}
+          >
+            <ActivityIndicator size={z(30)} color="#53acff" />
+          </View>
+        ) : null}
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({});
+
+// const animatedLock = React.useRef(
+//   new Animated.ValueXY({ x: 17, y: 12 })
+// ).current;
+
+// const startAnimation = (animatedRef, xValue, yValue, api) => {
+//   Animated.timing(animatedRef, {
+//     toValue: { x: xValue, y: yValue },
+//     duration: 1000,
+//     useNativeDriver: false,
+//     easing: Easing.out(Easing.sin),
+//   }).start(({ finished }) => {
+//     if (finished) {
+//       setTimeout(() => {
+//         dispatch(updateUserApis({ api: api, booleanValue: 1 }));
+
+//         Toast.show({
+//           type: "success",
+//           text1: "New feature unlocked",
+//           // text2: "Registeration Complete",
+//           visibilityTime: 3000,
+//         });
+//       }, 500);
+//     }
+//   });
+// };
+
+// async function unlockApi(animatedRef, xValue, yValue, api, required_coins) {
+//   try {
+//     setUnlockLayer(false);
+
+//     let currentToken = await SecureStore.getItemAsync("token");
+
+//     let response = await fetch(`${global.server_address}/api/update-apis`, {
+//       method: "POST",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         api: api,
+//         token: currentToken,
+//         required_coins,
+//       }),
+//     });
+
+//     let data = await response.json();
+//     console.log(data);
+
+//     if (data.type === "not_enough") {
+//       errorToast(data.message);
+//     } else if (data.type === "wrong-device") {
+//       deleteValueFor("token");
+//       dispatch(setAuth(false));
+//     } else if (data.type === "success") {
+//       console.log("here");
+
+//       startAnimation(animatedRef, xValue, yValue, api);
+//       dispatch(consumeCoins(required_coins));
+//     } else if (data.type === "error") {
+//       // ErrorID: E025
+//       errorToast(data.message);
+//     } else {
+//       errorToast("ErrorID: E024");
+//     }
+//   } catch (error) {
+//     console.log("ErrorID: E023: ", error);
+//     errorToast("ErrorID: E023");
+//   }
+
+//   // send post with email, token|device id
+//   // check available coins
+//   // if less than 10 > toast error
+//   // if more > take 10 and update api in db
+
+//   // start animation
+//   // after animation ends
+//   // update state
+// }
+
+{
+  /* {userApis[api] == false ? (
         <TouchableWithoutFeedback
           onPress={() => {
             setUnlockLayer(true);
@@ -276,9 +300,11 @@ export default function ApiButton({
             </Animated.View>
           </View>
         </TouchableWithoutFeedback>
-      ) : null} */}
+      ) : null} */
+}
 
-      {/* {unlockLayer ? (
+{
+  /* {unlockLayer ? (
         <View
           style={{
             position: "absolute",
@@ -336,9 +362,5 @@ export default function ApiButton({
             ></TouchableOpacity>
           </View>
         </View>
-      ) : null} */}
-    </View>
-  );
+      ) : null} */
 }
-
-const styles = StyleSheet.create({});

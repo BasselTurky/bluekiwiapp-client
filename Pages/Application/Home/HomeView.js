@@ -33,10 +33,12 @@ import { setPages } from "../../../Features/pages";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-export default function HomeView({
+export default React.memo(function HomeView({
   navigation,
   viewRef,
   mainWebviewUrlRef,
+  //   isViewLoginRef,
+  //   isWebviewLoadedRef,
   //   isWebviewLoaded,
   //   setIsWebviewLoaded,
   //   isViewLogin,
@@ -95,7 +97,7 @@ export default function HomeView({
     return () => {
       // clear search result
       dispatch(setSearchResult(null));
-      mainWebviewUrlRef.current = "https://pixabay.com";
+
       //   dispatch(setPageUrl("https://pixabay.com"));
       dispatch(
         setPages({
@@ -203,6 +205,8 @@ export default function HomeView({
 
             <ApiButton
               navigation={navigation}
+              //   isViewLoginRef={isViewLoginRef}
+              //   isWebviewLoadedRef={isWebviewLoadedRef}
               //   isWebviewLoaded={isWebviewLoaded}
               //   isViewLogin={isViewLogin}
               api={"image_api"}
@@ -261,7 +265,7 @@ export default function HomeView({
     console.log("ErrorID: E022: ", error);
     return <ErrorView Error={"ErrorID: E022"} />;
   }
-}
+});
 
 const styles = StyleSheet.create({
   container: {
