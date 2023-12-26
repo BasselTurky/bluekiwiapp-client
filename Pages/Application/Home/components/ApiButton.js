@@ -26,7 +26,7 @@ import Toast from "react-native-toast-message";
 import LockPart1SVG from "../../../../Components/LockPart1SVG";
 import LockPart2SVG from "../../../../Components/LockPart2SVG";
 
-import { setUserApis, updateUserApis } from "../../../../Features/userApis";
+// import { setUserApis, updateUserApis } from "../../../../Features/userApis";
 import { setCoins, addCoin, consumeCoins } from "../../../../Features/coins";
 
 import { BlurView, VibrancyView } from "@react-native-community/blur";
@@ -44,20 +44,24 @@ export default function ApiButton({
   // viewRef,
   // pageUrl,
   // setPageUrl,
-  isWebviewLoaded,
-  isViewLogin,
+  // isWebviewLoaded,
+  // isViewLogin,
+  homeFlatlistRef,
 }) {
   // e.g.
   // api = "image_api"
   // apiText = "Search and download images"
   // navigationPage = ImageApiPage
   // requiredCoins = 10
-  const [unlockLayer, setUnlockLayer] = useState(false);
+  // const [unlockLayer, setUnlockLayer] = useState(false);
 
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);
-  const userApis = useSelector((state) => state.userApis.value);
+  // const userApis = useSelector((state) => state.userApis.value);
   const coins = useSelector((state) => state.coins.value);
+
+  const isWebviewLoaded = useSelector((state) => state.isWebviewLoaded.value);
+  const isViewLogin = useSelector((state) => state.isViewLogin.value);
 
   const errorToast = (message) => {
     Toast.show({
@@ -68,84 +72,84 @@ export default function ApiButton({
     });
   };
 
-  const animatedLock = React.useRef(
-    new Animated.ValueXY({ x: 17, y: 12 })
-  ).current;
+  // const animatedLock = React.useRef(
+  //   new Animated.ValueXY({ x: 17, y: 12 })
+  // ).current;
 
-  const startAnimation = (animatedRef, xValue, yValue, api) => {
-    Animated.timing(animatedRef, {
-      toValue: { x: xValue, y: yValue },
-      duration: 1000,
-      useNativeDriver: false,
-      easing: Easing.out(Easing.sin),
-    }).start(({ finished }) => {
-      if (finished) {
-        setTimeout(() => {
-          dispatch(updateUserApis({ api: api, booleanValue: 1 }));
+  // const startAnimation = (animatedRef, xValue, yValue, api) => {
+  //   Animated.timing(animatedRef, {
+  //     toValue: { x: xValue, y: yValue },
+  //     duration: 1000,
+  //     useNativeDriver: false,
+  //     easing: Easing.out(Easing.sin),
+  //   }).start(({ finished }) => {
+  //     if (finished) {
+  //       setTimeout(() => {
+  //         dispatch(updateUserApis({ api: api, booleanValue: 1 }));
 
-          Toast.show({
-            type: "success",
-            text1: "New feature unlocked",
-            // text2: "Registeration Complete",
-            visibilityTime: 3000,
-          });
-        }, 500);
-      }
-    });
-  };
+  //         Toast.show({
+  //           type: "success",
+  //           text1: "New feature unlocked",
+  //           // text2: "Registeration Complete",
+  //           visibilityTime: 3000,
+  //         });
+  //       }, 500);
+  //     }
+  //   });
+  // };
 
-  async function unlockApi(animatedRef, xValue, yValue, api, required_coins) {
-    try {
-      setUnlockLayer(false);
+  // async function unlockApi(animatedRef, xValue, yValue, api, required_coins) {
+  //   try {
+  //     setUnlockLayer(false);
 
-      let currentToken = await SecureStore.getItemAsync("token");
+  //     let currentToken = await SecureStore.getItemAsync("token");
 
-      let response = await fetch(`${global.server_address}/api/update-apis`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          api: api,
-          token: currentToken,
-          required_coins,
-        }),
-      });
+  //     let response = await fetch(`${global.server_address}/api/update-apis`, {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         api: api,
+  //         token: currentToken,
+  //         required_coins,
+  //       }),
+  //     });
 
-      let data = await response.json();
-      console.log(data);
+  //     let data = await response.json();
+  //     console.log(data);
 
-      if (data.type === "not_enough") {
-        errorToast(data.message);
-      } else if (data.type === "wrong-device") {
-        deleteValueFor("token");
-        dispatch(setAuth(false));
-      } else if (data.type === "success") {
-        console.log("here");
+  //     if (data.type === "not_enough") {
+  //       errorToast(data.message);
+  //     } else if (data.type === "wrong-device") {
+  //       deleteValueFor("token");
+  //       dispatch(setAuth(false));
+  //     } else if (data.type === "success") {
+  //       console.log("here");
 
-        startAnimation(animatedRef, xValue, yValue, api);
-        dispatch(consumeCoins(required_coins));
-      } else if (data.type === "error") {
-        // ErrorID: E025
-        errorToast(data.message);
-      } else {
-        errorToast("ErrorID: E024");
-      }
-    } catch (error) {
-      console.log("ErrorID: E023: ", error);
-      errorToast("ErrorID: E023");
-    }
+  //       startAnimation(animatedRef, xValue, yValue, api);
+  //       dispatch(consumeCoins(required_coins));
+  //     } else if (data.type === "error") {
+  //       // ErrorID: E025
+  //       errorToast(data.message);
+  //     } else {
+  //       errorToast("ErrorID: E024");
+  //     }
+  //   } catch (error) {
+  //     console.log("ErrorID: E023: ", error);
+  //     errorToast("ErrorID: E023");
+  //   }
 
-    // send post with email, token|device id
-    // check available coins
-    // if less than 10 > toast error
-    // if more > take 10 and update api in db
+  //   // send post with email, token|device id
+  //   // check available coins
+  //   // if less than 10 > toast error
+  //   // if more > take 10 and update api in db
 
-    // start animation
-    // after animation ends
-    // update state
-  }
+  //   // start animation
+  //   // after animation ends
+  //   // update state
+  // }
 
   return (
     <View
@@ -217,13 +221,7 @@ export default function ApiButton({
             width: "100%",
             color: "black",
             fontSize: z(14),
-            // backgroundColor: "pink",
-            // fontFamily: "ChelaOne_400Regular",
-            // fontFamily: "Graduate_400Regular",
-
-            // fontFamily: "PinyonScript_400Regular",
-            // fontFamily: "GrandHotel_400Regular",
-            // fontFamily: "PlayfairBold",
+            fontFamily: "RobotoMedium",
           }}
         >
           {apiText}
@@ -280,7 +278,7 @@ export default function ApiButton({
         </TouchableWithoutFeedback>
       ) : null} */}
 
-      {unlockLayer ? (
+      {/* {unlockLayer ? (
         <View
           style={{
             position: "absolute",
@@ -338,7 +336,7 @@ export default function ApiButton({
             ></TouchableOpacity>
           </View>
         </View>
-      ) : null}
+      ) : null} */}
     </View>
   );
 }

@@ -2,35 +2,21 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableWithoutFeedback,
-  Keyboard,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   Dimensions,
   KeyboardAvoidingView,
 } from "react-native";
-
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useToast } from "react-native-toast-notifications";
 import React, { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import Toast from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
-
 import { useDispatch, useSelector } from "react-redux";
-
 import { z, zx } from "../../../../utils/scaling";
-
 import { setAuth } from "../../../../Features/auth";
-// import { setUserData } from "../../../../Features/userData";
-
-import GoBackSVG from "../../../../Components/GoBackSVG";
+// import GoBackSVG from "../../../../Components/GoBackSVG";
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -38,13 +24,9 @@ async function deleteValueFor(key) {
 
 var height = Dimensions.get("window").height;
 
-export default function ChangePassword({
-  setShowChangePass,
-  Toast,
-  errorToast,
-}) {
+export default function ChangePassword({ setShowChangePass, light }) {
   const insets = useSafeAreaInsets();
-
+  const toast = useToast();
   const dispatch = useDispatch();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -53,15 +35,6 @@ export default function ChangePassword({
   const passwordInput = React.useRef();
   const confirmPasswordInput = React.useRef();
 
-  //   const errorToast = (message) => {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: message,
-  //       text2: "Error",
-  //       visibilityTime: 3000,
-  //     });
-  //   };
-
   async function handleSubmit() {
     try {
       if (
@@ -69,22 +42,19 @@ export default function ChangePassword({
         newPassword === "" ||
         confirmPassword === ""
       ) {
-        errorToast("Fields can't be empty");
+        toast.show("Fields can't be empty", { type: "error" });
       } else if (newPassword !== confirmPassword) {
-        //   console.log("Password is not matching");
-        errorToast("Password is not matching");
+        toast.show("Password is not matching", { type: "error" });
       } else if (
         currentPassword.length < 8 ||
         currentPassword.length > 16 ||
         newPassword.length < 8 ||
         newPassword.length > 16
       ) {
-        //   console.log("Password should be between 8-16 characters");
-        errorToast("Password should be between 8-16 characters");
+        toast.show("Password should be between 8-16 characters", {
+          type: "error",
+        });
       } else {
-        // let current_device_id = await SecureStore.getItemAsync("device_id");
-
-        // if (current_device_id) {
         let currentToken = await SecureStore.getItemAsync("token");
 
         let response = await fetch(
@@ -96,8 +66,6 @@ export default function ChangePassword({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              // email: userData.email,
-              // current_device_id,
               token: currentToken,
               currentPassword,
               newPassword,
@@ -111,31 +79,25 @@ export default function ChangePassword({
           deleteValueFor("token");
           dispatch(setAuth(false));
         } else if (data.type === "wrong-password" || data.type === "error") {
-          // ErrorID: E031
-          errorToast(data.message);
+          toast.show(data.message, { type: "error" });
           setCurrentPassword("");
           setNewPassword("");
           setConfirmPassword("");
         } else if (data.type === "success") {
-          // errorToast(data.message)
-          Toast.show({
+          toast.show(data.message, {
             type: "success",
-            text1: data.message,
-            text2: "Success",
-            visibilityTime: 3000,
           });
           setCurrentPassword("");
           setNewPassword("");
           setConfirmPassword("");
-          // dispatch(setUserData(data.userData));
         } else {
-          errorToast("ErrorID: E030");
+          toast.show("ErrorID: E030", { type: "error" });
         }
         // }
       }
     } catch (error) {
       console.log("ErrorID: E029: ", error);
-      errorToast("ErrorID: E029");
+      toast.show("ErrorID: E029", { type: "error" });
     }
   }
 
@@ -143,6 +105,8 @@ export default function ChangePassword({
     <View
       style={{
         flex: 1,
+        zIndex: 2,
+        marginTop: insets.top,
       }}
     >
       <View
@@ -152,28 +116,24 @@ export default function ChangePassword({
           paddingHorizontal: 17,
           flexDirection: "row",
           zIndex: 2,
-          backgroundColor: "#2b2d31",
+          // backgroundColor: "#2b2d31",
         }}
       >
         <TouchableOpacity
           style={{
-            // zIndex: 2,
-            // position: "absolute",
-            // top: 30,
-            // left: 17,
             width: zx(40),
             height: zx(40),
-            backgroundColor: "rgba(0,0,0,0.3)",
+            backgroundColor: "rgba(0,0,0,0.1)",
             borderRadius: 100,
             justifyContent: "center",
             alignItems: "center",
           }}
           onPress={() => {
-            //   navigation.goBack();
             setShowChangePass(false);
           }}
         >
-          <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} />
+          {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
+          <Entypo name="chevron-left" size={30} color="black" />
         </TouchableOpacity>
 
         <View
@@ -185,7 +145,7 @@ export default function ChangePassword({
           <Text
             style={{
               fontSize: z(20),
-              color: "#9c9c9c",
+              color: light === "night" ? "#fff" : "#5c5c5c",
             }}
           >
             Change Password
@@ -196,7 +156,6 @@ export default function ChangePassword({
       <View
         style={{
           flex: 1,
-          //   backgroundColor: "green",
           flexDirection: "column-reverse",
           paddingBottom: insets.bottom,
         }}
@@ -209,10 +168,8 @@ export default function ChangePassword({
             bottom: 0,
             right: 0,
             left: 0,
-            // justifyContent: "center",
             alignItems: "center",
             zIndex: 1,
-            // backgroundColor: "green",
           }}
         >
           <KeyboardAvoidingView
@@ -233,7 +190,7 @@ export default function ChangePassword({
               }}
               style={styles.textinput}
               placeholder="Enter current password.."
-              placeholderTextColor={"#9c9c9c"}
+              placeholderTextColor={light === "night" ? "#fff" : "#9c9c9c"}
               secureTextEntry
               returnKeyType="next"
             />
@@ -248,7 +205,7 @@ export default function ChangePassword({
               }}
               style={styles.textinput}
               placeholder="Enter your new password.."
-              placeholderTextColor={"#9c9c9c"}
+              placeholderTextColor={light === "night" ? "#fff" : "#9c9c9c"}
               secureTextEntry
               returnKeyType="next"
             />
@@ -260,7 +217,7 @@ export default function ChangePassword({
               }}
               style={styles.textinput}
               placeholder="Confirm your new password.."
-              placeholderTextColor={"#9c9c9c"}
+              placeholderTextColor={light === "night" ? "#fff" : "#9c9c9c"}
               secureTextEntry
               returnKeyType="done"
             />
@@ -271,14 +228,13 @@ export default function ChangePassword({
             style={styles.buttonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
-            // color="green"
             mode="contained"
             uppercase={false}
           >
             <Text
               style={{
                 fontSize: z(18),
-                fontFamily: "PlayfairBold",
+                // fontFamily: "PlayfairBold",
                 color: "#ffffffcc",
               }}
             >
@@ -293,43 +249,28 @@ export default function ChangePassword({
 
 const styles = StyleSheet.create({
   textinput: {
-    // alignSelf: "stretch",
     height: zx(60),
     marginBottom: z(10),
     color: "#fff",
     borderBottomColor: "#f8f8f8cc",
     borderBottomWidth: 1,
-    // padding: 10,
-    // top: 120,
     marginHorizontal: z(30),
     fontSize: z(15),
-    fontFamily: "Playfair",
-    // width: "100%",
+    // fontFamily: "Playfair",
   },
   buttonStyle: {
-    // marginTop: 10,
     width: z(200),
     height: z(45),
     backgroundColor: "#4b6382",
     elevation: 3,
-    // top: 120,
     alignSelf: "center",
     marginTop: z(35),
-    // marginBottom: zx(200),
   },
   buttonContent: {
-    // alignItems: "center",
-    // justifyContent: "center",
-    // paddingVertical: 3,
-    // paddingHorizontal: 10,
-    // borderRadius: 4,
-    // elevation: 3,
     padding: 0,
     margin: 0,
     height: "100%",
     width: "100%",
-    // backgroundColor: "grey",
-    // backgroundColor: "#3b4650",
   },
   buttonLabel: {
     padding: 0,

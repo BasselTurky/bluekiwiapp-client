@@ -1,6 +1,8 @@
 // import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 // import logger from "redux-logger";
 
+import { enableMapSet } from "immer";
+
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistStore, persistReducer } from "redux-persist";
@@ -24,6 +26,21 @@ import colorsArrayReducer from "./Features/colorsArray";
 import tipsMenuWallpaperReducer from "./Features/tipsMenuWallpaper";
 import deleteAccountModalReducer from "./Features/deleteAccountModal";
 import pagesReducer from "./Features/pages";
+import availableReducer from "./Features/available";
+import winnerReducer from "./Features/winner";
+import activeReducer from "./Features/active";
+import pageUrlReducer from "./Features/pageUrl";
+import galleryLastScrollPositionReducer from "./Features/galleryLastScrollPosition";
+import searchInputReducer from "./Features/searchInput";
+import isWebViewReadyReducer from "./Features/isWebViewReady";
+import newSearchReducer from "./Features/newSearch";
+import isPortraitReducer from "./Features/isPortrait";
+import urlDataReducer from "./Features/urlData";
+import isLoadingReducer from "./Features/isLoading";
+import isWebviewLoadedReducer from "./Features/isWebviewLoaded";
+import isViewLoginReducer from "./Features/isViewLogin";
+
+enableMapSet();
 
 const rootReducer = combineReducers({
   //   test: testReducer,
@@ -45,6 +62,19 @@ const rootReducer = combineReducers({
   tipsMenuWallpaper: tipsMenuWallpaperReducer,
   deleteAccountModal: deleteAccountModalReducer,
   pages: pagesReducer,
+  available: availableReducer,
+  winner: winnerReducer,
+  active: activeReducer,
+  pageUrl: pageUrlReducer,
+  galleryLastScrollPosition: galleryLastScrollPositionReducer,
+  searchInput: searchInputReducer,
+  isWebViewReady: isWebViewReadyReducer,
+  newSearch: newSearchReducer,
+  isPortrait: isPortraitReducer,
+  urlData: urlDataReducer,
+  isLoading: isLoadingReducer,
+  isWebviewLoaded: isWebviewLoadedReducer,
+  isViewLogin: isViewLoginReducer,
 });
 
 const persistConfig = {
@@ -56,9 +86,9 @@ const persistConfig = {
     "tipsMenuReducer",
     // "colorsArray",
     // "favArray",
-    // "searchResult",
+    "searchResult",
     // "searchPage",
-    // "lastSearchInput",
+    "lastSearchInput",
     "deleteAccountModal",
   ],
 };

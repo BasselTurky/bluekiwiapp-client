@@ -2,53 +2,32 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TextInput,
   TouchableOpacity,
   ImageBackground,
   Dimensions,
-  Image,
   Animated,
   Easing,
-  PermissionsAndroid,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSocket } from "../../SocketContext/SocketContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as SecureStore from "expo-secure-store";
 import { z, zx } from "../../../utils/scaling";
-import Toast, { BaseToast } from "react-native-toast-message";
-
+import { useToast } from "react-native-toast-notifications";
 import GoBackSVG from "../../../Components/GoBackSVG";
-import FavoriteIconSVG from "../../../Components/FavoriteIconSVG";
-import ExclamationIcon from "../../../Components/ExclamationIcon";
-import DashIcon from "../../../Components/DashIcon";
 
 import { setDailyWallpapers } from "../../../Features/dailyWallpapers";
 import Carousel from "react-native-snap-carousel";
-import { Button as PaperButton } from "react-native-paper";
-import { setTipsMenuWallpaper } from "../../../Features/tipsMenuWallpaper";
 import { setColorsArray } from "../../../Features/colorsArray";
 
 import WallpaperCard from "./components/WallpaperCard";
-
-async function deleteValueFor(key) {
-  await SecureStore.deleteItemAsync(key);
-}
-import { setAuth } from "../../../Features/auth";
 
 import ErrorView from "../../Error/ErrorView";
 
 import PlusIconSVG from "../../../Components/PlusIconSVG";
 import CoinsStack from "../../../Components/CoinsStack";
 
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AnimatedImageBackground =
   Animated.createAnimatedComponent(ImageBackground);
@@ -63,8 +42,9 @@ const xInt = -(width * 0.9);
 const yInt = height * 0.28;
 
 export default function WallpaperApi({ navigation }) {
+  const socket = useSocket();
   const insets = useSafeAreaInsets();
-
+  const toast = useToast();
   const dispatch = useDispatch();
   const dailyWallpapers = useSelector((state) => state.dailyWallpapers.value);
   const colorsArray = useSelector((state) => state.colorsArray.value);
@@ -76,23 +56,10 @@ export default function WallpaperApi({ navigation }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
 
-  const errorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
-
-  const [color, setColor] = React.useState("grey");
   const [iniColor, setIniColor] = React.useState(
     colorsArray.length ? colorsArray[0] : "#C88781"
   );
-  const [iniIndex, setIniIndex] = React.useState(0);
   const [nextColor, setNextColor] = React.useState({ color: "grey", index: 1 });
-  const [val, setVal] = React.useState(0);
-
   const animateMenuX = React.useRef(new Animated.Value(xInt)).current;
 
   function toggleMenu() {}
@@ -116,8 +83,6 @@ export default function WallpaperApi({ navigation }) {
   });
 
   function animate(index) {
-    // colorRange.interpolate(animatedColor, [0, 1], ["blue", "yellow"]);
-
     Animated.timing(animatedColor, {
       toValue: 1,
       duration: 500,
@@ -125,9 +90,6 @@ export default function WallpaperApi({ navigation }) {
     }).start(({ finished }) => {
       if (finished) {
         setIniColor(colorsArray[index]);
-        // animatedColor.setValue(0);
-
-        // console.log("finished");
       }
     });
   }
@@ -136,7 +98,7 @@ export default function WallpaperApi({ navigation }) {
       animate(nextColor.index);
     } catch (error) {
       console.log("ErrorID: E036: ", error);
-      errorToast("ErrorID: E036");
+      toast.show("ErrorID: E036", { type: "error" });
     }
   }, [nextColor]);
 
@@ -144,54 +106,28 @@ export default function WallpaperApi({ navigation }) {
     animatedColor.setValue(0);
   }, [iniColor]);
 
-  async function fetchWallpapers() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-      const response = await fetch(
-        `${global.server_address}/api/get-daily-wallpapers`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: currentToken,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      if (data.type === "success") {
-        // type of - data.date: string
-        // type of - data.result: array of objects > object is image row in database
-        // image object has:  wallpapers_id, date, img_link, average_color, product_link, downloads
-        const images_array = data.result;
-        const extracted_colores = [];
-        for (let i = 0; i < images_array.length; i++) {
-          extracted_colores.push(images_array[i].average_color);
-        }
-        dispatch(setColorsArray(extracted_colores));
-        dispatch(
-          setDailyWallpapers({
-            date: data.date,
-            value: data.result,
-          })
-        );
-      } else if (data.type === "wrong-device") {
-        deleteValueFor("token");
-        dispatch(setAuth(false));
-      } else if (data.type === "error") {
-        // ErrorID: E039
-        errorToast(data.message);
-      } else {
-        errorToast("ErrorID: E038");
-      }
-    } catch (error) {
-      console.log("ErrorID: E037: ", error);
-      errorToast("ErrorID: E037");
-    }
+  function fetchWallpapers() {
+    socket.emit("get-daily-wallpapers");
   }
+
+  useEffect(() => {
+    socket.on("daily-wallpapers", (data) => {
+      const images_array = data.result;
+      const extracted_colores = [];
+      for (let i = 0; i < images_array.length; i++) {
+        extracted_colores.push(images_array[i].average_color);
+      }
+      dispatch(setColorsArray(extracted_colores));
+      dispatch(
+        setDailyWallpapers({
+          date: data.date,
+          value: data.result,
+        })
+      );
+    });
+
+    return () => {};
+  }, []);
 
   async function getDailyWallpapers() {
     try {
@@ -219,7 +155,7 @@ export default function WallpaperApi({ navigation }) {
       }
     } catch (error) {
       console.log("ErrorID: E040: ", error);
-      errorToast("ErrorID: E040");
+      toast.show("ErrorID: E040", { type: "error" });
     }
   }
 
@@ -240,257 +176,144 @@ export default function WallpaperApi({ navigation }) {
     return result;
   }
 
-  // check permissions
   try {
     return (
-      <SafeAreaProvider>
-        <GestureHandlerRootView
-          style={{
-            flex: 1,
-          }}
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+        }}
+      >
+        <AnimatedImageBackground
+          source={require("../../../assets/blackLayer.png")}
+          resizeMode="cover"
+          style={[
+            {
+              flex: 1,
+              alignItems: "center",
+              paddingTop:
+                height * 0.04 < 24
+                  ? insets.top + height * 0.005
+                  : insets.top + height * 0.015,
+              paddingBottom: insets.bottom,
+              backgroundColor: colorRange,
+            },
+          ]}
         >
-          <AnimatedImageBackground
-            source={require("../../../assets/blackLayer.png")}
-            resizeMode="cover"
-            style={[
-              {
-                flex: 1,
-                alignItems: "center",
-                // justifyContent: "center",
-                paddingTop:
-                  height * 0.04 < 24
-                    ? insets.top + height * 0.005
-                    : insets.top + height * 0.015,
-                // paddingTop: insets.top + 10,
-                paddingBottom: insets.bottom,
-                backgroundColor: colorRange,
-              },
-              // styles.container,
-            ]}
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 17,
+            }}
           >
+            <TouchableOpacity
+              style={{
+                width: z(40),
+                height: z(40),
+                backgroundColor: "rgba(0,0,0,0.3)",
+                borderRadius: 100,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <GoBackSVG fill={"#fff"} width={15} height={15} />
+            </TouchableOpacity>
+
             <View
               style={{
-                width: "100%",
                 flexDirection: "row",
-                justifyContent: "space-between",
-                paddingHorizontal: 17,
+                alignItems: "center",
               }}
             >
               <TouchableOpacity
                 style={{
-                  // zIndex: 2,
-                  // position: "absolute",
-                  // top: 30,
-                  // left: 17,
-                  width: z(40),
-                  height: z(40),
-                  backgroundColor: "rgba(0,0,0,0.3)",
-                  borderRadius: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  marginRight: 70,
                 }}
+                activeOpacity={0.7}
                 onPress={() => {
-                  navigation.goBack();
+                  navigation.navigate("AdsView");
                 }}
               >
-                <GoBackSVG fill={"#fff"} width={15} height={15} />
+                <PlusIconSVG height={30} width={30} />
               </TouchableOpacity>
 
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  // backgroundColor: "green",
-                }}
+                style={[
+                  styles.score,
+                  {
+                    position: "absolute",
+                    right: 26,
+                  },
+                ]}
               >
-                <TouchableOpacity
-                  style={{
-                    // position: "absolute",
-                    // right: 126,
-                    marginRight: 70,
-                  }}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    navigation.navigate("AdsView");
-                  }}
-                >
-                  <PlusIconSVG height={30} width={30} />
-                </TouchableOpacity>
-
-                <View
-                  style={[
-                    styles.score,
-                    {
-                      position: "absolute",
-                      right: 26,
-                    },
-                  ]}
-                >
-                  <Text style={styles.scoreText}>
-                    {remainingdDigits(coins)}
-                    {coins}
-                  </Text>
-                </View>
-
-                <View
-                  style={
-                    {
-                      // position: "absolute",
-                      // right: 17,
-                    }
-                  }
-                >
-                  <CoinsStack height={z(50)} width={z(50)} />
-                </View>
+                <Text style={styles.scoreText}>
+                  {remainingdDigits(coins)}
+                  {coins}
+                </Text>
               </View>
 
-              {/* <TouchableOpacity
-                style={{
-                  // zIndex: 2,
-                  // position: "absolute",
-                  // top: 30,
-                  // right: 17,
-                  // marginRight: 17,
-                  width: z(40),
-                  height: z(40),
-                  backgroundColor: "rgba(0,0,0,0.3)",
-                  borderRadius: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                disabled={isDisabled}
-                onPress={() => {
-                  if (tipsMenuWallpaper) {
-                    dispatch(setTipsMenuWallpaper(false));
-                    setIsDisabled(true);
-                    toggleMenu();
-                  } else {
-                    dispatch(setTipsMenuWallpaper(true));
-                    setIsDisabled(true);
-                    toggleMenu();
-                    // closeMenu();
-                  }
-                }}
-                activeOpacity={0.7}
-              >
-                {!tipsMenuWallpaper ? (
-                  <DashIcon fill={"#fff"} width={18} height={18} />
-                ) : (
-                  <ExclamationIcon fill={"#fff"} width={18} height={18} />
-                )}
-              </TouchableOpacity> */}
+              <View>
+                <CoinsStack height={z(50)} width={z(50)} />
+              </View>
             </View>
-
-            {/* <Animated.View
-              style={[
-                {
-                  position: "absolute",
-                  width: width * 0.8,
-                  // height: height * 0.54,
-                  // alignSelf: "center",
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  left: 0,
-                  top: 0.5 * height - 0.5 * ((height - insets.top) * 0.5),
-                  borderBottomRightRadius: z(20),
-                  borderTopRightRadius: z(20),
-                  zIndex: 2,
-                  transform: [
-                    {
-                      translateX: animateMenuX,
-                    },
-                  ],
-                  paddingBottom: z(22),
-                },
-                // animatedMenu.getLayout(),
-              ]}
-            >
-              <Text style={styles.tips}>
-                Wallpapers change daily, with 5 new wallpapers every day.
-              </Text>
-              <Text style={styles.tips}>
-                From the twenty-eighth day until the end of the month, the
-                wallpapers with the highest download numbers will be displayed.
-              </Text>
-              <Text style={styles.tips}>
-                At the end of each month, all the wallpapers that were viewed in
-                that month will be added to the Archive and will require a
-                higher amount of coins to download.
-              </Text>
-         
-            </Animated.View> */}
-
+          </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View
               style={{
-                flex: 1,
-                justifyContent: "center",
                 alignItems: "center",
+                justifyContent: "center",
+                height: viewHeight,
+                width: width,
               }}
             >
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: viewHeight,
+              <Carousel
+                data={dailyWallpapers.value}
+                itemWidth={item_height * (30 / 49)}
+                itemHeight={item_height}
+                sliderWidth={width}
+                sliderHeight={viewHeight}
+                enableMomentum={true}
+                onSnapToItem={(index) => {
+                  setNextColor({ color: colorsArray[index], index: index });
+                }}
+                containerCustomStyle={{
                   width: width,
                 }}
-              >
-                <Carousel
-                  // ref={carouselRef}
-                  data={dailyWallpapers.value}
-                  itemWidth={item_height * (30 / 49)}
-                  itemHeight={item_height}
-                  sliderWidth={width}
-                  sliderHeight={viewHeight}
-                  enableMomentum={true}
-                  onSnapToItem={(index) => {
-                    setNextColor({ color: colorsArray[index], index: index });
-                  }}
-                  containerCustomStyle={{
-                    width: width,
-                    // borderRadius: 50,
-                  }}
-                  contentContainerCustomStyle={{
-                    alignItems: "center",
-                    borderColor: "green",
-                  }}
-                  slideStyle={{
-                    justifyContent: "center",
-                    height: item_height,
-                    width: item_height * (30 / 49),
-                  }}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <WallpaperCard
-                        key={index}
-                        index={index}
-                        item={item}
-                        toast={Toast}
-                        errorToast={errorToast}
-                        type={"daily"}
-                        required_coins={1}
-                      />
-                    );
-                  }}
-                />
-              </View>
+                contentContainerCustomStyle={{
+                  alignItems: "center",
+                  borderColor: "green",
+                }}
+                slideStyle={{
+                  justifyContent: "center",
+                  height: item_height,
+                  width: item_height * (30 / 49),
+                }}
+                renderItem={({ item, index }) => {
+                  return (
+                    <WallpaperCard
+                      key={index}
+                      index={index}
+                      item={item}
+                      type={"daily"}
+                      required_coins={1}
+                    />
+                  );
+                }}
+              />
             </View>
-
-            <Toast
-              topOffset={insets.top + 5}
-              // config={toastConfig}
-              onPress={() => {
-                Toast.hide();
-              }}
-            />
-            {/* <Button
-            title="hello"
-            onPress={() => {
-              console.log(dailyWallpapers);
-            }}
-          /> */}
-          </AnimatedImageBackground>
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
+          </View>
+        </AnimatedImageBackground>
+      </GestureHandlerRootView>
     );
   } catch (error) {
     console.log("ErrorID: E041: ", error);
@@ -500,11 +323,7 @@ export default function WallpaperApi({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: "#C88781",
-    // alignItems: "center",
-    // justifyContent: "center",
-    // width: "100%",
   },
   header: {
     fontSize: 24,

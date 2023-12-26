@@ -52,7 +52,13 @@ export default function ArchiveApiPage() {
   // }
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        contentStyle: {
+          backgroundColor: "transparent",
+        },
+      }}
+    >
       <Stack.Screen
         name="ArchiveApi"
         // component={ImageAPI}

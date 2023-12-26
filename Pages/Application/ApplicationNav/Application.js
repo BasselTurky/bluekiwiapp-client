@@ -1,72 +1,278 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import { io } from "socket.io-client";
+import { useSocket } from "../../SocketContext/SocketContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+import { z } from "../../../utils/scaling";
 import Home from "../Home/Home";
 import ProfilePage from "../Profile/ProfilePage";
 import AdsView from "../AdsView/AdsView";
 
 import ImageApiPage from "../Gallery/ImageApiPage";
+import GalleryContainer from "../Gallery/GalleryContainer";
 import WallpaperApi from "../Wallpapers/WallpaperApi";
 import ArchiveApiPage from "../Archive/ArchiveApiPage";
-// import Giveaway from "../APIs/Giveaway";
 
-import NoteApi from "../MyNote/NoteApi";
+import Giveaways from "../Giveaways/Giveaways";
 
-// import AdAlert from "../../Components/AdAlertSVG";
-// import WatchSVG from "../../Components/WatchSVG";
-// import KiwiCoinSVG from "../../Components/KiwiCoinSVG";
+import { downloadImage } from "../../../utils/downloadImage";
+import Toast, { BaseToast } from "react-native-toast-message";
+import { ToastProvider, useToast } from "react-native-toast-notifications";
 
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
-
+import * as SecureStore from "expo-secure-store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { setAuth } from "../../../Features/auth";
+import { setUserData } from "../../../Features/userData";
+import { setCoins } from "../../../Features/coins";
+import { addCoin } from "../../../Features/coins";
+
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+import { enableMapSet } from "immer";
+
+enableMapSet();
 const Stack = createNativeStackNavigator();
 
+async function deleteValueFor(key) {
+  await SecureStore.deleteItemAsync(key);
+}
+
 export default function Application() {
-  let viewRef = React.useRef(null);
-  const [pageUrl, setPageUrl] = React.useState("https://pixabay.com");
-  const [isWebviewLoaded, setIsWebviewLoaded] = useState(false);
-  const [isViewLogin, setIsViewLogin] = useState(false);
+  // console.log("app");
+  const toast = useToast();
+  const dispatch = useDispatch();
+  const socket = useSocket();
+  const insets = useSafeAreaInsets();
 
+  const homeFlatlistRef = useRef(null);
+
+  const viewRef = React.useRef(null);
+  const mainWebviewUrlRef = useRef("https://pixabay.com");
+  // change pageUrl to redux
+  // const [pageUrl, setPageUrl] = React.useState("https://pixabay.com");
+
+  // const [isWebviewLoaded, setIsWebviewLoaded] = useState(false);
+  // const [isViewLogin, setIsViewLogin] = useState(false);
+
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+
+  const [toastData, setToastData] = useState(null);
+  const auth = useSelector((state) => state.auth.value);
+
+  // make redux state : after success socket connection
+  // set state to true
+
+  function showToast(type, message) {
+    toast.show(message, {
+      type: type,
+      duration: 3000,
+      animationType: "slide-in",
+      placement: "top",
+    });
+  }
+
+  useEffect(() => {
+    if (toastData) {
+      toast.show(toastData.message, {
+        type: toastData.type,
+        duration: 3000,
+      });
+    }
+  }, [toastData]);
+
+  // const getGoogleUser = async () => {
+  //   try {
+  //     const currentUser = await GoogleSignin.getCurrentUser();
+  //     console.log(currentUser);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("connect", async () => {
+        console.log("socket connected");
+        setIsSocketConnected(true);
+      });
+      socket.on("connect_error", (error) => {
+        console.error("Connection failed:", error.message);
+        // Perform error handling or retry logic here
+      });
+
+      socket.on("disconnect", async () => {
+        // force logout the user
+        deleteValueFor("token");
+        // console.log("token deleted");
+        await GoogleSignin.signOut();
+        // console.log("google signed out");
+        dispatch(setAuth(false));
+        // delete token
+
+        toast.show("Lost connection with the server", {
+          type: "normal",
+        });
+      });
+
+      socket.on("force-disconnect", async () => {
+        // force logout the user
+        deleteValueFor("token");
+        // console.log("token deleted");
+        await GoogleSignin.signOut();
+        // console.log("google signed out");
+        dispatch(setAuth(false));
+        // delete token
+      });
+
+      socket.on("toasts", (toast_object) => {
+        toast.show(toast_object.message, {
+          type: toast_object.type,
+          duration: 3000,
+        });
+      });
+
+      socket.on("userInfo", async (userInfo) => {
+        // console.log(" user");
+        let userDataObj = {
+          name: userInfo.name,
+          email: userInfo.email,
+          uid: userInfo.uid,
+          coins: userInfo.coins,
+          // uid: userInfo.uid,
+        };
+        dispatch(setUserData(userDataObj));
+        dispatch(setCoins(userDataObj.coins));
+        console.log("user added");
+        await SplashScreen.hideAsync();
+      });
+
+      socket.on(
+        "start-download",
+        (updated_coins, type, item, year, month, wallpaper_id_) => {
+          downloadImage(
+            updated_coins,
+            type,
+            item,
+            year,
+            month,
+            wallpaper_id_,
+            dispatch,
+            showToast
+            // setToastData
+          );
+        }
+      );
+
+      socket.on("coin-saved", (new_coin_amount) => {
+        dispatch(addCoin(new_coin_amount));
+      });
+
+      return () => {
+        socket.off("connect"); // Unsubscribe from the "connect" event
+        socket.removeAllListeners();
+        setIsSocketConnected(false);
+      };
+    }
+  }, [socket]);
+
+  async function addUser() {
+    console.log("addUser");
+    console.log(isSocketConnected);
+    if (isSocketConnected) {
+      if (auth === "default") {
+        let currentToken = await SecureStore.getItemAsync("token");
+        // console.log("default");
+        if (currentToken) {
+          socket.emit("add-user", currentToken);
+          // console.log("default 2");
+        }
+      } else if (auth === "google") {
+        const currentUser = await GoogleSignin.getCurrentUser();
+        // save currentUser in redux
+        // console.log("google");
+        socket.emit(
+          "check-google-user",
+          currentUser.user.id,
+          currentUser.user.email,
+          currentUser.user.givenName
+        );
+        // console.log("checked googleUser");
+      }
+    }
+  }
+
+  useEffect(() => {
+    addUser();
+  }, [isSocketConnected]);
+
+  // console.log("application");
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          // component={Home}
-          options={{
-            // animation: "slide_from_bottom",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "fade",
-            headerShown: false,
-          }}
-        >
-          {(props) => (
-            <Home
-              {...props}
-              viewRef={viewRef}
-              pageUrl={pageUrl}
-              setPageUrl={setPageUrl}
-              isWebviewLoaded={isWebviewLoaded}
-              setIsWebviewLoaded={setIsWebviewLoaded}
-              isViewLogin={isViewLogin}
-              setIsViewLogin={setIsViewLogin}
-            />
-          )}
-        </Stack.Screen>
+    // <ToastProvider
+    //   offsetTop={insets.top + z(20)}
+    //   animationType="slide-in"
+    //   placement="top"
+    //   duration={3000}
+    // >
+    <ImageBackground
+      source={require("../../../assets/001.jpg")}
+      // source={require("../../../assets/splashx2.png")}
+      blurRadius={2}
+      resizeMode="cover"
+      style={{
+        flex: 1,
+        // backgroundColor: "black",
+      }}
+    >
+      {isSocketConnected ? (
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              contentStyle: {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <Stack.Screen
+              name="Home"
+              // component={Home}
+              options={{
+                // animation: "slide_from_bottom",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "fade",
+                headerShown: false,
+              }}
+            >
+              {(props) => (
+                <Home
+                  {...props}
+                  viewRef={viewRef}
+                  mainWebviewUrlRef={mainWebviewUrlRef}
+                  // pageUrl={pageUrl}
+                  // setPageUrl={setPageUrl}
+                  // isWebviewLoaded={isWebviewLoaded}
+                  // setIsWebviewLoaded={setIsWebviewLoaded}
+                  // isViewLogin={isViewLogin}
+                  // setIsViewLogin={setIsViewLogin}
+                />
+              )}
+            </Stack.Screen>
 
-        <Stack.Screen
-          name="ProfilePage"
-          component={ProfilePage}
-          options={{
-            // animation: "slide_from_bottom",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "none",
-            headerShown: false,
-          }}
-        ></Stack.Screen>
+            {/* <Stack.Screen
+              name="ProfilePage"
+              component={ProfilePage}
+              options={{
+                // animation: "slide_from_bottom",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "none",
+                headerShown: false,
+              }}
+            ></Stack.Screen> */}
 
-        {/* <Stack.Screen
+            {/* <Stack.Screen
           name="DogAPI"
           component={DogAPI}
           options={{
@@ -88,31 +294,33 @@ export default function Application() {
           }}
         ></Stack.Screen> */}
 
-        <Stack.Screen
-          name="ImageApiPage"
-          // component={ImageApiPage}
-          options={{
-            // animation: "slide_from_left",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "none",
-            headerShown: false,
-          }}
-        >
-          {(props) => (
-            <ImageApiPage
-              {...props}
-              viewRef={viewRef}
-              pageUrl={pageUrl}
-              setPageUrl={setPageUrl}
-              isWebviewLoaded={isWebviewLoaded}
-              setIsWebviewLoaded={setIsWebviewLoaded}
-              isViewLogin={isViewLogin}
-              setIsViewLogin={setIsViewLogin}
-            />
-          )}
-        </Stack.Screen>
+            <Stack.Screen
+              name="GalleryContainer"
+              // component={ImageApiPage}
+              options={{
+                // animation: "slide_from_right",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "fade",
+                headerShown: false,
+              }}
+            >
+              {(props) => (
+                <GalleryContainer
+                  {...props}
+                  mainWebviewUrlRef={mainWebviewUrlRef}
+                  viewRef={viewRef}
+                  // pageUrl={pageUrl}
+                  // setPageUrl={setPageUrl}
+                  // isWebviewLoaded={isWebviewLoaded}
+                  // setIsWebviewLoaded={setIsWebviewLoaded}
+                  // isViewLogin={isViewLogin}
+                  homeFlatlistRef={homeFlatlistRef}
+                  // setIsViewLogin={setIsViewLogin}
+                />
+              )}
+            </Stack.Screen>
 
-        {/* <Stack.Screen
+            {/* <Stack.Screen
           name="Giveaway"
           component={Giveaway}
           options={{
@@ -123,51 +331,51 @@ export default function Application() {
           }}
         ></Stack.Screen> */}
 
-        <Stack.Screen
-          name="ArchiveApiPage"
-          component={ArchiveApiPage}
-          options={{
-            // animation: "slide_from_left",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "none",
-            headerShown: false,
-          }}
-        ></Stack.Screen>
+            <Stack.Screen
+              name="ArchiveApiPage"
+              component={ArchiveApiPage}
+              options={{
+                // animation: "slide_from_left",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "fade",
+                headerShown: false,
+              }}
+            ></Stack.Screen>
 
-        <Stack.Screen
-          name="WallpaperApi"
-          component={WallpaperApi}
-          options={{
-            // animation: "slide_from_left",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "none",
-            headerShown: false,
-          }}
-        ></Stack.Screen>
+            <Stack.Screen
+              name="WallpaperApi"
+              component={WallpaperApi}
+              options={{
+                // animation: "slide_from_left",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "fade",
+                headerShown: false,
+              }}
+            ></Stack.Screen>
 
-        <Stack.Screen
-          name="NoteApi"
-          component={NoteApi}
-          options={{
-            // animation: "slide_from_left",
-            navigationBarColor: "rgba(0,0,0,0)",
-            animation: "none",
-            headerShown: false,
-          }}
-        ></Stack.Screen>
+            <Stack.Screen
+              name="Giveaways"
+              component={Giveaways}
+              options={{
+                // animation: "slide_from_right",
+                navigationBarColor: "rgba(0,0,0,0)",
+                animation: "fade",
+                headerShown: false,
+              }}
+            ></Stack.Screen>
 
-        <Stack.Screen
-          name="AdsView"
-          component={AdsView}
-          options={{
-            animation: "none",
-            // animation: "slide_from_bottom",
-            navigationBarColor: "rgba(0,0,0,0)",
-            // animation: "fade",
-            headerShown: false,
-          }}
-        >
-          {/* {(props) => (
+            <Stack.Screen
+              name="AdsView"
+              component={AdsView}
+              options={{
+                animation: "fade",
+                // animation: "slide_from_bottom",
+                navigationBarColor: "rgba(0,0,0,0)",
+                // animation: "fade",
+                headerShown: false,
+              }}
+            >
+              {/* {(props) => (
             <AdsView
               {...props}
               AdAlert={AdAlert}
@@ -175,9 +383,21 @@ export default function Application() {
               KiwiCoinSVG={KiwiCoinSVG}
             />
           )} */}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+            </Stack.Screen>
+          </Stack.Navigator>
+
+          {/* <Toast
+            topOffset={20}
+            // config={toastConfig}
+
+            onPress={() => {
+              Toast.hide();
+            }}
+          /> */}
+        </NavigationContainer>
+      ) : null}
+    </ImageBackground>
+    // </ToastProvider>
   );
 }
 

@@ -29,6 +29,7 @@ import Toast from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
 
 import { useDispatch, useSelector } from "react-redux";
+import { useSocket } from "../../SocketContext/SocketContext";
 import { setAuth } from "../../../Features/auth";
 
 import GoBackSVG from "../../../Components/GoBackSVG";
@@ -56,6 +57,7 @@ const xInt = -(width * 0.9);
 const yInt = -(height * 0.55);
 
 export default function Profile({ navigation }) {
+  const socket = useSocket();
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const insets = useSafeAreaInsets();

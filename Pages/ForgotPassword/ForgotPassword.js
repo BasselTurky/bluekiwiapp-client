@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Toast from "react-native-toast-message";
+import { useToast } from "react-native-toast-notifications";
 import { Button as PaperButton } from "react-native-paper";
 
 import GoBackSVG from "../../Components/GoBackSVG";
 
 import { s } from "react-native-size-matters";
+import { z } from "../../utils/scaling";
 
 import {
   SafeAreaView,
@@ -29,16 +31,8 @@ var height = Dimensions.get("window").height;
 
 export default function ForgotPassword({ navigation }) {
   const insets = useSafeAreaInsets();
+  const toast = useToast();
   const [email, setEmail] = useState("");
-
-  const errorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
 
   const resetPasswordHandler = async () => {
     try {
@@ -65,197 +59,167 @@ export default function ForgotPassword({ navigation }) {
         if (data.type === "error") {
           // ErrorID: E017
           // ErrorID: E018
-          errorToast(data.message);
+          toast.show(data.message, { type: "error" });
         } else if (data.type === "success") {
           setEmail("");
-          Toast.show({
+          toast.show(data.message, {
             type: "success",
-            text1: data.message,
-            // text2: data.message,
-            visibilityTime: 3000,
           });
         } else {
-          errorToast("ErrorID: E016");
+          toast.show("ErrorID: E016", { type: "error" });
         }
       }
     } catch (error) {
       console.log("ErrorID: E015: ", error);
-      errorToast("ErrorID: E015");
+      toast.show("ErrorID: E015", { type: "error" });
     }
   };
   return (
-    <SafeAreaProvider>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+          paddingHorizontal: s(50),
+          minHeight: "100%",
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         }}
       >
         <View
           style={{
-            flex: 1,
-            backgroundColor: "#36485f",
-            // alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: s(50),
-            minHeight: "100%",
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
+            marginTop: s(height * 0.128),
           }}
         >
-          <View
+          <Text
             style={{
-              marginTop: s(height * 0.128),
-              // backgroundColor: "pink",
+              fontSize: s(25),
+              color: "#fff",
+              paddingBottom: s(8),
+              fontFamily: "Playfair",
+              borderBottomColor: "#fff",
+              borderBottomWidth: 1,
+              textShadowColor: "#9ac8ec",
+              textShadowOffset: {
+                width: 2,
+                height: 2,
+              },
+              textShadowRadius: 10,
             }}
+          >
+            Restore Password
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            position: "absolute",
+            top: insets.top,
+            bottom: insets.bottom,
+            right: 0,
+            left: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior="padding"
+            enabled={true}
+            keyboardVerticalOffset={s(90)}
+            style={{
+              width: "100%",
+            }}
+          >
+            <TextInput
+              value={email}
+              onChangeText={(val) => {
+                setEmail(val);
+              }}
+              style={styles.textinput}
+              placeholder="E-mail address"
+              placeholderTextColor={"#c7d8e6"}
+              returnKeyType="done"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+          </KeyboardAvoidingView>
+        </View>
+
+        <View
+          style={{
+            marginBottom: z(height * 0.15),
+          }}
+        >
+          <Text
+            style={{
+              fontSize: s(12),
+              color: "#fff",
+              fontFamily: "PlayfairBold",
+              marginBottom: z(20),
+            }}
+          >
+            You will receive an email with password reset link.
+          </Text>
+          <PaperButton
+            onPress={resetPasswordHandler}
+            style={styles.buttonStyle}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+            mode="contained"
+            uppercase={false}
           >
             <Text
               style={{
-                fontSize: s(25),
-                color: "#fff",
-                paddingBottom: s(8),
-                // backgroundColor: "green",
-                // fontWeight: "bold",
-                // fontFamily: "ChelaOne_400Regular",
-                // fontFamily: "Graduate_400Regular",
-                // justifyContent: "center",
-                // alignItems: "center",
-                // fontFamily: "PinyonScript_400Regular",
-                // fontFamily: "GrandHotel_400Regular",
-                fontFamily: "Playfair",
-                // alignSelf: "center",
-                borderBottomColor: "#199187",
-                borderBottomWidth: 1,
-                textShadowColor: "#9ac8ec",
-                // textShadowColor: "#2196F3",
-                textShadowOffset: {
-                  width: 2,
-                  height: 2,
-                },
-                textShadowRadius: 10,
+                fontSize: s(14),
+                color: "white",
+                fontFamily: "Graduate_400Regular",
               }}
             >
-              Restore Password
+              Submit
             </Text>
-          </View>
-
+          </PaperButton>
           <View
             style={{
-              flex: 1,
-              position: "absolute",
-              top: insets.top,
-              bottom: insets.bottom,
-              right: 0,
-              left: 0,
-              justifyContent: "center",
-              alignItems: "center",
+              flexDirection: "row-reverse",
+              marginTop: s(28),
             }}
           >
-            <KeyboardAvoidingView
-              behavior="padding"
-              enabled={true}
-              keyboardVerticalOffset={s(90)}
-              style={{
-                width: "100%",
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Login");
               }}
             >
-              <TextInput
-                value={email}
-                onChangeText={(val) => {
-                  setEmail(val);
-                }}
-                style={styles.textinput}
-                placeholder="E-mail address"
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="done"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-              />
-            </KeyboardAvoidingView>
-          </View>
-
-          <View
-            style={{
-              marginBottom: s(height * 0.17),
-            }}
-          >
-            <Text
-              style={{
-                fontSize: s(12),
-                color: "#c4c4c4",
-                fontFamily: "PlayfairBold",
-              }}
-            >
-              You will receive an email with password reset link.
-            </Text>
-            <PaperButton
-              onPress={resetPasswordHandler}
-              style={styles.buttonStyle}
-              contentStyle={styles.buttonContent}
-              labelStyle={styles.buttonLabel}
-              mode="contained"
-              uppercase={false}
-              //   icon="account-box"
-            >
-              <Text
+              <View
                 style={{
-                  fontSize: s(14),
-                  color: "white",
-                  // fontFamily: "PlayfairBold",
-                  fontFamily: "Graduate_400Regular",
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                Submit
-              </Text>
-            </PaperButton>
-            <View
-              style={{
-                flexDirection: "row-reverse",
-                marginTop: s(28),
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Login");
-                }}
-              >
-                <View
+                <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
+                <Text
                   style={{
-                    // alignSelf: "flex-end",
-
-                    flexDirection: "row",
-                    // justifyContent: "center",
-                    alignItems: "center",
-                    // backgroundColor: "grey",
+                    fontSize: s(13),
+                    color: "#fff",
+                    fontFamily: "PlayfairBold",
+                    marginLeft: s(8),
+                    paddingBottom: s(2),
                   }}
                 >
-                  <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
-                  <Text
-                    style={{
-                      fontSize: s(13),
-                      color: "#c4c4c4",
-                      fontFamily: "PlayfairBold",
-                      marginLeft: s(8),
-                      paddingBottom: s(2),
-                    }}
-                  >
-                    Back to Login page
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+                  Back to Sign in
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-
-          <Toast
-            topOffset={s(20) + insets.top}
-            onPress={() => {
-              Toast.hide();
-            }}
-          />
         </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaProvider>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -263,7 +227,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#36485f",
-    // alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 60,
   },
@@ -289,38 +252,14 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
-  // buttonStyle: {
-  //   marginTop: s(17),
-  // },
-  // buttonContent: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   paddingVertical: 1,
-  //   // paddingHorizontal: 10,
-  //   borderRadius: 4,
-  //   elevation: 3,
-  //   backgroundColor: "#59cbbd",
-  //   // backgroundColor: "#3b4650",
-  // },
-  // buttonLabel: {
-  //   fontSize: 34,
-  //   // backgroundColor: "green",
-  //   // customLabelSize: 20,
-  //   width: "90%",
-  //   height: "100%",
-  //   paddingVertical: 5,
-  //   paddingLeft: 15,
-  //   marginVertical: 0,
-  //   marginHorizontal: 0,
-  //   // textAlign: "left",
-  // },
   buttonStyle: {
     width: "100%",
-    height: s(38),
+    height: z(46),
     elevation: 5,
     alignSelf: "center",
-    marginTop: s(17),
-    backgroundColor: "#59cbbd",
+    marginBottom: z(20),
+    backgroundColor: "#84c4ff",
+    borderRadius: z(6),
   },
   buttonContent: {
     padding: 0,

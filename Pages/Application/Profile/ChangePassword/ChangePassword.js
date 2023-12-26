@@ -222,7 +222,18 @@ export default function ChangePassword({ navigation }) {
             </Text>
           </View>
 
-          <View style={styles.content}>
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: 0,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <KeyboardAvoidingView
               behavior="padding"
               enabled={true}

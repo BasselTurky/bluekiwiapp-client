@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "react-native-toast-notifications";
 import LinearGradient from "react-native-linear-gradient";
 
 import AddToFavIcon from "../../../../Components/AddToFavIcon";
@@ -24,11 +25,10 @@ export default function ImageParallax({
   image_object,
   download,
   marginTop,
-  toast,
 }) {
   const winWidth = Dimensions.get("window").width;
   const winHeight = Dimensions.get("window").height;
-
+  const toast = useToast();
   const imgWidth = winWidth * 0.8;
   const imgHeight = winHeight * 0.325;
 
@@ -179,10 +179,8 @@ export default function ImageParallax({
                   dispatch(updateSearchResult({ index: index, value: true }));
                 } else {
                   // don't add
-                  toast.show({
-                    type: "info",
-                    text1: "100 favorites limit reached!",
-                    visibilityTime: 3000,
+                  toast.show("100 favorites limit reached!", {
+                    type: "normal",
                   });
                 }
 

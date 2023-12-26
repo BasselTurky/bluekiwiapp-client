@@ -1,13 +1,15 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, ImageBackground } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+
+import { SocketProvider } from "./Pages/SocketContext/SocketContext";
+import { ToastProvider } from "react-native-toast-notifications";
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -31,6 +33,7 @@ import { GrandHotel_400Regular } from "@expo-google-fonts/grand-hotel";
 import { useFonts } from "expo-font";
 
 import * as SplashScreen from "expo-splash-screen";
+import { z } from "./utils/scaling";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,8 +47,7 @@ async function deleteValueFor(key) {
 
 export default function Main() {
   const dispatch = useDispatch();
-
-  // const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
   const auth = useSelector((state) => state.auth.value);
 
   let [fontsLoaded, error] = useFonts({
@@ -59,6 +61,8 @@ export default function Main() {
     Playfair: require("./assets/fonts/PlayfairDisplay-Regular.ttf"),
     PlayfairBold: require("./assets/fonts/PlayfairDisplay-SemiBold.ttf"),
     PlayfairItalic: require("./assets/fonts/PlayfairDisplay-MediumItalic.ttf"),
+    RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
+    RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
   });
 
   React.useEffect(() => {
@@ -66,60 +70,35 @@ export default function Main() {
       checkForToken();
     }
   }, [fontsLoaded]);
-  // on component first load run 'checkForToken' function, which will fetch the token from SecureStore
-
-  // useEffect(() => {
-  //   checkForToken();
-  // }, []);
 
   async function checkForToken() {
     try {
-      let result = await SecureStore.getItemAsync("token");
+      // first check if user is signedIn with google:
+      const isSignedIn = await GoogleSignin.isSignedIn();
 
-      if (!result) {
-        // if False : set 'auth' to false, which means no session available, user will be taken to Login screen.
+      if (isSignedIn) {
+        dispatch(setAuth("google"));
 
-        console.log("Token fetch results: ", result, "no token available");
-
-        dispatch(setAuth(false));
-        // setLoading(false);
-        await SplashScreen.hideAsync();
         return;
       } else {
-        // if True : send the token to the backend for verification
+        let result = await SecureStore.getItemAsync("token");
 
-        console.log("Token result: ", result);
+        if (!result) {
+          // if False : set 'auth' to false, which means no session available, user will be taken to Login screen.
 
-        let response = await fetch(
-          `${global.server_address}/auth/check-token`,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token: result }),
-          }
-        );
-
-        let jsonData = await response.json();
-        // remove all but error condition
-        if (
-          jsonData === "expired" ||
-          jsonData === "wrong-device" ||
-          jsonData === "error"
-        ) {
-          // Clear session, restart start from login page
+          console.log("Token fetch results: ", result, "no token available");
 
           dispatch(setAuth(false));
-          await deleteValueFor("token");
           // setLoading(false);
           await SplashScreen.hideAsync();
-        } else if (jsonData === "pass") {
-          // Request refresh token
+          return;
+        } else {
+          // if True : send the token to the backend for verification
 
-          let refresh_token_response = await fetch(
-            `${global.server_address}/auth/refresh-token`,
+          console.log("Token result: ", result);
+
+          let response = await fetch(
+            `${global.server_address}/auth/check-token`,
             {
               method: "POST",
               headers: {
@@ -130,43 +109,63 @@ export default function Main() {
             }
           );
 
-          let data = await refresh_token_response.json();
-
-          // remove error condition
-          if (data.type === "expired" || data.type === "error") {
-            console.log("Error ID: E004: ", data.message);
+          let jsonData = await response.json();
+          // remove all but error condition
+          if (jsonData === "error") {
             // Clear session, restart start from login page
 
             dispatch(setAuth(false));
             await deleteValueFor("token");
             // setLoading(false);
             await SplashScreen.hideAsync();
-          } else if (data.type === "pass") {
-            // Save the new generated token, let user it
+          } else if (jsonData === "pass") {
+            // Request refresh token
 
-            dispatch(setAuth(true));
-            await save("token", data.token);
-            // setLoading(false);
-            await SplashScreen.hideAsync();
+            let refresh_token_response = await fetch(
+              `${global.server_address}/auth/refresh-token`,
+              {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ token: result }),
+              }
+            );
+
+            let data = await refresh_token_response.json();
+
+            // remove error condition
+            if (data.type === "expired" || data.type === "error") {
+              console.log("Error ID: E004: ", data.message);
+              // Clear session, restart start from login page
+
+              dispatch(setAuth(false));
+              await deleteValueFor("token");
+              await SplashScreen.hideAsync();
+            } else if (data.type === "pass") {
+              // Save the new generated token, let user it
+
+              dispatch(setAuth("default"));
+              await save("token", data.token);
+            } else {
+              // Clear session, restart start from login page
+              console.log("ErrorID E003");
+              alert("Error ID: E003");
+              // To do: Edit
+              dispatch(setAuth(false));
+              await deleteValueFor("token");
+              await SplashScreen.hideAsync();
+            }
           } else {
             // Clear session, restart start from login page
-            console.log("ErrorID E003");
-            alert("Error ID: E003");
-            // To do: Edit
+            console.log("ErrorID E002");
+            alert("Error ID: E002");
+
             dispatch(setAuth(false));
             await deleteValueFor("token");
-            // setLoading(false);
             await SplashScreen.hideAsync();
           }
-        } else {
-          // Clear session, restart start from login page
-          console.log("ErrorID E002");
-          alert("Error ID: E002");
-
-          dispatch(setAuth(false));
-          await deleteValueFor("token");
-          // setLoading(false);
-          await SplashScreen.hideAsync();
         }
       }
     } catch (error) {
@@ -176,92 +175,81 @@ export default function Main() {
 
       dispatch(setAuth(false));
       await deleteValueFor("token");
-      // setLoading(false);
       await SplashScreen.hideAsync();
     }
-
-    // backend resonse :-
-
-    // if Failed : token is expired or hacked, display Login Page, delete the token
-
-    // if Pass : user has active session available : send request for 'Refresh token'
-
-    // if Wrong Device : to do
   }
-
-  // if (loading) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <ActivityIndicator size="large" color="skyblue" />
-  //     </View>
-  //   );
-  // }
 
   if (auth) {
-    return <Application />;
+    return (
+      <ToastProvider
+        offsetTop={insets.top + z(20)}
+        animationType="slide-in"
+        placement="top"
+        duration={3000}
+      >
+        <SocketProvider>
+          <Application />
+        </SocketProvider>
+      </ToastProvider>
+    );
   } else {
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            // initialParams={{ setLogin: setLogin }}
-            options={{
-              animation: "slide_from_bottom",
-              // title: "Login",
-              // headerStyle: { backgroundColor: "skyblue" },
-              // headerTintColor: "#fff",
-              // headerTitleAlign: "center",
-              // headerTitleStyle: {
-              //   fontWeight: "bold",
-              // },
-              navigationBarColor: "rgba(0,0,0,0)",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={Register}
-            options={{
-              animation: "slide_from_right",
-              // title: "Register",
-              // headerStyle: { backgroundColor: "skyblue" },
-
-              // headerTintColor: "#fff",
-              // headerTitleAlign: "center",
-              // headerTitleStyle: {
-              //   fontWeight: "bold",
-              // },
-              navigationBarColor: "rgba(0,0,0,0)",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPassword}
-            options={{
-              animation: "slide_from_right",
-              // title: "Forgot Password",
-              // headerStyle: { backgroundColor: "skyblue" },
-              // headerTintColor: "#fff",
-              // headerTitleAlign: "center",
-              // headerTitleStyle: {
-              //   fontWeight: "bold",
-              // },
-              navigationBarColor: "rgba(0,0,0,0)",
-              headerShown: false,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ToastProvider
+        offsetTop={insets.top + z(20)}
+        animationType="slide-in"
+        placement="top"
+        duration={3000}
+      >
+        <ImageBackground
+          source={require("./assets/front1.jpg")}
+          blurRadius={1}
+          resizeMode="cover"
+          style={{
+            flex: 1,
+          }}
+        >
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                contentStyle: {
+                  backgroundColor: "rgba(131, 196, 255,0.7)",
+                  // backgroundColor: "rgba(110,230,196,0.5)",
+                },
+              }}
+            >
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{
+                  animation: "slide_from_bottom",
+                  navigationBarColor: "rgba(0,0,0,0)",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{
+                  animation: "default",
+                  navigationBarColor: "rgba(0,0,0,0)",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPassword}
+                options={{
+                  animation: "default",
+                  navigationBarColor: "rgba(0,0,0,0)",
+                  headerShown: false,
+                }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ImageBackground>
+      </ToastProvider>
     );
   }
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text>Open up App.js to start working on your app!</Text>
-  //     </View>
-  //   );
 }
 
 const styles = StyleSheet.create({

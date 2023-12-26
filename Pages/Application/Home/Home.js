@@ -4,11 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableWithoutFeedback,
   TouchableOpacity,
-  TouchableHighlight,
-  ImageBackground,
   Dimensions,
   Image,
   Keyboard,
@@ -16,620 +12,140 @@ import {
 import { z } from "../../../utils/scaling";
 import React, { useState, useEffect } from "react";
 import ErrorView from "../../Error/ErrorView";
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { DrawerLayout } from "react-native-gesture-handler";
 import DrawerView from "./components/DrawerView";
 
-import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setUserData } from "../../../Features/userData";
-import { setUserApis, updateUserApis } from "../../../Features/userApis";
-import { setCoins, addCoin, consumeCoins } from "../../../Features/coins";
-
-import Toast, { BaseToast } from "react-native-toast-message";
-import { Button as PaperButton } from "react-native-paper";
-
-import KiwiCoinSVG from "../../../Components/KiwiCoinSVG";
-import CoinsStack from "../../../Components/CoinsStack";
-import PlusIconSVG from "../../../Components/PlusIconSVG";
-import ArchiveIcon from "../../../Components/ArchiveIcon";
-
-import WallpaperIcon from "../../../Components/WallpaperIcon";
-import ImagesIcon from "../../../Components/ImagesIcon";
+import { useToast } from "react-native-toast-notifications";
 import MyNoteIcon from "../../../Components/MyNoteIcon";
 
 import ApiButton from "./components/ApiButton";
 
 import { WebView } from "react-native-webview";
 
-import { setUserFav } from "../../../Features/favArray";
-
-async function deleteValueFor(key) {
-  await SecureStore.deleteItemAsync(key);
-}
-import { setAuth } from "../../../Features/auth";
-
-const toastConfig = {
-  success: (props) => <BaseToast {...props} style={{ zIndex: 999 }} />,
-};
-
+import { createUserFav } from "../../../Features/favArray";
+import { setPageUrl } from "../../../Features/pageUrl";
+import { setSearchResult } from "../../../Features/searchResult";
+import { setPages } from "../../../Features/pages";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
-// const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+import HomeView from "./HomeView";
+import HomeWebview from "./HomeWebview";
 
 export default function Home({
   navigation,
   viewRef,
-  pageUrl,
-  setPageUrl,
-  isWebviewLoaded,
-  setIsWebviewLoaded,
-  isViewLogin,
-  setIsViewLogin,
+  mainWebviewUrlRef,
+  // pageUrl, // change to redux
+  // setPageUrl,
+  // isWebviewLoaded,
+  // setIsWebviewLoaded,
+  // isViewLogin,
+  // setIsViewLogin,
 }) {
-  const insets = useSafeAreaInsets();
+  console.log("Home");
+  // const insets = useSafeAreaInsets();
+  // const toast = useToast();
+  // const drawerRef = React.useRef();
 
-  const [attempts, setAttempts] = useState(0);
+  // const [attempts, setAttempts] = useState(0);
 
-  const dispatch = useDispatch();
-  const userData = useSelector((state) => state.userData.value);
-  const coins = useSelector((state) => state.coins.value);
-  const favArray = useSelector((state) => state.favArray.value);
+  // const dispatch = useDispatch();
+  // const userData = useSelector((state) => state.userData.value);
+  // const coins = useSelector((state) => state.coins.value);
+  // const favArray = useSelector((state) => state.favArray.value);
+  // const pageUrl = useSelector((state) => state.pageUrl.value);
 
-  const errorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
+  // useEffect(() => {
+  //   if (isWebviewLoaded) {
+  //     setTimeout(() => {
+  //       // check_login();
+  //       fullLoginWebview();
+  //       console.log("login attempt");
+  //       console.log(pageUrl);
+  //     }, 500);
+  //   }
+  // }, [isWebviewLoaded]);
 
-  // function timeout(ms) {
-  //   return new Promise((resolve) => setTimeout(resolve, ms));
-  // }
-  // async function sleep(ms, fn, ...args) {
-  //   await timeout(ms);
-  //   return fn(...args);
-  // }
+  // useEffect(() => {
+  //   if (isViewLogin) {
+  //     // login steps with delay
+  //     console.log("Webview login success");
+  //   }
+  // }, [isViewLogin]);
 
-  // async function start() {
-  //   await sleep(1000, open_login);
-  //   await sleep(1000, insert_auth);
-  //   await sleep(1000, click_login);
-  // }
+  // useEffect(() => {
+  //   if (userData) {
+  //     let email = userData.email;
+  //     // console.log(userData.email);
+  //     // console.log(favArray);
+  //     // let userKey = favArray[email];
+  //     // if (favArray) {
+  //     // console.log(favArray, "sss");
+  //     if (!favArray[email]) {
+  //       dispatch(createUserFav(email));
+  //     }
+  //     // }
+  //   }
+  // }, [userData]);
 
-  function check_login() {
-    viewRef.current.injectJavaScript(
-      `
-        (function(){
-           let available = false
-           let profile = window.document.getElementsByClassName('userMenu--BWkSG')[0]
-           if(profile){
-             available = true
-           }
-          window.ReactNativeWebView.postMessage(JSON.stringify({ message: "login status" , data: available}))
-          
-        })()
-      `
-    );
-  }
-  async function open_login() {
-    viewRef.current.injectJavaScript(
-      `window.document.getElementsByClassName('loginButton--uIEF2 buttonBase--r4opq tertiaryButton--+4ehJ')[0].click()`
-    );
-  }
-  async function insert_auth() {
-    viewRef.current.injectJavaScript(`
-    (function(){
-      let event = new Event('change', { bubbles: true });
+  // useEffect(() => {
+  //   return () => {
+  //     // clear search result
+  //     dispatch(setSearchResult(null));
+  //     dispatch(setPageUrl("https://pixabay.com"));
+  //     dispatch(
+  //       setPages({
+  //         current: "",
+  //         total: "",
+  //       })
+  //     );
+  //   };
+  // }, []);
 
-event.simulated = true;
-
-
-window.document.getElementsByClassName('textInput--yG-0W')[1].setAttribute('value','basselturky121@gmail.com')
-
-window.document.getElementsByClassName('textInput--yG-0W')[1].dispatchEvent(event);
-
-
-window.document.getElementsByClassName('textInput--yG-0W')[2].setAttribute('value','blue101@webview')
-
-window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(event);
-    })()
-
- `);
-  }
-  async function click_login() {
-    viewRef.current.injectJavaScript(
-      `window.document.getElementsByClassName('loginButton--cVPDu e2e-auth-login-submit-button base--o-Oap primary--uRlHk')[0].click()`
-    );
-    console.log("logged in");
-    console.log(pageUrl);
-  }
-
-  useEffect(() => {
-    if (isWebviewLoaded) {
-      setTimeout(() => {
-        check_login();
-      }, 1000);
-    }
-  }, [isWebviewLoaded]);
-
-  useEffect(() => {
-    if (isViewLogin) {
-      // login steps with delay
-      console.log("Webview login success");
-    }
-  }, [isViewLogin]);
-
-  async function fetchUserData() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-      console.log("current token: ", currentToken);
-      let response = await fetch(`${global.server_address}/auth/user`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: currentToken }),
-      });
-
-      let data = await response.json();
-      console.log(data);
-
-      if (data.type === "expired" || data.type === "wrong-device") {
-        deleteValueFor("token");
-        dispatch(setAuth(false));
-        return;
-      } else if (data.type === "success") {
-        let userDataObj = {
-          name: data.userInfo.name,
-          email: data.userInfo.email,
-          device_id: data.userInfo.device_id,
-          coins: data.userInfo.coins,
-        };
-        let userApisObj = {
-          // use truthy condition ==
-          // results are in 0 and 1
-          image_api: data.userInfo.image_api,
-          wallpaper_api: data.userInfo.wallpaper_api,
-          archive_api: data.userInfo.archive_api,
-          giveaways: data.userInfo.giveaways,
-        };
-        dispatch(setUserData(userDataObj));
-        dispatch(setUserApis(userApisObj));
-        dispatch(setCoins(userDataObj.coins));
-        return;
-      } else if (data.type === "error") {
-        // ErrorID: E021
-        errorToast(data.message);
-      } else {
-        errorToast("ErrorID: E020");
-      }
-    } catch (error) {
-      console.log("ErrorID: E019: ", error);
-      errorToast("ErrorID: E019");
-    }
-  }
-
-  useEffect(() => {
-    // fetch user data
-
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
-    // console.log(favArray);
-    // console.log(userData);
-    if (userData) {
-      let email = userData.email;
-      let userKey = favArray[email];
-      if (!userKey) {
-        dispatch(setUserFav({ key: userData.email, value: [] }));
-      }
-    }
-  }, [userData, favArray]);
-
-  function remainingdDigits(number) {
-    var length = (Math.log(number) * Math.LOG10E + 1) | 0;
-
-    let remaining = 3 - length;
-
-    let result = "";
-    for (let i = 0; i < remaining; i++) {
-      result = result.concat("0");
-    }
-
-    return result;
-  }
-
-  try {
-    return (
-      <SafeAreaProvider>
-        <DrawerLayout
-          // hideStatusBar={true}
-          onDrawerStateChanged={(state) => {
-            if (state === "Dragging") {
-              Keyboard.dismiss();
-            } else if (state === "Settling") {
-              Keyboard.dismiss();
-            }
-          }}
-          onDrawerSlide={(position) => {
-            if (position === 0) {
-              Keyboard.dismiss();
-            }
-          }}
-          drawerWidth={z(350)}
-          drawerPosition="right"
-          drawerType="front"
-          keyboardDismissMode="on-drag"
-          renderNavigationView={() => {
-            return <DrawerView Toast={Toast} errorToast={errorToast} />;
-          }}
-        >
-          <View
-            // source={require("../../assets/splashx2.png")}
-            // resizeMode="cover"
-            style={styles.container}
-          >
-            <Image
-              // source={{ uri }}
-              source={require("../../../assets/001.jpg")}
-              blurRadius={2}
-              style={[
-                {
-                  width: "100%",
-                  height: "100%",
-                  resizeMode: "cover",
-                },
-                StyleSheet.absoluteFill,
-              ]}
-            />
-            <View
-              style={{
-                // height: 40,
-                width: "100%",
-                // backgroundColor: "pink",
-                position: "absolute",
-                top:
-                  height * 0.04 < 24
-                    ? insets.top + height * 0.02
-                    : insets.top + height * 0.04,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <TouchableOpacity
-                style={
-                  // styles.profileIcon
-                  {
-                    elevation: 5,
-                    borderRadius: 50,
-                    marginLeft: 17,
-                    width: 40,
-                    height: 40,
-                    borderRadius: 50,
-                    backgroundColor: "#83c4ff",
-
-                    overflow: "hidden",
-                  }
-                }
-                // activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate("ProfilePage");
-                }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    // backgroundColor: "blue",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 22,
-                    }}
-                  >
-                    {userData ? userData.name.charAt(0).toUpperCase() : "B"}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  // backgroundColor: "green",
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    position: "absolute",
-                    right: 126,
-                  }}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    navigation.navigate("AdsView");
-                  }}
-                >
-                  <PlusIconSVG height={30} width={30} />
-                </TouchableOpacity>
-
-                <View
-                  style={[styles.score, { position: "absolute", right: 36 }]}
-                >
-                  <Text style={styles.scoreText}>
-                    {remainingdDigits(coins)}
-                    {coins}
-                  </Text>
-                </View>
-
-                <View
-                  style={{
-                    position: "absolute",
-                    right: 17,
-                  }}
-                >
-                  <CoinsStack height={z(50)} width={z(50)} />
-                </View>
-              </View>
-            </View>
-
-            {/* download webview start*/}
-
-            <View
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-                width: 1,
-                height: 1,
-              }}
-            >
-              <WebView
-                ref={viewRef}
-                style={{
-                  // flex: 0,
-                  width: 1,
-                  // width: 300,
-                }}
-                // containerStyle={{
-                //   flex: 1,
-                // }}
-                userAgent={
-                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
-                }
-                source={{
-                  uri: pageUrl,
-                }}
-                onLoad={() => {
-                  setIsWebviewLoaded(true);
-                  console.log("loaded");
-                }}
-                javaScriptEnabled
-                onMessage={(event) => {
-                  // const htmlString = event.nativeEvent.data;
-                  // console.log(htmlString);
-                  let eventObj = JSON.parse(event.nativeEvent.data);
-                  let message = eventObj.message;
-                  let data = eventObj.data;
-                  console.log(eventObj);
-                  if (data) {
-                    setIsViewLogin(true);
-                  } else {
-                    setIsViewLogin(false);
-
-                    // start();
-
-                    setTimeout(() => {
-                      open_login();
-                      setTimeout(() => {
-                        insert_auth();
-                        setTimeout(() => {
-                          click_login();
-
-                          if (attempts < 3) {
-                            setTimeout(() => {
-                              check_login();
-                              setAttempts(attempts + 1);
-                            }, 3000);
-                          }
-                        }, 1000);
-                      }, 1000);
-                    }, 1000);
-                  }
-                }}
-              />
-            </View>
-
-            {/* download webview end*/}
-
-            <View style={[styles.row]}>
-              <ApiButton
-                navigation={navigation}
-                api={"wallpaper_api"}
-                apiText={"Wallpapers"}
-                navigationPage={"WallpaperApi"}
-                requiredCoins={0}
-              >
-                {/* <WallpaperIcon width={z(42)} height={z(42)} fill={"white"} /> */}
-                <Image
-                  source={require("../../../assets/frame26.png")}
-                  resizeMode="contain"
-                  style={{
-                    width: "90%",
-                    // height: z(44),
-
-                    // backgroundColor: "green",
-                  }}
-                />
-              </ApiButton>
-
-              <ApiButton
-                navigation={navigation}
-                // viewRef={viewRef}
-                // pageUrl={pageUrl}
-                // setPageUrl={setPageUrl}
-                isWebviewLoaded={isWebviewLoaded}
-                isViewLogin={isViewLogin}
-                api={"image_api"}
-                apiText={"Gallery"}
-                navigationPage={"ImageApiPage"}
-                requiredCoins={10}
-              >
-                {/* <ImagesIcon width={z(42)} height={z(42)} fill={"white"} /> */}
-                <Image
-                  source={require("../../../assets/frame25.png")}
-                  resizeMode="contain"
-                  style={{
-                    width: "90%",
-                    // height: z(44),
-
-                    // backgroundColor: "green",
-                  }}
-                />
-              </ApiButton>
-            </View>
-
-            <View
-              style={[
-                {
-                  marginTop: 20,
-                },
-                styles.row,
-              ]}
-            >
-              <ApiButton
-                navigation={navigation}
-                api={"archive_api"}
-                apiText={"Archive"}
-                navigationPage={"ArchiveApiPage"}
-                requiredCoins={5}
-              >
-                {/* <ArchiveIcon width={z(42)} height={z(42)} fill={"white"} /> */}
-                <Image
-                  source={require("../../../assets/Archive2.png")}
-                  resizeMode="contain"
-                  style={{
-                    width: "70%",
-                    // height: z(44),
-
-                    // backgroundColor: "green",
-                  }}
-                />
-                {/* <CitiesGuideIcon width={z(42)} height={z(42)} /> */}
-              </ApiButton>
-
-              <ApiButton
-                navigation={navigation}
-                api={"tasks_note"}
-                apiText={"My Note"}
-                navigationPage={"NoteApi"}
-                requiredCoins={5}
-              >
-                <MyNoteIcon width={z(42)} height={z(42)} fill={"white"} />
-              </ApiButton>
-            </View>
-            {/* <Button
-          title="Show"
-          onPress={() => {
-            console.log(searchResult);
-            // console.log(height * 0.04);
-          }}
-        /> */}
-            {/* <Button
-        title="show"
-        onPress={async () => {
-          // console.log(currentArray);
-          await Linking.openURL(
-            "https://pixabay.com/images/download/cat-6492741_1920.jpg?attachment"
-          );
-        }}
+  // console.log("Home");
+  // try {
+  return (
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
+      <HomeView
+        navigation={navigation}
+        viewRef={viewRef}
+        mainWebviewUrlRef={mainWebviewUrlRef}
+        // isWebviewLoaded={isWebviewLoaded}
+        // setIsWebviewLoaded={setIsWebviewLoaded}
+        // isViewLogin={isViewLogin}
+        // setIsViewLogin={setIsViewLogin}
       />
-      <Button
-        title="showx"
-        onPress={() => {
-          console.log(searchResult);
-        }}
-      /> */}
-            {/* <View
-        style={[
-          {
-            marginTop: 20,
-          },
-          styles.row,
-        ]}
-      >
-        <ApiButton
-          navigation={navigation}
-          api={"giveaways"}
-          apiText={"Giveaway"}
-          navigationPage={"Giveaway"}
-          requiredCoins={5}
-        />
-      </View> */}
-          </View>
-        </DrawerLayout>
-        <Toast
-          topOffset={20}
-          // config={toastConfig}
-          onPress={() => {
-            Toast.hide();
-          }}
-        />
-
-        {/* <View
-          style={{
-            position: "absolute",
-            backgroundColor: "green",
-            width: 300,
-            height: 300,
-            zIndex: 100,
-          }}
-        ></View> */}
-      </SafeAreaProvider>
-    );
-  } catch (error) {
-    console.log("ErrorID: E022: ", error);
-    return <ErrorView Error={"ErrorID: E022"} />;
-  }
+      <HomeWebview
+        viewRef={viewRef}
+        mainWebviewUrlRef={mainWebviewUrlRef}
+        // setIsWebviewLoaded={setIsWebviewLoaded}
+        // setIsViewLogin={setIsViewLogin}
+      />
+    </View>
+  );
+  // } catch (error) {
+  //   console.log("ErrorID: E022: ", error);
+  //   return <ErrorView Error={"ErrorID: E022"} />;
+  // }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
   profileIcon: {
-    // position: "absolute",
-    // top: 56,
-    // left: 16,
-
-    // right: 15,
-    // width:40,
-    // height:40,
-    // borderWidth: 3,
     borderRadius: 50,
-    // padding: 4,
-
-    // borderBottomColor: "white",
-    // borderStyle: "dashed",
-    // borderColor: "grey",
-    // backgroundColor: "#36485f",
     elevation: 5,
   },
   score: {
@@ -644,50 +160,28 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     paddingLeft: 10,
-    // elevation: 5,
-    // position: "absolute",
-    // top: 61,
-    // right: 36,
-    // borderColor: "#ffd69e",
   },
   scoreText: {
     fontFamily: "Righteous_400Regular",
     fontSize: 16,
     color: "#36485f",
-    // position: "absolute",
-    // top: -6,
-    // left: 10,
   },
 
-  kiwiCoin: {
-    // position: "absolute",
-    // top: 56,
-    // // zIndex: 2,
-    // right: 16,
-  },
-  plusIcon: {
-    // position: "absolute",
-    // top: 61,
-    // // zIndex: 2,
-    // right: 126,
-  },
+  kiwiCoin: {},
+  plusIcon: {},
   watchButton: {
     marginTop: 10,
     flexDirection: "row",
     width: 160,
     height: 50,
-    // borderWidth: 2,
     borderRadius: 10,
-    // borderColor: "grey",
     alignItems: "center",
-    // justifyContent: "center",
     backgroundColor: "#8fbdff",
     paddingHorizontal: 5,
     elevation: 5,
     zIndex: 5,
   },
   row: {
-    // marginTop: 20,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-evenly",
@@ -1414,3 +908,193 @@ window.document.getElementsByClassName('textInput--yG-0W')[2].dispatchEvent(even
         }}
       /> */
 }
+
+// function check_login() {
+//   viewRef.current.injectJavaScript(
+//     `
+//     (function () {
+//       let available = false;
+//       let profile = window.document.getElementsByClassName("userMenu--BWkSG")[0];
+//       if (profile) {
+//         available = true;
+//       }
+//       window.ReactNativeWebView.postMessage(
+//         JSON.stringify({ message: "login status", data: available })
+//       );
+//     })();
+//     `
+//   );
+// }
+// async function open_login() {
+//   viewRef.current.injectJavaScript(
+//     `window.document.getElementsByClassName('loginButton--uIEF2 buttonBase--r4opq tertiaryButton--+4ehJ')[0].click()`
+//   );
+// }
+// async function insert_auth() {
+//   viewRef.current.injectJavaScript(`
+//   (function () {
+//     let event = new Event("change", { bubbles: true });
+
+//     event.simulated = true;
+
+//     window.document
+//       .getElementsByClassName("textInput--yG-0W")[1]
+//       .setAttribute("value", "basselturky121@gmail.com");
+
+//     window.document
+//       .getElementsByClassName("textInput--yG-0W")[1]
+//       .dispatchEvent(event);
+
+//     window.document
+//       .getElementsByClassName("textInput--yG-0W")[2]
+//       .setAttribute("value", "blue101@webview");
+
+//     window.document
+//       .getElementsByClassName("textInput--yG-0W")[2]
+//       .dispatchEvent(event);
+//   })();
+
+// `);
+// }
+// async function click_login() {
+//   viewRef.current.injectJavaScript(
+//     `
+//     window.document
+//     .getElementsByClassName(
+//       "loginButton--cVPDu e2e-auth-login-submit-button base--o-Oap primary--uRlHk"
+//     )[0]
+//     .click();
+//     `
+//   );
+//   console.log("logged in");
+//   console.log(pageUrl);
+// }
+
+// async function fullLoginWebview() {
+//   viewRef.current.injectJavaScript(
+//     `
+//   (function () {
+//     let event = new Event("change", { bubbles: true });
+//     event.simulated = true;
+
+//     // Function to check the condition every 50 ms for 500 ms at the beginning
+//     const checkConditionAtBeginning = (startTime) => {
+//       const currentTime = Date.now();
+//       const elapsedTime = currentTime - startTime;
+
+//       if (elapsedTime <= 500) {
+//         let available = false;
+//         const profile = window.document.getElementsByClassName("userMenu--BWkSG")[0];
+
+//         if (profile) {
+//           available = true;
+//           console.log("true at the beginning"); // Log true if the condition becomes true
+//         } else {
+//           // Continue checking every 50 ms
+//           setTimeout(() => checkConditionAtBeginning(startTime), 50);
+//         }
+//       } else {
+//         console.log("Initial timeout reached. Condition not met within 500 ms.");
+
+//         // Proceed with checking the button
+//         checkButton();
+//       }
+//     };
+
+//     // Start checking for the condition at the beginning every 50 ms for 500 ms
+//     checkConditionAtBeginning(Date.now());
+
+//     // Function to check if the button element is available
+//     const checkButton = () => {
+//       try {
+//         const loginButton = window.document.getElementsByClassName("loginButton--uIEF2 buttonBase--r4opq tertiaryButton--+4ehJ")[0];
+
+//         if (loginButton) {
+//           // Click the login button
+//           loginButton.click();
+
+//           // Continue with checking inputs
+//           checkInputs();
+//         } else {
+//           // Continue checking until the button is available
+//           setTimeout(checkButton, 100);
+//         }
+//       } catch (error) {
+//         console.error("Error checking button:", error.message);
+//                     window.ReactNativeWebView.postMessage(
+//               JSON.stringify({ message: "login-failed", error: error.message })
+//             );
+//       }
+//     };
+
+//     // Function to check if the input elements are available
+//     const checkInputs = () => {
+//       try {
+//         const emailInput = window.document.getElementsByClassName("textInput--yG-0W")[1];
+//         const passwordInput = window.document.getElementsByClassName("textInput--yG-0W")[2];
+
+//         if (emailInput && passwordInput) {
+//           // Set values and trigger change event for email input
+//           emailInput.setAttribute("value", "basselturky121@gmail.com");
+//           emailInput.dispatchEvent(event);
+
+//           // Set values and trigger change event for password input
+//           passwordInput.setAttribute("value", "blue101@webview");
+//           passwordInput.dispatchEvent(event);
+
+//           // Delay before clicking the login button (100 ms)
+//           setTimeout(() => {
+//             // Click the login button
+//             window.document
+//               .getElementsByClassName(
+//                 "loginButton--cVPDu e2e-auth-login-submit-button base--o-Oap primary--uRlHk"
+//               )[0]
+//               .click();
+
+//             // Start checking for the condition with a maximum timeout of 2 seconds
+//             const startTime = Date.now();
+//             checkCondition(startTime);
+//           }, 100);
+//         } else {
+//           // Continue checking until the inputs are available
+//           setTimeout(checkInputs, 100);
+//         }
+//       } catch (error) {
+//         console.error("Error checking inputs:", error.message);
+//                     window.ReactNativeWebView.postMessage(
+//               JSON.stringify({ message: "login-failed", error: error.message })
+//             );
+//       }
+//     };
+
+//     // Function to check the condition with a maximum timeout of 2 seconds
+//     const checkCondition = (startTime) => {
+//       const currentTime = Date.now();
+//       const elapsedTime = currentTime - startTime;
+
+//       if (elapsedTime <= 2000) {
+//         let available = false;
+//         const profile = window.document.getElementsByClassName("userMenu--BWkSG")[0];
+
+//         if (profile) {
+//           available = true;
+//           console.log("true"); // Log true if the condition becomes true
+//                         window.ReactNativeWebView.postMessage(
+//                 JSON.stringify({ message: "login-success", data: true })
+//               );
+//         } else {
+//           // Continue checking every 50 ms
+//           setTimeout(() => checkCondition(startTime), 50);
+//         }
+//       } else {
+//         console.log("Timeout reached. Condition not met within 2 seconds.");
+//                     window.ReactNativeWebView.postMessage(
+//               JSON.stringify({ message: "login-failed", error: "Timeout reached." })
+//             );
+//       }
+//     };
+//   })();
+//   `
+//   );
+//   // console.log("injected");
+// }

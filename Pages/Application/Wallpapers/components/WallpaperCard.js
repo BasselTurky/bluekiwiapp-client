@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSocket } from "../../../SocketContext/SocketContext";
+
 import LinearGradient from "react-native-linear-gradient";
 import { z } from "../../../../utils/scaling";
 import { updateDownload_dailyWallpapers } from "../../../../Features/dailyWallpapers";
@@ -24,6 +26,7 @@ import { consumeCoins } from "../../../../Features/coins";
 import { setCoins } from "../../../../Features/coins";
 
 import RNFetchBlob from "rn-fetch-blob";
+import { downloadImage } from "../../../../utils/downloadImage";
 
 import KiwiCoinSVG from "../../../../Components/KiwiCoinSVG";
 import DownloadIcon from "../../../../Components/DownloadIcon";
@@ -36,101 +39,33 @@ const height = Dimensions.get("window").height;
 export default function WallpaperCard({
   index,
   item,
-  toast,
-  errorToast,
   type,
   required_coins,
   year,
   month,
   wallpaper_id_,
 }) {
+  const socket = useSocket();
   const dispatch = useDispatch();
   const [showLayer, setShowLayer] = useState(false);
 
   const permanentWallpapers = useSelector(
     (state) => state.permanentWallpapers.value
   );
+  const userData = useSelector((state) => state.userData.value);
 
-  function downloadImage(url, updated_coins) {
-    try {
-      const { config, fs } = RNFetchBlob;
-      let PictureDir = fs.dirs.PictureDir;
-      config({
-        addAndroidDownloads: {
-          useDownloadManager: true,
-          notification: true,
-          description: "Image",
-          path: PictureDir + "/wallpaper_" + Date.now() + ".jpg",
-        },
-      }).fetch("GET", url);
-
-      // update donwload number in redux
-      toast.show({
-        type: "success",
-        text1: "Download started!",
-        // text2: "Error",
-        visibilityTime: 3000,
-      });
-      dispatch(setCoins(updated_coins));
-      if (type === "daily") {
-        dispatch(updateDownload_dailyWallpapers(item.wallpaper_id));
-      }
-      if (type === "archive") {
-        dispatch(
-          updateDownloads_permanentWallpapers({
-            year: year,
-            month: month,
-            wallpaper_id: wallpaper_id_,
-          })
-        );
-      }
-    } catch (error) {
-      // To do: refund
-      console.log("ErrorID: E042: ", error);
-      errorToast("ErrorID: E042 Download failed");
-    }
-  }
-
-  async function consume_coins() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-      console.log("current token: ", currentToken);
-      let response = await fetch(
-        `${global.server_address}/api/download-wallpaper`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: currentToken,
-            consumed_coins: required_coins,
-            wallpaper_id: item.wallpaper_id,
-          }),
-        }
-      );
-
-      let data = await response.json();
-
-      if (data.type === "success") {
-        //download start
-        downloadImage(item.img_link, data.updated_coins);
-      } else if (data.type === "insufficient") {
-        errorToast(data.message);
-      } else if (data.type === "wrong-device") {
-        deleteValueFor("token");
-        dispatch(setAuth(false));
-      } else if (data.type === "error") {
-        // ErrorID: E045
-        errorToast(data.message);
-      } else {
-        errorToast("ErrorID: E044");
-      }
-    } catch (error) {
-      console.log("ErrorID: E043: ", error);
-      errorToast("ErrorID: E043");
-    }
+  function consume_coins() {
+    socket.emit(
+      "download-wallpaper",
+      required_coins,
+      item.wallpaper_id,
+      type,
+      item,
+      year,
+      month,
+      wallpaper_id_,
+      userData.email
+    );
   }
 
   async function checkPermissionsAndDownload() {
@@ -176,13 +111,6 @@ export default function WallpaperCard({
       />
       {showLayer ? (
         <View
-          // locations={[0.1, 0.3, 0.7, 0.9]}
-          // colors={[
-          //   "transparent",
-          //   "transparent",
-          //   "transparent",
-          //   "rgba(0,0,0,0.8)",
-          // ]}
           style={{
             position: "absolute",
             top: 0,
@@ -199,7 +127,6 @@ export default function WallpaperCard({
               width: "100%",
               bottom: 0,
               height: z(90),
-              // backgroundColor: "yellow",
             }}
           >
             <BlurView
@@ -215,7 +142,6 @@ export default function WallpaperCard({
               width: "100%",
               flexDirection: "row",
               justifyContent: "space-between",
-              // backgroundColor: "blue",
               paddingBottom: z(20),
               paddingHorizontal: z(20),
               alignItems: "flex-end",
@@ -223,16 +149,11 @@ export default function WallpaperCard({
           >
             <View
               style={{
-                // position: "absolute",
-                // bottom: 15,
-                // right: 15,
                 minWidth: z(40),
                 height: z(40),
                 backgroundColor: "rgba(255,255,255,0.2)",
                 padding: z(10),
-                // paddingVertical: 12,
                 borderRadius: z(10),
-                // marginHorizontal: 10,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -240,7 +161,6 @@ export default function WallpaperCard({
               <Text
                 style={{
                   color: "#fff",
-                  // fontFamily: "Righteous_400Regular",
                   fontFamily: "Graduate_400Regular",
                 }}
               >
@@ -251,17 +171,9 @@ export default function WallpaperCard({
             </View>
             <TouchableOpacity
               style={{
-                // position: "absolute",
-                // bottom: 15,
-                // right: 15,
                 minHeight: z(40),
-                // minWidth: 80,
                 backgroundColor: "rgba(255,255,255,0.2)",
-                // padding: 10,
-                // paddingVertical: 12,
                 borderRadius: z(10),
-                // marginHorizontal: 10,
-                // justifyContent: "space-around",
                 alignItems: "center",
                 flexDirection: "row",
                 paddingHorizontal: z(10),

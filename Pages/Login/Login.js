@@ -1,30 +1,40 @@
+// "android": {
+// "googleServicesFile": "./google-services.json",
+
 import {
   StyleSheet,
   Text,
   View,
-  Button,
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   Dimensions,
-  Platform,
-  ActivityIndicator,
   Image,
   Animated,
   Easing,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import Toast from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
-// import { s } from "react-native-size-matters";
-
 import * as SecureStore from "expo-secure-store";
-import { v4 as uuid } from "uuid";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../Features/auth";
 import moment from "moment";
+import GoogleColoredIcon from "../../Components/GoogleColoredIcon";
+import { useToast } from "react-native-toast-notifications";
+
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+
+GoogleSignin.configure({
+  webClientId:
+    "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+  // "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+});
 
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -43,83 +53,74 @@ async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
 }
 
-// function s(size) {
-//   return (width / 350) * size;
-// }
-
 import { s, z } from "../../utils/scaling";
 
 export default function Login({ navigation }) {
-  const insets = useSafeAreaInsets();
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      dispatch(setAuth("google"));
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        console.log("user cancelled the login flow");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        console.log("operation (e.g. sign in) is in progress already");
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log("play services not available or outdated");
+      } else {
+        // some other error happened
+        console.log("some other error happened : ", error);
+      }
+    }
+  };
 
+  const insets = useSafeAreaInsets();
+  const toast = useToast();
   const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isModalVisable, setIsModalVisable] = useState(true);
-  const [otpEmail, setOtpEmail] = useState("");
-  const [otpInput, setOtpInput] = useState("");
-  const [modal_content_state, set_modal_content_state] = useState("content");
-  const [isLoading, setIsLoading] = useState(false);
 
   const passwordInput = useRef();
 
   const headerHeight = useHeaderHeight();
 
-  const [showLayer, setShowLayer] = useState(false);
-
   const animateMenuX = React.useRef(new Animated.Value(0)).current;
   const animateMenuY = React.useRef(new Animated.Value(0)).current;
 
-  function toggleMenu(value) {
-    Animated.timing(animateMenuX, {
-      // toValue: { x: 0, y: yInt },
-      toValue: value,
-      // toValue: deleteAccountModal ? xInt : 0,
-      duration: 800,
-      useNativeDriver: false,
-      easing: Easing.out(Easing.sin),
-    }).start(({ finished }) => {
-      if (finished) {
-        // setIsDisabled(false);
-        // console.log(deleteAccountModal);
-      }
-    });
-  }
-
-  const errorToast = (message) => {
-    console.log(message);
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
+  // function toggleMenu(value) {
+  //   Animated.timing(animateMenuX, {
+  //     // toValue: { x: 0, y: yInt },
+  //     toValue: value,
+  //     // toValue: deleteAccountModal ? xInt : 0,
+  //     duration: 800,
+  //     useNativeDriver: false,
+  //     easing: Easing.out(Easing.sin),
+  //   }).start(({ finished }) => {
+  //     if (finished) {
+  //       // setIsDisabled(false);
+  //       // console.log(deleteAccountModal);
+  //     }
+  //   });
+  // }
 
   const sendLoginDataToServer = async () => {
     let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     if (email === "" || password === "") {
-      //   console.log("Fields can't be empty!!");
-      errorToast("Fields can't be empty!!");
+      toast.show("Fields can't be empty!!", { type: "error" });
     } else if (!regex.test(email)) {
-      errorToast("Please enter valid email format");
+      toast.show("Please enter valid email format", { type: "error" });
     } else if (password.length < 8 || password.length > 16) {
-      errorToast("Password should be between 8-16 characters");
+      toast.show("Password should be between 8-16 characters", {
+        type: "error",
+      });
     } else {
       try {
-        // Check if Device ID is available
-
-        let device_id;
-
-        let current_device_id = await SecureStore.getItemAsync("device_id");
-
-        if (current_device_id) {
-          device_id = current_device_id;
-        } else {
-          device_id = uuid();
-        }
-
         let date = moment().format("MMMM Do YYYY, h:mm:ss a");
 
         let response = await fetch(`${global.server_address}/auth/login-data`, {
@@ -131,7 +132,6 @@ export default function Login({ navigation }) {
           body: JSON.stringify({
             email: email,
             password: password,
-            device_id: device_id,
             date: date,
           }),
         });
@@ -139,363 +139,611 @@ export default function Login({ navigation }) {
         let data = await response.json();
 
         if (data.type === "error") {
-          // ErrorID: E007
-          errorToast(data.message);
+          toast.show(data.message, { type: "error" });
           return;
         } else if (data.type === "success") {
           await save("token", data.token);
-
-          await SecureStore.setItemAsync("device_id", device_id);
-
-          dispatch(setAuth(true));
-
-          return;
-        } else if (data.type === "verify") {
-          await SecureStore.setItemAsync("device_id", device_id);
-
-          // open verification layout
-          setOtpEmail(data.email);
-          await SecureStore.setItemAsync("otp", data.otp_token);
-
-          // setIsModalVisable(true);
-          setShowLayer(true);
-          toggleMenu(50 + width - (width - width * 0.8) / 2);
+          dispatch(setAuth("default"));
 
           return;
         } else {
-          errorToast("ErrorID: E006");
+          toast.show("ErrorID: E006", { type: "error" });
           return;
         }
       } catch (error) {
         console.log("ErrorID E005: ", error);
-        // alert('Error ID: E001')
-        errorToast("ErrorID: E005");
+        toast.show("ErrorID: E005", { type: "error" });
         return;
       }
     }
   };
 
-  async function handleVerification() {
-    // start loading
-    // set_modal_content_state("loading");
-    setIsLoading(true);
-
-    try {
-      let otp_token = await SecureStore.getItemAsync("otp");
-      let device_id = await SecureStore.getItemAsync("device_id");
-
-      let response = await fetch(`${global.server_address}/auth/verify-otp`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          otp_token: otp_token,
-          otpInput: otpInput,
-          device_id: device_id,
-        }),
-      });
-      let data = await response.json();
-
-      // verified state
-      if (data.type === "verified") {
-        // save token
-        await save("token", data.token);
-
-        set_modal_content_state("verified");
-        setIsLoading(false);
-        setTimeout(() => {
-          dispatch(setAuth(true));
-        }, 500);
-        return;
-      } else if (
-        data.type === "expired" ||
-        data.type === "failed" ||
-        data.type === "error"
-      ) {
-        // stop loading, diplay try again message
-        setIsLoading(false);
-        // ErrorID: E010
-        errorToast(data.message);
-        set_modal_content_state("content");
-        return;
-      }
-      //   else if(data.type === 'failed'){
-      //     errorToast(data.message)
-      //     set_modal_content_state("content");
-      //     return
-
-      //   }else if(data.type === 'error'){
-
-      //     errorToast(data.message)
-      //     set_modal_content_state("content");
-      //     return
-      //   }
-      else {
-        errorToast("ErrorID: E009");
-        return;
-      }
-    } catch (error) {
-      console.log("ErrorID E008: ", error);
-      errorToast("ErrorID: E008");
-      return;
-    }
-  }
-
   return (
-    <SafeAreaProvider>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          // backgroundColor: "#36485f",
+          // backgroundColor: "#7dffd4",
+          // backgroundColor: "#fff",
+          // justifyContent: "space-between",
+          // paddingHorizontal: s(50),
+          minHeight: "100%",
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         }}
       >
         <View
-          style={
-            {
-              flex: 1,
-              backgroundColor: "#36485f",
-              // alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: s(50),
-              // paddingHorizontal: 60,
-              minHeight: "100%",
-              paddingTop: insets.top,
-              paddingBottom: insets.bottom,
-            }
-
-            // [
-            // styles.container,
-            // {
-            //   minHeight: isModalVisable
-            //     ? Dimensions.get("window").height
-            //     : "100%",
-            // },
-            // ]
-          }
+          style={{
+            position: "absolute",
+            right: 0,
+            left: 0,
+            borderBottomColor: "#199187",
+            alignItems: "center",
+            paddingTop: z(height * 0.065) + insets.top,
+            // backgroundColor: "#7dffd4",
+          }}
         >
           <View
             style={{
-              flexDirection: "row",
-              // marginBottom: s(70),
-              borderBottomColor: "#199187",
-              // borderBottomWidth: 1,
-              alignItems: "flex-end",
-              // backgroundColor: "pink",
-              marginTop: s(height * 0.128),
-              // marginTop: height * 0.15,
+              width: z(90),
+              height: z(90),
+              borderRadius: z(30),
+              elevation: 8,
+              overflow: "hidden",
+              marginBottom: z(5),
             }}
           >
-            <View
-              style={{
-                // width: 60,
-                // height: 60,
-                width: s(50),
-                height: s(50),
-                borderRadius: s(16),
-                elevation: 8,
-                overflow: "hidden",
-                marginRight: s(16),
-                marginBottom: s(14),
-                // backgroundColor: "yellow",
-              }}
-            >
-              <Image
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-                source={require("../../assets/icon.png")}
-              />
-            </View>
-
-            <Text
-              style={{
-                fontSize: s(42),
-                // fontSize: 50,
-                color: "#fff",
-                // paddingBottom: 10,
-                // backgroundColor: "green",
-                // justifyContent: "center",
-                // alignItems: "center",
-                // fontWeight: "bold",
-                // fontFamily: "ChelaOne_400Regular",
-                // fontFamily: "Graduate_400Regular",
-                // fontFamily: "PinyonScript_400Regular",
-                fontFamily: "GrandHotel_400Regular",
-                textShadowColor: "#9ac8ec",
-                // textShadowColor: "#2196F3",
-                textShadowOffset: {
-                  width: 2,
-                  height: 2,
-                },
-                textShadowRadius: 10,
-                // backgroundColor: "pink",
-                // paddingHorizontal: s(6),
-              }}
-            >
-              Blue Kiwi
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              position: "absolute",
-              top: insets.top,
-              bottom: insets.bottom,
-              right: 0,
-              left: 0,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <KeyboardAvoidingView
-              behavior="padding"
-              enabled={true}
-              keyboardVerticalOffset={s(90)}
+            <Image
               style={{
                 width: "100%",
+                height: "100%",
               }}
-            >
-              <TextInput
-                onSubmitEditing={() => {
-                  passwordInput.current?.focus();
-                }}
-                value={email}
-                onChangeText={(val) => {
-                  setEmail(val);
-                }}
-                style={styles.textinput}
-                placeholder="E-mail..."
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="next"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-              />
-              <TextInput
-                ref={passwordInput}
-                returnKeyType="done"
-                value={password}
-                onChangeText={(val) => {
-                  setPassword(val);
-                }}
-                style={styles.textinput}
-                placeholder="Password..."
-                placeholderTextColor={"#c7d8e6"}
-                secureTextEntry
-              />
-            </KeyboardAvoidingView>
+              source={require("../../assets/icon.png")}
+            />
           </View>
+
+          <Text
+            style={{
+              fontSize: z(28),
+              color: "#fff",
+              fontFamily: "GrandHotel_400Regular",
+              textShadowColor: "#9ac8ec",
+              textShadowOffset: {
+                width: 2,
+                height: 2,
+              },
+              textShadowRadius: z(10),
+              marginBottom: z(5),
+            }}
+          >
+            Blue Kiwi
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            position: "absolute",
+            top: insets.top,
+            bottom: insets.bottom,
+            right: 0,
+            left: 0,
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginHorizontal: z(50),
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior="position"
+            enabled={true}
+            keyboardVerticalOffset={z(40)}
+            style={{
+              width: "100%",
+            }}
+          >
+            <TextInput
+              onSubmitEditing={() => {
+                passwordInput.current?.focus();
+              }}
+              value={email}
+              onChangeText={(val) => {
+                setEmail(val);
+              }}
+              style={styles.textinput}
+              placeholder="E-mail..."
+              placeholderTextColor={"#9c9c9c"}
+              returnKeyType="next"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+            <TextInput
+              ref={passwordInput}
+              returnKeyType="done"
+              value={password}
+              onChangeText={(val) => {
+                setPassword(val);
+              }}
+              style={styles.textinput}
+              placeholder="Password..."
+              placeholderTextColor={"#9c9c9c"}
+              secureTextEntry
+            />
+          </KeyboardAvoidingView>
 
           <View
             style={{
-              marginBottom: s(height * 0.128),
-              // marginBottom: height * 0.15,
-              // backgroundColor: "grey",
+              marginBottom: z(20),
+              alignSelf: "flex-end",
             }}
           >
-            <View
-              style={{
-                marginBottom: s(32),
-                // flexDirection: "row-reverse",
-                // backgroundColor: "blue",
-                alignSelf: "flex-end",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => navigation.navigate("ForgotPassword")}
-                style={
-                  {
-                    // alignSelf: "flex-end",
-                    // marginTop: 10,
-                  }
-                }
-              >
-                <Text
-                  style={{
-                    fontSize: z(14),
-                    // fontSize: 14,
-                    color: "#c4c4c4",
-                    // fontFamily: "PlayfairBold",
-                  }}
-                >
-                  Forgot your password?
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <PaperButton
-              onPress={sendLoginDataToServer}
-              style={styles.buttonStyle}
-              contentStyle={styles.buttonContent}
-              labelStyle={styles.buttonLabel}
-              mode="contained"
-              uppercase={false}
-              //   icon="account-box"
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ForgotPassword")}
+              style={{}}
             >
               <Text
                 style={{
-                  fontSize: s(14),
-                  color: "white",
-                  // fontFamily: "PlayfairBold",
-                  // fontFamily: "ChelaOne_400Regular",
-                  fontFamily: "Graduate_400Regular",
-                  width: "100%",
-                  // fontFamily: "PinyonScript_400Regular",
-                  // fontFamily: "GrandHotel_400Regular",
+                  fontSize: z(14),
+                  color: "#fff",
                 }}
               >
-                Login
+                Forgot your password?
               </Text>
-            </PaperButton>
-
-            <View
+            </TouchableOpacity>
+          </View>
+          <PaperButton
+            onPress={sendLoginDataToServer}
+            style={styles.buttonStyle}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+            mode="contained"
+            uppercase={false}
+          >
+            <Text
               style={{
-                // alignSelf: "flex-end",
-                marginTop: s(26),
-                // marginTop: 30,
-                // backgroundColor: "pink",
-                flexDirection: "row-reverse",
+                fontSize: z(14),
+                color: "white",
+                fontFamily: "RobotoMedium",
+                width: "100%",
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Register");
-                }}
-                style={
-                  {
-                    // backgroundColor: "green",
-                  }
-                }
-              >
-                <Text
-                  style={{
-                    fontSize: z(15),
-                    color: "#c4c4c4",
-                    // fontFamily: "PlayfairBold",
-                    //   alignSelf: "flex-end",
-                    //   marginTop: 30,
-                    //   backgroundColor: "white",
-                  }}
-                >
-                  Don't have an account? Register here!
-                </Text>
-              </TouchableOpacity>
-            </View>
+              SIGN IN
+            </Text>
+          </PaperButton>
 
-            {/* <Button
-              title="Show"
-              onPress={() => {
-                setShowLayer(true);
-                toggleMenu(50 + width - (width - width * 0.8) / 2);
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginHorizontal: z(50),
+              width: "100%",
+              marginBottom: z(20),
+            }}
+          >
+            <View style={styles.line}></View>
+            <Text
+              style={{
+                marginHorizontal: z(20),
+                color: "#fff",
               }}
-            /> */}
+            >
+              Or
+            </Text>
+            <View style={styles.line}></View>
           </View>
 
-          {showLayer ? (
+          <PaperButton
+            onPress={signIn}
+            style={styles.googleButtonStyle}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+            mode="contained"
+            uppercase={false}
+            icon={() => <GoogleColoredIcon width={z(24)} height={z(24)} />}
+          >
+            <Text
+              style={{
+                fontSize: z(14),
+                color: "#7f7f7f",
+                fontFamily: "RobotoMedium",
+              }}
+            >
+              Connect with Google
+            </Text>
+          </PaperButton>
+
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              marginBottom: z(32),
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Register");
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: z(17),
+                  color: "#fff",
+                }}
+              >
+                Create account
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 60,
+    minHeight: "100%",
+  },
+  header: {
+    fontSize: 24,
+    color: "#fff",
+    paddingBottom: 10,
+    marginBottom: 80,
+    borderBottomColor: "#199187",
+    borderBottomWidth: 1,
+    fontWeight: "bold",
+  },
+  textinput: {
+    alignSelf: "stretch",
+    height: z(46),
+    marginBottom: z(20),
+    color: "#000",
+    borderBottomColor: "#f8f8f8",
+    borderBottomWidth: 1,
+    borderRadius: z(6),
+    fontFamily: "RobotoRegular",
+    fontSize: z(14),
+    // marginHorizontal: z(40),
+    // color: "#fff",
+    backgroundColor: "#eaeaec",
+    paddingHorizontal: z(10),
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#fff", // Customize the line color
+  },
+
+  // buttonStyle: {
+  //   marginTop: z(8),
+  // },
+  // buttonContent: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   // paddingVertical: 3,
+  //   // paddingHorizontal: 10,
+  //   borderRadius: 4,
+  //   elevation: 3,
+  //   backgroundColor: "#59cbbd",
+  //   width: "100%",
+
+  //   // backgroundColor: "#3b4650",
+  // },
+
+  buttonStyle: {
+    width: "100%",
+    height: z(46),
+    elevation: 5,
+    alignSelf: "center",
+    marginBottom: z(20),
+    // backgroundColor: "#59cbbd",
+    backgroundColor: "#84c4ff",
+    borderRadius: z(6),
+  },
+  googleButtonStyle: {
+    width: "100%",
+    height: z(46),
+    elevation: 5,
+    alignSelf: "center",
+    marginBottom: z(20),
+    // backgroundColor: "#59cbbd",
+    backgroundColor: "#fff",
+    // backgroundColor: "#ff6175",
+    borderRadius: z(6),
+  },
+  buttonContent: {
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
+
+    // backgroundColor: "pink",
+  },
+  buttonLabel: {
+    padding: 0,
+    margin: 0,
+    // width: "100%",
+    // backgroundColor: "green",
+  },
+  //   buttonLabel: {
+  //     fontSize: 34,
+  //     // backgroundColor: "green",
+  //     // customLabelSize: 20,
+  //     width: "90%",
+  //     height: "100%",
+  //     paddingVertical: 5,
+  //     paddingLeft: 15,
+  //     marginVertical: 0,
+  //     marginHorizontal: 0,
+  //     // textAlign: "left",
+  //   },
+  innerText: {
+    fontSize: 18,
+    color: "white",
+  },
+  goback: {
+    alignSelf: "flex-end",
+    marginTop: 20,
+  },
+  layer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 300,
+    backgroundColor: "transparent",
+  },
+  modal_content: {
+    // flex: 1,
+    // position: "absolute",
+    // top: 0,
+    // height: "40%",
+    // width: "100%",
+    // height: "40%",
+
+    backgroundColor: "transparent",
+    borderRadius: 15,
+    // justifyContent: "center",
+    // alignItems: "center",
+    paddingTop: 30,
+  },
+  input: {
+    marginTop: 20,
+    marginBottom: 10,
+    // marginHorizontal: 10,
+    // marginRight: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "black",
+    alignSelf: "center",
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    elevation: 5,
+    width: "100%",
+    // borderTopLeftRadius: 30,
+    // borderBottomLeftRadius: 30,
+  },
+
+  verifyButtonStyle: {
+    marginTop: 20,
+    // width: "80%",
+    // alignSelf: "center",
+    margin: 20,
+  },
+  verifyButtonContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    // paddingVertical: 3,
+    // paddingHorizontal: 10,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#59cbbd",
+    // backgroundColor: "#3b4650",
+  },
+
+  modal_close_button: {
+    alignSelf: "flex-start",
+    // backgroundColor: "grey",
+    position: "absolute",
+    top: 8,
+    right: 8,
+  },
+  modal_text: {
+    marginTop: 30,
+    marginBottom: 20,
+    color: "#435860",
+    fontWeight: "bold",
+    fontSize: 18,
+    alignSelf: "center",
+  },
+  modal_view: {
+    flex: 1,
+    backgroundColor: "#c7d8e6",
+    margin: 0,
+    padding: 10,
+    borderRadius: 10,
+    maxHeight: 300,
+    elevation: 5,
+  },
+
+  m_buttonStyle: {
+    width: z(100),
+    height: z(36),
+    elevation: 5,
+    alignSelf: "center",
+    marginBottom: z(13),
+  },
+  m_buttonContent: {
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
+  },
+  m_buttonLabel: {
+    padding: 0,
+    margin: 0,
+    width: "100%",
+  },
+});
+
+{
+  /* <Modal
+style={[styles.modal_content]}
+// avoidKeyboard={true}
+isVisible={isModalVisable}
+backdropOpacity={0.2}
+onBackButtonPress={() => {
+  setIsModalVisable(false);
+}}
+onBackdropPress={() => {
+  Keyboard.dismisz();
+}}
+onModalHide={() => {
+  setOtpEmail("");
+}}
+>
+{modal_content_state === "loading" ? (
+  <ActivityIndicator size="large" color="skyblue" />
+) : modal_content_state === "content" ? (
+  <TouchableWithoutFeedback
+    onPress={() => {
+      Keyboard.dismiss();
+    }}
+  >
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#c7d8e6",
+        margin: 0,
+        // padding: 10,
+        borderRadius: 10,
+        maxHeight: 300,
+        elevation: 5,
+      }}
+    >
+      <Text
+        style={{
+          // marginTop: 30,
+          // marginBottom: 20,
+          color: "#435860",
+          fontWeight: "bold",
+          fontSize: 18,
+          alignSelf: "center",
+        }}
+      >
+        Verification code is sent to email, code expires in 10
+        minutes
+      </Text>
+
+      {otpEmail ? <Text>{otpEmail}</Text> : null}
+
+      <TextInput
+        style={styles.input}
+        returnKeyType="done"
+        placeholder="Enter 6-digits code.."
+        value={otpInput}
+        onChangeText={(val) => {
+          setOtpInput(val);
+        }}
+      />
+
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+        }}
+      >
+        <PaperButton
+          onPress={() => {}}
+          style={[
+            styles.m_buttonStyle,
+            { backgroundColor: "#fff" },
+          ]}
+          contentStyle={styles.m_buttonContent}
+          labelStyle={styles.m_buttonLabel}
+          // color="green"
+          mode="contained"
+          uppercase={false}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: "PlayfairBold",
+              color: "#454545",
+            }}
+          >
+            Cancel
+          </Text>
+        </PaperButton>
+        <PaperButton
+          onPress={() => {}}
+          style={[
+            styles.m_buttonStyle,
+            { backgroundColor: "#f53649" },
+          ]}
+          contentStyle={styles.m_buttonContent}
+          labelStyle={styles.m_buttonLabel}
+          // color="green"
+          mode="contained"
+          uppercase={false}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: "PlayfairBold",
+              color: "#ffffffcc",
+            }}
+          >
+            Delete
+          </Text>
+        </PaperButton>
+      </View>
+      <PaperButton
+        onPress={handleVerification}
+        style={styles.verifyButtonStyle}
+        contentStyle={styles.verifyButtonContent}
+        //   labelStyle={styles.buttonLabel}
+        mode="contained"
+        uppercase={false}
+        //   icon="account-box"
+      >
+        <Text style={styles.innerText}>Verify</Text>
+      </PaperButton>
+
+      <TouchableOpacity
+        onPress={() => {
+          setIsModalVisable(false);
+        }}
+        style={styles.modal_close_button}
+      >
+
+        <ModalCloseIconSVG
+          fill={"#1A3442"}
+          width={26}
+          height={26}
+        />
+
+      </TouchableOpacity>
+    </View>
+  </TouchableWithoutFeedback>
+) : modal_content_state === "verified" ? (
+  <Text>Verified</Text>
+) : null}
+</Modal> */
+}
+
+{
+  /* {showLayer ? (
             <TouchableWithoutFeedback
               onPress={() => {
                 Keyboard.dismiss();
@@ -513,9 +761,11 @@ export default function Login({ navigation }) {
                 }}
               ></View>
             </TouchableWithoutFeedback>
-          ) : null}
+          ) : null} */
+}
 
-          <Animated.View
+{
+  /* <Animated.View
             style={[
               {
                 position: "absolute",
@@ -737,353 +987,73 @@ export default function Login({ navigation }) {
                 </View>
               ) : null}
             </View>
-          </Animated.View>
-
-          <Toast
-            topOffset={20 + insets.top}
-            onPress={() => {
-              Toast.hide();
-            }}
-          />
-        </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaProvider>
-  );
+          </Animated.View> */
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#36485f",
-    // alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 60,
-    minHeight: "100%",
-  },
-  header: {
-    fontSize: 24,
-    color: "#fff",
-    paddingBottom: 10,
-    marginBottom: 80,
-    borderBottomColor: "#199187",
-    borderBottomWidth: 1,
-    fontWeight: "bold",
-  },
-  textinput: {
-    alignSelf: "stretch",
-    height: s(50),
-    marginBottom: s(26),
-    color: "#fff",
-    borderBottomColor: "#f8f8f8",
-    borderBottomWidth: 1,
-    fontFamily: "Playfair",
-    fontSize: s(15),
-    marginHorizontal: s(50),
-    color: "#fff",
-  },
+// async function handleVerification() {
+//   // start loading
+//   // set_modal_content_state("loading");
+//   setIsLoading(true);
 
-  // buttonStyle: {
-  //   marginTop: s(8),
-  // },
-  // buttonContent: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   // paddingVertical: 3,
-  //   // paddingHorizontal: 10,
-  //   borderRadius: 4,
-  //   elevation: 3,
-  //   backgroundColor: "#59cbbd",
-  //   width: "100%",
+//   try {
+//     let otp_token = await SecureStore.getItemAsync("otp");
+//     let device_id = await SecureStore.getItemAsync("device_id");
 
-  //   // backgroundColor: "#3b4650",
-  // },
+//     let response = await fetch(`${global.server_address}/auth/verify-otp`, {
+//       method: "POST",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         otp_token: otp_token,
+//         otpInput: otpInput,
+//         device_id: device_id,
+//       }),
+//     });
+//     let data = await response.json();
 
-  buttonStyle: {
-    width: "100%",
-    height: s(38),
-    elevation: 5,
-    alignSelf: "center",
-    marginBottom: s(8),
-    backgroundColor: "#59cbbd",
-  },
-  buttonContent: {
-    padding: 0,
-    margin: 0,
-    height: "100%",
-    width: "100%",
-    // backgroundColor: "pink",
-  },
-  buttonLabel: {
-    padding: 0,
-    margin: 0,
-    width: "100%",
-    // backgroundColor: "green",
-  },
-  //   buttonLabel: {
-  //     fontSize: 34,
-  //     // backgroundColor: "green",
-  //     // customLabelSize: 20,
-  //     width: "90%",
-  //     height: "100%",
-  //     paddingVertical: 5,
-  //     paddingLeft: 15,
-  //     marginVertical: 0,
-  //     marginHorizontal: 0,
-  //     // textAlign: "left",
-  //   },
-  innerText: {
-    fontSize: 18,
-    color: "white",
-  },
-  goback: {
-    alignSelf: "flex-end",
-    marginTop: 20,
-  },
-  layer: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 300,
-    backgroundColor: "transparent",
-  },
-  modal_content: {
-    // flex: 1,
-    // position: "absolute",
-    // top: 0,
-    // height: "40%",
-    // width: "100%",
-    // height: "40%",
+//     // verified state
+//     if (data.type === "verified") {
+//       // save token
+//       await save("token", data.token);
 
-    backgroundColor: "transparent",
-    borderRadius: 15,
-    // justifyContent: "center",
-    // alignItems: "center",
-    paddingTop: 30,
-  },
-  input: {
-    marginTop: 20,
-    marginBottom: 10,
-    // marginHorizontal: 10,
-    // marginRight: 0,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "black",
-    alignSelf: "center",
-    backgroundColor: "#fff",
-    borderRadius: 30,
-    elevation: 5,
-    width: "100%",
-    // borderTopLeftRadius: 30,
-    // borderBottomLeftRadius: 30,
-  },
+//       set_modal_content_state("verified");
+//       setIsLoading(false);
+//       setTimeout(() => {
+//         dispatch(setAuth(true));
+//       }, 500);
+//       return;
+//     } else if (
+//       data.type === "expired" ||
+//       data.type === "failed" ||
+//       data.type === "error"
+//     ) {
+//       // stop loading, diplay try again message
+//       setIsLoading(false);
+//       // ErrorID: E010
+//       toast.show(data.message, { type: "error" });
+//       set_modal_content_state("content");
+//       return;
+//     }
+//     //   else if(data.type === 'failed'){
+//     //     toast.show(data.messag,{type:'error'}e)
+//     //     set_modal_content_state("content");
+//     //     return
 
-  verifyButtonStyle: {
-    marginTop: 20,
-    // width: "80%",
-    // alignSelf: "center",
-    margin: 20,
-  },
-  verifyButtonContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    // paddingVertical: 3,
-    // paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "#59cbbd",
-    // backgroundColor: "#3b4650",
-  },
+//     //   }else if(data.type === 'error'){
 
-  modal_close_button: {
-    alignSelf: "flex-start",
-    // backgroundColor: "grey",
-    position: "absolute",
-    top: 8,
-    right: 8,
-  },
-  modal_text: {
-    marginTop: 30,
-    marginBottom: 20,
-    color: "#435860",
-    fontWeight: "bold",
-    fontSize: 18,
-    alignSelf: "center",
-  },
-  modal_view: {
-    flex: 1,
-    backgroundColor: "#c7d8e6",
-    margin: 0,
-    padding: 10,
-    borderRadius: 10,
-    maxHeight: 300,
-    elevation: 5,
-  },
-
-  m_buttonStyle: {
-    width: s(100),
-    height: s(36),
-    elevation: 5,
-    alignSelf: "center",
-    marginBottom: s(13),
-  },
-  m_buttonContent: {
-    padding: 0,
-    margin: 0,
-    height: "100%",
-    width: "100%",
-  },
-  m_buttonLabel: {
-    padding: 0,
-    margin: 0,
-    width: "100%",
-  },
-});
-
-{
-  /* <Modal
-style={[styles.modal_content]}
-// avoidKeyboard={true}
-isVisible={isModalVisable}
-backdropOpacity={0.2}
-onBackButtonPress={() => {
-  setIsModalVisable(false);
-}}
-onBackdropPress={() => {
-  Keyboard.dismiss();
-}}
-onModalHide={() => {
-  setOtpEmail("");
-}}
->
-{modal_content_state === "loading" ? (
-  <ActivityIndicator size="large" color="skyblue" />
-) : modal_content_state === "content" ? (
-  <TouchableWithoutFeedback
-    onPress={() => {
-      Keyboard.dismiss();
-    }}
-  >
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#c7d8e6",
-        margin: 0,
-        // padding: 10,
-        borderRadius: 10,
-        maxHeight: 300,
-        elevation: 5,
-      }}
-    >
-      <Text
-        style={{
-          // marginTop: 30,
-          // marginBottom: 20,
-          color: "#435860",
-          fontWeight: "bold",
-          fontSize: 18,
-          alignSelf: "center",
-        }}
-      >
-        Verification code is sent to email, code expires in 10
-        minutes
-      </Text>
-
-      {otpEmail ? <Text>{otpEmail}</Text> : null}
-
-      <TextInput
-        style={styles.input}
-        returnKeyType="done"
-        placeholder="Enter 6-digits code.."
-        value={otpInput}
-        onChangeText={(val) => {
-          setOtpInput(val);
-        }}
-      />
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-        }}
-      >
-        <PaperButton
-          onPress={() => {}}
-          style={[
-            styles.m_buttonStyle,
-            { backgroundColor: "#fff" },
-          ]}
-          contentStyle={styles.m_buttonContent}
-          labelStyle={styles.m_buttonLabel}
-          // color="green"
-          mode="contained"
-          uppercase={false}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: "PlayfairBold",
-              color: "#454545",
-            }}
-          >
-            Cancel
-          </Text>
-        </PaperButton>
-        <PaperButton
-          onPress={() => {}}
-          style={[
-            styles.m_buttonStyle,
-            { backgroundColor: "#f53649" },
-          ]}
-          contentStyle={styles.m_buttonContent}
-          labelStyle={styles.m_buttonLabel}
-          // color="green"
-          mode="contained"
-          uppercase={false}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: "PlayfairBold",
-              color: "#ffffffcc",
-            }}
-          >
-            Delete
-          </Text>
-        </PaperButton>
-      </View>
-      <PaperButton
-        onPress={handleVerification}
-        style={styles.verifyButtonStyle}
-        contentStyle={styles.verifyButtonContent}
-        //   labelStyle={styles.buttonLabel}
-        mode="contained"
-        uppercase={false}
-        //   icon="account-box"
-      >
-        <Text style={styles.innerText}>Verify</Text>
-      </PaperButton>
-
-      <TouchableOpacity
-        onPress={() => {
-          setIsModalVisable(false);
-        }}
-        style={styles.modal_close_button}
-      >
-
-        <ModalCloseIconSVG
-          fill={"#1A3442"}
-          width={26}
-          height={26}
-        />
-
-      </TouchableOpacity>
-    </View>
-  </TouchableWithoutFeedback>
-) : modal_content_state === "verified" ? (
-  <Text>Verified</Text>
-) : null}
-</Modal> */
-}
+//     //     toast.show(data.messag,{type:'error'}e)
+//     //     set_modal_content_state("content");
+//     //     return
+//     //   }
+//     else {
+//       toast.show("ErrorID: E009", { type: "error" });
+//       return;
+//     }
+//   } catch (error) {
+//     console.log("ErrorID E008: ", error);
+//     toast.show("ErrorID: E008", { type: "error" });
+//     return;
+//   }
+// }

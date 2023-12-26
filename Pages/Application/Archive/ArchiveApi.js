@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSocket } from "../../SocketContext/SocketContext";
 import { z } from "../../../utils/scaling";
 import * as SecureStore from "expo-secure-store";
 import GoBackSVG from "../../../Components/GoBackSVG";
@@ -22,7 +23,7 @@ import { Button as PaperButton } from "react-native-paper";
 import ArchiveIcon from "../../../Components/ArchiveIcon";
 
 import Toast, { BaseToast } from "react-native-toast-message";
-
+import { useToast } from "react-native-toast-notifications";
 import MonthButton from "./components/MonthButton";
 import YearButton from "./components/YearButton";
 
@@ -44,8 +45,9 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 export default function ArchiveApi({ navigation }) {
+  const socket = useSocket();
   const insets = useSafeAreaInsets();
-
+  const toast = useToast();
   const dispatch = useDispatch();
   const dailyWallpapers = useSelector((state) => state.dailyWallpapers.value);
   const permanentWallpapers = useSelector(
@@ -56,64 +58,98 @@ export default function ArchiveApi({ navigation }) {
 
   // const angels = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 
-  async function fetchWallpapers() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-      const response = await fetch(
-        `${global.server_address}/api/get-all-wallpapers`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: currentToken,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      if (data.type === "success") {
-        let total = {};
-
-        for (let i = 0; i < data.result.length; i++) {
-          let row = data.result[i];
-          let year = row.date.substring(0, 4);
-          let month = row.date.substring(5, 7);
-          let day = row.date.substring(8, 10);
-
-          if (!total[year]) {
-            total[year] = {};
-          }
-
-          if (!total[year][month]) {
-            total[year][month] = [];
-          }
-
-          total[year][month].push(row);
-        }
-
-        dispatch(
-          setPermanentWallpapers({
-            date: data.date,
-            value: total,
-          })
-        );
-      } else if (data.type === "wrong-device") {
-        deleteValueFor("token");
-        dispatch(setAuth(false));
-      } else if (data.type === "error") {
-        // ErrorID: E052
-        errorToast(data.message);
-      } else {
-        errorToast("ErrorID: E051");
-      }
-    } catch (error) {
-      console.log("ErrorID: E050: ", error);
-      errorToast("ErrorID: E050");
-    }
+  function fetchWallpapers() {
+    socket.emit("get-all-wallpapers");
   }
+
+  useEffect(() => {
+    socket.on("all-wallpapers", (data) => {
+      let total = {};
+
+      for (let i = 0; i < data.result.length; i++) {
+        let row = data.result[i];
+        let year = row.date.substring(0, 4);
+        let month = row.date.substring(5, 7);
+        let day = row.date.substring(8, 10);
+
+        if (!total[year]) {
+          total[year] = {};
+        }
+
+        if (!total[year][month]) {
+          total[year][month] = [];
+        }
+
+        total[year][month].push(row);
+      }
+
+      dispatch(
+        setPermanentWallpapers({
+          date: data.date,
+          value: total,
+        })
+      );
+    });
+  }, []);
+
+  // async function fetchWallpapers() {
+  //   try {
+  //     let currentToken = await SecureStore.getItemAsync("token");
+  //     const response = await fetch(
+  //       `${global.server_address}/api/get-all-wallpapers`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           token: currentToken,
+  //         }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+  //     if (data.type === "success") {
+  //       let total = {};
+
+  //       for (let i = 0; i < data.result.length; i++) {
+  //         let row = data.result[i];
+  //         let year = row.date.substring(0, 4);
+  //         let month = row.date.substring(5, 7);
+  //         let day = row.date.substring(8, 10);
+
+  //         if (!total[year]) {
+  //           total[year] = {};
+  //         }
+
+  //         if (!total[year][month]) {
+  //           total[year][month] = [];
+  //         }
+
+  //         total[year][month].push(row);
+  //       }
+
+  //       dispatch(
+  //         setPermanentWallpapers({
+  //           date: data.date,
+  //           value: total,
+  //         })
+  //       );
+  //     } else if (data.type === "wrong-device") {
+  //       deleteValueFor("token");
+  //       dispatch(setAuth(false));
+  //     } else if (data.type === "error") {
+  //       // ErrorID: E052
+  //       errorToast(data.message);
+  //     } else {
+  //       errorToast("ErrorID: E051");
+  //     }
+  //   } catch (error) {
+  //     console.log("ErrorID: E050: ", error);
+  //     errorToast("ErrorID: E050");
+  //   }
+  // }
 
   async function getAllWallpapers() {
     try {
@@ -139,7 +175,7 @@ export default function ArchiveApi({ navigation }) {
       }
     } catch (error) {
       console.log("ErrorID: E053: ", error);
-      errorToast("ErrorID: E053");
+      toast.show("ErrorID: E053", { type: "error" });
     }
   }
 
@@ -288,80 +324,79 @@ export default function ArchiveApi({ navigation }) {
 
   try {
     return (
-      <SafeAreaProvider>
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
         <View
-          style={{
-            flex: 1,
-          }}
+          // source={require("../../../assets/001.jpg")}
+          // source={require("../../../assets/whiteLayer.png")}
+          // blurRadius={2}
+          // resizeMode="cover"
+          style={[
+            {
+              flex: 1,
+              alignItems: "center",
+              // justifyContent: "center",
+              // paddingTop:
+              //   height * 0.04 < 24
+              //     ? insets.top + height * 0.005
+              //     : insets.top + height * 0.015,
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom,
+              // backgroundColor: "#C88781",
+            },
+            // styles.container,
+          ]}
         >
-          <ImageBackground
-            source={require("../../../assets/pixel4.jpg")}
-            // source={require("../../../assets/whiteLayer.png")}
-            blurRadius={2}
-            resizeMode="cover"
-            style={[
-              {
-                flex: 1,
-                alignItems: "center",
-                // justifyContent: "center",
-                // paddingTop:
-                //   height * 0.04 < 24
-                //     ? insets.top + height * 0.005
-                //     : insets.top + height * 0.015,
-                paddingTop: insets.top,
-                paddingBottom: insets.bottom,
-                backgroundColor: "#C88781",
-              },
-              // styles.container,
-            ]}
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 17,
+            }}
           >
-            <View
+            <TouchableOpacity
               style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingHorizontal: 17,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  // zIndex: 2,
-                  // position: "absolute",
-                  // top: 30,
-                  // left: 17,
-                  width: z(40),
-                  height: z(40),
-                  backgroundColor: "rgba(0,0,0,0.3)",
-                  borderRadius: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              >
-                <GoBackSVG fill={"#fff"} width={15} height={15} />
-              </TouchableOpacity>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
+                // zIndex: 2,
+                // position: "absolute",
+                // top: 30,
+                // left: 17,
+                width: z(40),
+                height: z(40),
+                backgroundColor: "rgba(0,0,0,0.3)",
+                borderRadius: 100,
                 justifyContent: "center",
-                flexDirection: "column-reverse",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                navigation.goBack();
               }}
             >
-              {renderYears()}
-              {/* {permanentWallpapers
+              <GoBackSVG fill={"#fff"} width={15} height={15} />
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column-reverse",
+            }}
+          >
+            {renderYears()}
+            {/* {permanentWallpapers
               ? Object.keys(permanentWallpapers.value).map((year) => {
                   
                   );
                 })
               : null} */}
-            </View>
+          </View>
 
-            {/* <View
+          {/* <View
             style={{
               position: "absolute",
               top: 0,
@@ -405,28 +440,20 @@ export default function ArchiveApi({ navigation }) {
             ></View>
           </View> */}
 
-            <Toast
-              topOffset={insets.top + 5}
-              // config={toastConfig}
-              onPress={() => {
-                Toast.hide();
-              }}
-            />
-            {/* <Button
+          {/* <Button
             title="hello"
             onPress={() => {
               console.log(permanentWallpapers);
             }}
           /> */}
-            {/* <Button
+          {/* <Button
             title="go"
             onPress={() => {
               navigation.navigate("ArchiveMonth");
             }}
           /> */}
-          </ImageBackground>
         </View>
-      </SafeAreaProvider>
+      </View>
     );
   } catch (error) {
     console.log("ErrorID: E054: ", error);

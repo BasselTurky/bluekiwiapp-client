@@ -2,7 +2,7 @@
   "expo": {
     "name": "Blue Kiwi",
     "slug": "BlueKiwi",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,6 +11,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
+
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -20,12 +21,13 @@
       "bundleIdentifier": "com.basselturky.bluekiwiapp"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
       "package": "com.basselturky.bluekiwiapp",
-      "versionCode": 4
+      "versionCode": 12
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,7 +36,8 @@
       "eas": {
         "projectId": "a4c72648-0f2a-4523-bdb9-a4861f797947"
       }
-    }
+    },
+    "plugins": ["@react-native-google-signin/google-signin"]
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4213110958189376~3405929057",

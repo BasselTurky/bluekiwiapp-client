@@ -11,47 +11,31 @@ import {
   Dimensions,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import Toast from "react-native-toast-message";
+import { useToast } from "react-native-toast-notifications";
 
 import { Button as PaperButton } from "react-native-paper";
 
 import GoBackSVG from "../../Components/GoBackSVG";
 
 import { s } from "react-native-size-matters";
-
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { z } from "../../utils/scaling";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 var width = Dimensions.get("window").width;
 var height = Dimensions.get("window").height;
 
 export default function Register({ navigation }) {
   const insets = useSafeAreaInsets();
-
+  const toast = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [paypal, setPaypal] = useState("");
 
   const nameInput = useRef();
-  const lastNameInput = useRef();
   const emailInput = useRef();
   const passwordInput = useRef();
   const confirmPasswordInput = useRef();
-  const paypalInput = useRef();
-
-  const errorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
 
   const sendRegisterDataToServer = async () => {
     let regex = /^[a-zA-Z]+$/;
@@ -64,23 +48,25 @@ export default function Register({ navigation }) {
       // paypal === ""
     ) {
       //   console.log("Fields can't be empty!!");
-      errorToast("Fields can't be empty!!");
+      toast.show("Fields can't be empty!!", { type: "error" });
     } else if (!regex.test(name)) {
       //   console.log("Name should include letters only");
-      errorToast("Name should include letters only");
+      toast.show("Name should include letters only", { type: "error" });
     } else if (!emailRegex.test(email)) {
       //   console.log("Please enter valid email format");
-      errorToast("Please enter valid email format");
+      toast.show("Please enter valid email format", { type: "error" });
     } else if (password.length < 8 || password.length > 16) {
       //   console.log("Password should be between 8-16 characters");
-      errorToast("Password should be between 8-16 characters");
+      toast.show("Password should be between 8-16 characters", {
+        type: "error",
+      });
     } else if (password !== confirmPassword) {
       //   console.log("Password is not matching");
-      errorToast("Password is not matching");
+      toast.show("Password is not matching", { type: "error" });
     }
     //  else if (!emailRegex.test(paypal)) {
     //   //   console.log("Please enter valid email format");
-    //   errorToast("Please enter valid email format");
+    //   toast.show("Please enter valid email format",{type:'error'});
     // }
     else {
       try {
@@ -105,11 +91,8 @@ export default function Register({ navigation }) {
 
         if (data.type === "success") {
           // console.log(data.message);
-          Toast.show({
+          toast.show("Registeration Complete", {
             type: "success",
-            text1: data.message,
-            text2: "Registeration Complete",
-            visibilityTime: 6000,
           });
 
           setName("");
@@ -123,160 +106,159 @@ export default function Register({ navigation }) {
         } else if (data.type === "error") {
           // ErrorID: E013
           // ErrorID: E014
-          errorToast(data.message);
+          toast.show(data.message, { type: "error" });
         } else {
-          errorToast("ErrorID: E012");
+          toast.show("ErrorID: E012", { type: "error" });
         }
       } catch (error) {
         console.log("ErrorID E011: ", error);
-        errorToast("ErrorID: E011");
+        toast.show("ErrorID: E011", { type: "error" });
       }
     }
   };
 
   return (
-    <SafeAreaProvider>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          // backgroundColor: "#36485f",
+          // alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: s(50),
+          minHeight: "100%",
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         }}
       >
         <View
           style={{
-            flex: 1,
-            backgroundColor: "#36485f",
-            // alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: s(50),
-            minHeight: "100%",
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
+            marginTop: s(height * 0.12),
+            // backgroundColor: "pink",
           }}
         >
-          <View
+          <Text
             style={{
-              marginTop: s(height * 0.12),
-              // backgroundColor: "pink",
+              fontSize: s(25),
+              color: "#fff",
+              paddingBottom: s(8),
+              // backgroundColor: "green",
+              // fontWeight: "bold",
+              // fontFamily: "ChelaOne_400Regular",
+              // fontFamily: "Graduate_400Regular",
+              // justifyContent: "center",
+              // alignItems: "center",
+              // fontFamily: "PinyonScript_400Regular",
+              // fontFamily: "GrandHotel_400Regular",
+              fontFamily: "Playfair",
+              // alignSelf: "center",
+              borderBottomColor: "#fff",
+              borderBottomWidth: 1,
+              textShadowColor: "#9ac8ec",
+              // textShadowColor: "#2196F3",
+              textShadowOffset: {
+                width: 2,
+                height: 2,
+              },
+              textShadowRadius: 10,
             }}
           >
-            <Text
-              style={{
-                fontSize: s(25),
-                color: "#fff",
-                paddingBottom: s(8),
-                // backgroundColor: "green",
-                // fontWeight: "bold",
-                // fontFamily: "ChelaOne_400Regular",
-                // fontFamily: "Graduate_400Regular",
-                // justifyContent: "center",
-                // alignItems: "center",
-                // fontFamily: "PinyonScript_400Regular",
-                // fontFamily: "GrandHotel_400Regular",
-                fontFamily: "Playfair",
-                // alignSelf: "center",
-                borderBottomColor: "#199187",
-                borderBottomWidth: 1,
-                textShadowColor: "#9ac8ec",
-                // textShadowColor: "#2196F3",
-                textShadowOffset: {
-                  width: 2,
-                  height: 2,
-                },
-                textShadowRadius: 10,
-              }}
-            >
-              Registeration
-            </Text>
-          </View>
+            Create Account
+          </Text>
+        </View>
 
-          <View
+        <View
+          style={{
+            flex: 1,
+            position: "absolute",
+            top: insets.top,
+            bottom: insets.bottom,
+            right: 0,
+            left: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior="padding"
+            enabled={true}
+            keyboardVerticalOffset={s(90)}
             style={{
-              flex: 1,
-              position: "absolute",
-              top: insets.top,
-              bottom: insets.bottom,
-              right: 0,
-              left: 0,
-              justifyContent: "center",
-              alignItems: "center",
+              width: "100%",
             }}
           >
-            <KeyboardAvoidingView
-              behavior="padding"
-              enabled={true}
-              keyboardVerticalOffset={s(90)}
-              style={{
-                width: "100%",
+            <TextInput
+              ref={nameInput}
+              onSubmitEditing={() => {
+                emailInput.current?.focus();
               }}
-            >
-              <TextInput
-                ref={nameInput}
-                onSubmitEditing={() => {
-                  emailInput.current?.focus();
-                }}
-                value={name}
-                onChangeText={(val) => {
-                  setName(val);
-                }}
-                style={styles.textinput}
-                placeholder="Name"
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="next"
-              />
-              <TextInput
-                ref={emailInput}
-                onSubmitEditing={() => {
-                  passwordInput.current?.focus();
-                }}
-                value={email}
-                onChangeText={(val) => {
-                  setEmail(val);
-                }}
-                style={styles.textinput}
-                placeholder="E-mail address"
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="next"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-              />
-              <TextInput
-                ref={passwordInput}
-                onSubmitEditing={() => {
-                  confirmPasswordInput.current?.focus();
-                }}
-                value={password}
-                onChangeText={(val) => {
-                  setPassword(val);
-                }}
-                style={styles.textinput}
-                placeholder="Password..."
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="next"
-                secureTextEntry
-              />
-              <TextInput
-                ref={confirmPasswordInput}
-                // onSubmitEditing={() => {
-                //   paypalInput.current?.focus();
-                // }}
-                value={confirmPassword}
-                onChangeText={(val) => {
-                  setConfirmPassword(val);
-                }}
-                style={styles.textinput}
-                placeholder="Confirm password..."
-                placeholderTextColor={"#c7d8e6"}
-                returnKeyType="done"
-                secureTextEntry
-              />
-            </KeyboardAvoidingView>
-          </View>
+              value={name}
+              onChangeText={(val) => {
+                setName(val);
+              }}
+              style={styles.textinput}
+              placeholder="Name"
+              placeholderTextColor={"#c7d8e6"}
+              returnKeyType="next"
+            />
+            <TextInput
+              ref={emailInput}
+              onSubmitEditing={() => {
+                passwordInput.current?.focus();
+              }}
+              value={email}
+              onChangeText={(val) => {
+                setEmail(val);
+              }}
+              style={styles.textinput}
+              placeholder="E-mail address"
+              placeholderTextColor={"#c7d8e6"}
+              returnKeyType="next"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+            <TextInput
+              ref={passwordInput}
+              onSubmitEditing={() => {
+                confirmPasswordInput.current?.focus();
+              }}
+              value={password}
+              onChangeText={(val) => {
+                setPassword(val);
+              }}
+              style={styles.textinput}
+              placeholder="Password..."
+              placeholderTextColor={"#c7d8e6"}
+              returnKeyType="next"
+              secureTextEntry
+            />
+            <TextInput
+              ref={confirmPasswordInput}
+              // onSubmitEditing={() => {
+              //   paypalInput.current?.focus();
+              // }}
+              value={confirmPassword}
+              onChangeText={(val) => {
+                setConfirmPassword(val);
+              }}
+              style={styles.textinput}
+              placeholder="Confirm password..."
+              placeholderTextColor={"#c7d8e6"}
+              returnKeyType="done"
+              secureTextEntry
+            />
+          </KeyboardAvoidingView>
+        </View>
 
-          {/* <Form /> */}
+        {/* <Form /> */}
 
-          {/* <TextInput
+        {/* <TextInput
           ref={paypalInput}
           value={paypal}
           onChangeText={(val) => {
@@ -287,78 +269,82 @@ export default function Register({ navigation }) {
           placeholderTextColor={"#c7d8e6"}
           returnKeyType="done"
         /> */}
-          <View
-            style={{
-              marginBottom: s(height * 0.08),
-            }}
+        <View
+          style={{
+            marginBottom: s(height * 0.08),
+          }}
+        >
+          <PaperButton
+            onPress={sendRegisterDataToServer}
+            style={styles.buttonStyle}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+            mode="contained"
+            uppercase={false}
+            //   icon="account-box"
           >
-            <PaperButton
-              onPress={sendRegisterDataToServer}
-              style={styles.buttonStyle}
-              contentStyle={styles.buttonContent}
-              labelStyle={styles.buttonLabel}
-              mode="contained"
-              uppercase={false}
-              //   icon="account-box"
-            >
-              <Text
-                style={{
-                  fontSize: s(14),
-                  color: "white",
-                  // fontFamily: "PlayfairBold",
-                  fontFamily: "Graduate_400Regular",
-                }}
-              >
-                Sign up
-              </Text>
-            </PaperButton>
-            <View
+            <Text
               style={{
-                flexDirection: "row-reverse",
-                marginTop: s(28),
+                fontSize: s(14),
+                color: "white",
+                // fontFamily: "PlayfairBold",
+                fontFamily: "Graduate_400Regular",
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Login");
+              Sign up
+            </Text>
+          </PaperButton>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              marginTop: s(28),
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            >
+              <View
+                style={{
+                  // alignSelf: "flex-end",
+
+                  flexDirection: "row",
+                  // justifyContent: "center",
+                  alignItems: "center",
+                  // backgroundColor: "grey",
                 }}
               >
-                <View
-                  style={{
-                    // alignSelf: "flex-end",
-
-                    flexDirection: "row",
-                    // justifyContent: "center",
-                    alignItems: "center",
-                    // backgroundColor: "grey",
-                  }}
-                >
-                  <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
-                  <Text
+                {/* <View
                     style={{
-                      fontSize: s(13),
-                      color: "#c4c4c4",
-                      fontFamily: "PlayfairBold",
-                      marginLeft: s(8),
-                      paddingBottom: s(2),
+                      backgroundColor: "rgba(0,0,0,0.2)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: z(30),
+                      height: z(30),
+                      borderRadius: z(30),
                     }}
                   >
-                    Back to Login page
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+                    
+                  </View> */}
+                <GoBackSVG fill={"#fff"} width={s(12)} height={s(12)} />
+                <Text
+                  style={{
+                    fontSize: s(13),
+                    color: "#fff",
+                    fontFamily: "PlayfairBold",
+                    marginLeft: s(8),
+                    paddingBottom: s(2),
+                  }}
+                >
+                  Already have an account? Sign in
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-
-          <Toast
-            topOffset={20}
-            onPress={() => {
-              Toast.hide();
-            }}
-          />
         </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaProvider>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -419,22 +405,27 @@ const styles = StyleSheet.create({
   // },
   buttonStyle: {
     width: "100%",
-    height: s(38),
+    height: z(46),
     elevation: 5,
     alignSelf: "center",
-    marginBottom: s(8),
-    backgroundColor: "#59cbbd",
+    marginBottom: z(20),
+    // backgroundColor: "#59cbbd",
+    backgroundColor: "#84c4ff",
+    borderRadius: z(6),
   },
   buttonContent: {
     padding: 0,
     margin: 0,
     height: "100%",
     width: "100%",
+
+    // backgroundColor: "pink",
   },
   buttonLabel: {
     padding: 0,
     margin: 0,
     width: "100%",
+    // backgroundColor: "green",
   },
 
   innerText: {
