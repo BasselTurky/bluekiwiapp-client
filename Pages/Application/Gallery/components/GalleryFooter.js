@@ -19,6 +19,8 @@ import ScrollUpButton from "./SubComponents/ScrollUpButton";
 import { setIsWebViewReady } from "../../../../Features/isWebViewReady";
 import { setUrlData } from "../../../../Features/urlData";
 import { setIsLoading } from "../../../../Features/isLoading";
+
+import { setModalVisible } from "../../../../Features/modalVisible";
 // import next and back icons
 export default function GalleryFooter({
   bottomTabTranslate,
@@ -137,7 +139,7 @@ export default function GalleryFooter({
             }}
             onPress={() => {
               if (Number(pages.total > 1)) {
-                //   setShowPageSelector(true);
+                dispatch(setModalVisible(true));
               }
             }}
           >

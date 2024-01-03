@@ -8,14 +8,52 @@ import {
   TextInput,
 } from "react-native";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { z, zx } from "../../../../utils/scaling";
 import GoBackSVG from "../../../../Components/GoBackSVG";
+import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button as PaperButton } from "react-native-paper";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
+import { useSocket } from "../../../SocketContext/SocketContext";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function DeleteAccount({ setShowDeleteAccount, light }) {
   const insets = useSafeAreaInsets();
+  const socket = useSocket();
+  const [inputText, setInputText] = React.useState("");
+  const auth = useSelector((state) => state.auth.value);
+
+  async function handleDelete() {
+    if (inputText === "DELETE") {
+      socket.emit("account-delete");
+
+      if (auth === "default") {
+        // let currentToken = await SecureStore.getItemAsync("token");
+        // // console.log("default");
+        // if (currentToken) {
+        //   socket.emit("account-delete", currentToken);
+        //   // console.log("default 2");
+        // }
+      } else if (auth === "google") {
+        const currentUser = await GoogleSignin.getCurrentUser();
+        console.log(
+          "🚀 ~ file: DeleteAccount.js:40 ~ handleDelete ~ currentUser:",
+          currentUser
+        );
+        // save currentUser in redux
+        // console.log("google");
+
+        // socket.emit(
+        //   "account-delete",
+        //   currentUser.user.id,
+        //   currentUser.user.email,
+        //   currentUser.user.givenName
+        // );
+        // console.log("checked googleUser");
+      }
+    }
+  }
   return (
     <View
       style={{
@@ -131,9 +169,9 @@ export default function DeleteAccount({ setShowDeleteAccount, light }) {
           >
             <TextInput
               //   ref={confirmPasswordInput}
-              //   value={confirmPassword}
+              value={inputText}
               onChangeText={(val) => {
-                // setConfirmPassword(val);
+                setInputText(val);
               }}
               style={styles.textinput}
               placeholder="Enter"
@@ -144,7 +182,23 @@ export default function DeleteAccount({ setShowDeleteAccount, light }) {
           </KeyboardAvoidingView>
 
           <PaperButton
-            // onPress={}
+            onPress={async () => {
+              const currentUser = await GoogleSignin.getCurrentUser();
+              console.log(currentUser);
+
+              const res = await fetch(
+                "https://www.googleapis.com/oauth2/v3/tokeninfo",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ id_token: currentUser.idToken }),
+                }
+              );
+
+              console.log(res.json());
+            }}
             style={styles.googleButtonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}

@@ -39,6 +39,7 @@ import urlDataReducer from "./Features/urlData";
 import isLoadingReducer from "./Features/isLoading";
 import isWebviewLoadedReducer from "./Features/isWebviewLoaded";
 import isViewLoginReducer from "./Features/isViewLogin";
+import modalVisibleReducer from "./Features/modalVisible";
 
 enableMapSet();
 
@@ -75,6 +76,7 @@ const rootReducer = combineReducers({
   isLoading: isLoadingReducer,
   isWebviewLoaded: isWebviewLoadedReducer,
   isViewLogin: isViewLoginReducer,
+  modalVisible: modalVisibleReducer,
 });
 
 const persistConfig = {

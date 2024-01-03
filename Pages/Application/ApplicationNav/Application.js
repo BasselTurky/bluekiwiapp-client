@@ -32,9 +32,9 @@ import { addCoin } from "../../../Features/coins";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-import { enableMapSet } from "immer";
+// import { enableMapSet } from "immer";
 
-enableMapSet();
+// enableMapSet();
 const Stack = createNativeStackNavigator();
 
 async function deleteValueFor(key) {
@@ -106,16 +106,15 @@ export default function Application() {
 
       socket.on("disconnect", async () => {
         // force logout the user
-        deleteValueFor("token");
+        // deleteValueFor("token");
         // console.log("token deleted");
-        await GoogleSignin.signOut();
+        // await GoogleSignin.signOut();
         // console.log("google signed out");
-        dispatch(setAuth(false));
+        // dispatch(setAuth(false));
         // delete token
-
-        toast.show("Lost connection with the server", {
-          type: "normal",
-        });
+        // toast.show("Lost connection with the server", {
+        //   type: "normal",
+        // });
       });
 
       socket.on("force-disconnect", async () => {

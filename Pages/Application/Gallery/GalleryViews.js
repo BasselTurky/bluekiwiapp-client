@@ -19,6 +19,7 @@ import GalleryHeader from "./components/GalleryHeader";
 import GalleryFooter from "./components/GalleryFooter";
 import LoadingLayer from "./components/LoadingLayer";
 import PageChangingModal from "./components/PageChangingModal";
+import { setModalVisible } from "../../../Features/modalVisible";
 // import GalleryTabs from "./GalleryTabs";
 
 import GalleryWebView from "./GalleryWebView";
@@ -56,8 +57,15 @@ export default React.memo(function GalleryViews({
 
   //   searchInputRef,
 }) {
+  const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setModalVisible(false));
+    };
+  }, []);
 
   // GalleryHome, Favorite and Header
   //   const [focused, setFocused] = useState("gallery");
@@ -250,7 +258,7 @@ export default React.memo(function GalleryViews({
         />
       ) : null}
       <GalleryWebView searchInputRef={searchInputRef} />
-      {/* <PageChangingModal /> */}
+      <PageChangingModal />
       <LoadingLayer />
     </View>
   );
