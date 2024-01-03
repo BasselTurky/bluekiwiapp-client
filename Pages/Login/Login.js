@@ -60,6 +60,26 @@ export default function Login({ navigation }) {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+      // TODO send token to backend, verify it, extract data, add data to jwt, send it back to frontend, store it in secure store, attach token to each socket io connection
+
+      let response = await fetch(
+        `${global.server_address}/auth/sign-google-idToken`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idToken: userInfo.idToken,
+          }),
+        }
+      );
+
+      let data = await response.json();
+
+      await save("token", data.token);
+
       dispatch(setAuth("google"));
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

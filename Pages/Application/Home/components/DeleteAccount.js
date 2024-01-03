@@ -25,34 +25,43 @@ export default function DeleteAccount({ setShowDeleteAccount, light }) {
   const auth = useSelector((state) => state.auth.value);
 
   async function handleDelete() {
-    if (inputText === "DELETE") {
-      socket.emit("account-delete");
+    // if (inputText === "DELETE") {
+    //   socket.emit("account-delete");
 
-      if (auth === "default") {
-        // let currentToken = await SecureStore.getItemAsync("token");
-        // // console.log("default");
-        // if (currentToken) {
-        //   socket.emit("account-delete", currentToken);
-        //   // console.log("default 2");
-        // }
-      } else if (auth === "google") {
-        const currentUser = await GoogleSignin.getCurrentUser();
-        console.log(
-          "🚀 ~ file: DeleteAccount.js:40 ~ handleDelete ~ currentUser:",
-          currentUser
-        );
-        // save currentUser in redux
-        // console.log("google");
+    if (auth === "default") {
+      // let currentToken = await SecureStore.getItemAsync("token");
+      // // console.log("default");
+      // if (currentToken) {
+      //   socket.emit("account-delete", currentToken);
+      //   // console.log("default 2");
+      // }
+    } else if (auth === "google") {
+      const clientId =
+        "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com";
+      const clientId__ =
+        "525928726797-ij7d64fhsoaer3i9l8b62h52da3iqqpn.apps.googleusercontent.com";
+      const clientId_ =
+        "109153830656-tafdv45ti0dc8c2vs895gl9tlub28r0h.apps.googleusercontent.com";
+      const tokens = await GoogleSignin.getTokens();
+      console.log(
+        "🚀 ~ file: DeleteAccount.js:40 ~ handleDelete ~ tokens:",
+        tokens.idToken
+      );
+      const currentUser = await GoogleSignin.getCurrentUser();
 
-        // socket.emit(
-        //   "account-delete",
-        //   currentUser.user.id,
-        //   currentUser.user.email,
-        //   currentUser.user.givenName
-        // );
-        // console.log("checked googleUser");
-      }
+      socket.emit("account-delete", clientId, tokens.idToken);
+      // save currentUser in redux
+      // console.log("google");
+
+      // socket.emit(
+      //   "account-delete",
+      //   currentUser.user.id,
+      //   currentUser.user.email,
+      //   currentUser.user.givenName
+      // );
+      // console.log("checked googleUser");
     }
+    // }
   }
   return (
     <View
@@ -182,23 +191,14 @@ export default function DeleteAccount({ setShowDeleteAccount, light }) {
           </KeyboardAvoidingView>
 
           <PaperButton
-            onPress={async () => {
-              const currentUser = await GoogleSignin.getCurrentUser();
-              console.log(currentUser);
+            onPress={
+              // async () => {
+              // const currentUser = await GoogleSignin.getCurrentUser();
+              // console.log(currentUser);
 
-              const res = await fetch(
-                "https://www.googleapis.com/oauth2/v3/tokeninfo",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ id_token: currentUser.idToken }),
-                }
-              );
-
-              console.log(res.json());
-            }}
+              handleDelete
+              // }
+            }
             style={styles.googleButtonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}

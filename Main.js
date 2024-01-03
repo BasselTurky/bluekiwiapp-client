@@ -77,7 +77,32 @@ export default function Main() {
       const isSignedIn = await GoogleSignin.isSignedIn();
 
       if (isSignedIn) {
-        dispatch(setAuth("google"));
+        try {
+          const tokens = await GoogleSignin.getTokens();
+
+          let response = await fetch(
+            `${global.server_address}/auth/sign-google-idToken`,
+            {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                idToken: tokens.idToken,
+              }),
+            }
+          );
+
+          let data = await response.json();
+
+          await save("token", data.token);
+
+          dispatch(setAuth("google"));
+        } catch (error) {
+          console.error(error);
+          dispatch(setAuth(false));
+        }
 
         return;
       } else {
