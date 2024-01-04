@@ -52,7 +52,7 @@ export default function WallpaperCard({
   const permanentWallpapers = useSelector(
     (state) => state.permanentWallpapers.value
   );
-  const userData = useSelector((state) => state.userData.value);
+  // const userData = useSelector((state) => state.userData.value);
 
   function consume_coins() {
     socket.emit(
@@ -63,8 +63,8 @@ export default function WallpaperCard({
       item,
       year,
       month,
-      wallpaper_id_,
-      userData.email
+      wallpaper_id_
+      // userData.email
     );
   }
 

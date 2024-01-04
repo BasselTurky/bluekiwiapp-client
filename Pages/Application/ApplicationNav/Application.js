@@ -181,26 +181,29 @@ export default function Application() {
   async function addUser() {
     console.log("addUser");
     console.log(isSocketConnected);
+
     if (isSocketConnected) {
-      if (auth === "default") {
-        let currentToken = await SecureStore.getItemAsync("token");
-        // console.log("default");
-        if (currentToken) {
-          socket.emit("add-user", currentToken);
-          // console.log("default 2");
-        }
-      } else if (auth === "google") {
-        const currentUser = await GoogleSignin.getCurrentUser();
-        // save currentUser in redux
-        // console.log("google");
-        socket.emit(
-          "check-google-user",
-          currentUser.user.id,
-          currentUser.user.email,
-          currentUser.user.givenName
-        );
-        // console.log("checked googleUser");
-      }
+      socket.emit("add-user");
+
+      // if (auth === "default") {
+      //   let currentToken = await SecureStore.getItemAsync("token");
+      //   // console.log("default");
+      //   if (currentToken) {
+      //     socket.emit("add-user", currentToken);
+      //     // console.log("default 2");
+      //   }
+      // } else if (auth === "google") {
+      //   const currentUser = await GoogleSignin.getCurrentUser();
+      //   // save currentUser in redux
+      //   // console.log("google");
+      //   socket.emit(
+      //     "check-google-user",
+      //     currentUser.user.id,
+      //     currentUser.user.email,
+      //     currentUser.user.givenName
+      //   );
+      //   // console.log("checked googleUser");
+      // }
     }
   }
 
