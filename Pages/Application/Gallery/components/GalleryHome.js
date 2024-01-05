@@ -134,14 +134,15 @@ export default function GalleryHome({
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            paddingHorizontal: z(60),
+            // paddingHorizontal: z(60),
             // backgroundColor: "grey",
           }}
         >
           <Text
             style={{
-              fontSize: z(32),
-              fontFamily: "PlayfairItalic",
+              fontSize: z(26),
+              // fontFamily: "PlayfairItalic",
+              fontWeight: "bold",
               letterSpacing: z(2),
               lineHeight: zx(60),
               color: "#b3b3b3",
@@ -149,7 +150,8 @@ export default function GalleryHome({
               marginBottom: zx(20),
             }}
           >
-            Explore and discover thousands of stunning and high-quality photos.
+            Explore and discover{"\n"}thousands of stunning and high-quality
+            photos.{"\n"}
           </Text>
           <View
             style={{

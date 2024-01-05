@@ -10,6 +10,8 @@ import Home from "../Home/Home";
 import ProfilePage from "../Profile/ProfilePage";
 import AdsView from "../AdsView/AdsView";
 
+import KeepAwake from "react-native-keep-awake";
+
 import ImageApiPage from "../Gallery/ImageApiPage";
 import GalleryContainer from "../Gallery/GalleryContainer";
 import WallpaperApi from "../Wallpapers/WallpaperApi";
@@ -398,6 +400,7 @@ export default function Application() {
           /> */}
         </NavigationContainer>
       ) : null}
+      <KeepAwake />
     </ImageBackground>
     // </ToastProvider>
   );

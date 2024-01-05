@@ -15,7 +15,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons, Entypo, AntDesign, Foundation } from "@expo/vector-icons";
-
+// import AnimatedNumbers from "react-native-animated-numbers";
 // import { Entypo } from '@expo/vector-icons';
 import React, { useState, useEffect } from "react";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -37,6 +37,9 @@ import UpdatePasswordIcon from "../../../../Components/UpdatePasswordIcon";
 import { BlurView, VibrancyView } from "@react-native-community/blur";
 import ChangePassword from "./ChangePassword";
 import DeleteAccount from "./DeleteAccount";
+import CoinsStack from "../../../../Components/CoinsStack";
+import KiwiCoinSVG from "../../../../Components/KiwiCoinSVG";
+import SingleKiwiCoin from "../../../../Components/SingleKiwiCoin";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -49,13 +52,16 @@ export default function DrawerView() {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const userData = useSelector((state) => state.userData.value);
+  const coins = useSelector((state) => state.coins.value);
   const auth = useSelector((state) => state.auth.value);
 
   const [showLogoutLayer, setShowLogoutLayer] = useState(false);
   const [showChangePass, setShowChangePass] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [light, setLight] = useState("night");
+  const [animateToNumber, setAnimateToNumber] = React.useState(7979);
 
+  // TODO go on every Height style make sure it uses zx() not z()
   return (
     <BlurView
       blurType="dark"
@@ -120,6 +126,68 @@ export default function DrawerView() {
             }}
           >
             {/* name */}
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                height: z(70),
+                // borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomColor: "#9c9c9c",
+                // backgroundColor: "green",
+                alignItems: "center",
+              }}
+            >
+              {/* <View
+                style={{
+                  // flex: 1,
+                  // alignItems: "center",
+                  justifyContent: "center",
+                  paddingRight: z(20),
+                  // backgroundColor: "yellow",
+                }}
+              >
+
+                <SingleKiwiCoin height={z(30)} width={z(30)} />
+              </View> */}
+              <View
+                style={{
+                  // flex: 4,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: zx(40),
+                  borderRadius: z(6),
+                  paddingHorizontal: z(10),
+                  width: z(140),
+                  marginLeft: z(10),
+                  paddingLeft: z(20),
+                }}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    left: z(-20),
+                  }}
+                >
+                  <SingleKiwiCoin height={z(46)} width={z(46)} />
+                </View>
+
+                <Text
+                  style={{
+                    fontSize: z(18),
+                    color: light === "night" ? "#fff" : "#5c5c5c",
+                    // fontFamily: "RobotoRegular",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    letterSpacing: z(2),
+                  }}
+                >
+                  {coins.toString().padStart(4, "0")}
+                </Text>
+              </View>
+            </View>
             <View
               style={{
                 flexDirection: "row",
@@ -209,84 +277,84 @@ export default function DrawerView() {
               </View>
             </View>
             {/* pass */}
-            {auth === "google" ? null : (
+            {/* {auth === "google" ? null : ( */}
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                height: z(70),
+                // borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomColor: "#9c9c9c",
+              }}
+            >
               <View
                 style={{
-                  flexDirection: "row",
                   width: "100%",
-                  height: z(70),
-                  // borderBottomWidth: StyleSheet.hairlineWidth,
-                  borderBottomColor: "#9c9c9c",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
                 <View
                   style={{
-                    width: "100%",
                     flexDirection: "row",
-                    justifyContent: "space-between",
                   }}
                 >
                   <View
                     style={{
-                      flexDirection: "row",
+                      // flex: 1,
+                      // alignItems: "center",
+                      justifyContent: "center",
+                      paddingRight: z(20),
                     }}
                   >
-                    <View
-                      style={{
-                        // flex: 1,
-                        // alignItems: "center",
-                        justifyContent: "center",
-                        paddingRight: z(20),
-                      }}
-                    >
-                      <Foundation
-                        name="key"
-                        size={24}
-                        color={light === "night" ? "#fff" : "#5c5c5c"}
-                      />
+                    <Foundation
+                      name="key"
+                      size={24}
+                      color={light === "night" ? "#fff" : "#5c5c5c"}
+                    />
 
-                      {/* <PasswordIcon
+                    {/* <PasswordIcon
                     width={z(26)}
                     height={z(26)}
                     fill={light === "night" ? "#fff" : "#5c5c5c"}
                   /> */}
-                    </View>
-
-                    <View
-                      style={{
-                        // flex: 3,
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: z(18),
-                          color: light === "night" ? "#fff" : "#5c5c5c",
-                        }}
-                      >
-                        Password
-                      </Text>
-                    </View>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowChangePass(true);
-                    }}
+
+                  <View
                     style={{
-                      // flex: 1,
-                      // alignItems: "center",
+                      // flex: 3,
                       justifyContent: "center",
                     }}
                   >
-                    <UpdatePasswordIcon
-                      width={z(30)}
-                      height={z(30)}
-                      fill={"#000"}
-                    />
-                  </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: z(18),
+                        color: light === "night" ? "#fff" : "#5c5c5c",
+                      }}
+                    >
+                      Password
+                    </Text>
+                  </View>
                 </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowChangePass(true);
+                  }}
+                  style={{
+                    // flex: 1,
+                    // alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <UpdatePasswordIcon
+                    width={z(30)}
+                    height={z(30)}
+                    fill={"#000"}
+                  />
+                </TouchableOpacity>
               </View>
-            )}
+            </View>
+            {/*  )} */}
 
             <View
               style={{
