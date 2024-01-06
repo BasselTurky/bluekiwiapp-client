@@ -175,6 +175,7 @@ export default function Application() {
       return () => {
         socket.off("connect"); // Unsubscribe from the "connect" event
         socket.removeAllListeners();
+        socket.close();
         setIsSocketConnected(false);
       };
     }

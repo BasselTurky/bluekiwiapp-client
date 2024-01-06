@@ -161,7 +161,7 @@ export default function DrawerView() {
                   borderRadius: z(6),
                   paddingHorizontal: z(10),
                   width: z(140),
-                  marginLeft: z(10),
+                  marginLeft: z(18),
                   paddingLeft: z(20),
                 }}
               >
