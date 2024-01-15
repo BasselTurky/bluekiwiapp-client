@@ -113,6 +113,10 @@ export default function WallpaperApi({ navigation }) {
   useEffect(() => {
     socket.on("daily-wallpapers", (data) => {
       const images_array = data.result;
+      console.log(
+        "🚀 ~ file: WallpaperApi.js:116 ~ socket.on ~ images_array:",
+        images_array
+      );
       const extracted_colores = [];
       for (let i = 0; i < images_array.length; i++) {
         extracted_colores.push(images_array[i].average_color);
@@ -131,22 +135,39 @@ export default function WallpaperApi({ navigation }) {
 
   async function getDailyWallpapers() {
     try {
-      let response = await fetch(
-        `https://worldtimeapi.org/api/timezone/Etc/UTC`
-      );
-      let data = await response.json();
-      let utc_time = data.utc_datetime;
+      // const currentUtcTime = new Date().toUTCString();
+      // const currentDate = new Date();
+      // console.log(
+      //   "🚀 ~ file: WallpaperApi.js:135 ~ getDailyWallpapers ~ currentUtcTime:",
+      //   currentUtcTime
+      // );
+      // let response = await fetch(
+      //   `https://worldtimeapi.org/api/timezone/Etc/UTC`
+      // );
+      // let data = await response.json();
+      // console.log(
+      //   "🚀 ~ file: WallpaperApi.js:138 ~ getDailyWallpapers ~ data:",
+      //   data
+      // );
+      // let utc_time = data.utc_datetime;
+      // let utc_time = data.utc_datetime;
 
-      let shortened_date = utc_time.substring(0, 10);
-      let date = new Date(shortened_date).getTime();
+      // let shortened_date = utc_time.substring(0, 10);
+      const today = new Date().toISOString().split("T")[0];
+      // let date = new Date(today).getTime();
+      // console.log(
+      //   "🚀 ~ file: WallpaperApi.js:142 ~ getDailyWallpapers ~ date:",
+      //   date
+      // );
 
       // check if date is not null
       if (!dailyWallpapers.date) {
         // call api
+        console.log("date null");
         fetchWallpapers();
-      } else if (date > new Date(dailyWallpapers.date).getTime()) {
+      } else if (new Date(today) > new Date(dailyWallpapers.date)) {
         // call api
-
+        console.log("date not null");
         fetchWallpapers();
       } else {
         // do nuthing
