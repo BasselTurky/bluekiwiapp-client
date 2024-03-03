@@ -153,20 +153,21 @@ export default function ArchiveApi({ navigation }) {
 
   async function getAllWallpapers() {
     try {
-      let response = await fetch(
-        `https://worldtimeapi.org/api/timezone/Etc/UTC`
-      );
-      let data = await response.json();
-
-      let utc_time = data.utc_datetime;
-      // convert utc_time to 10 index string
-      let shortened_date = utc_time.substring(0, 8) + "01";
-      let date = new Date(shortened_date).getTime();
-
+      // let response = await fetch(
+      //   `https://worldtimeapi.org/api/timezone/Etc/UTC`
+      // );
+      // let data = await response.json();
+      console.log(permanentWallpapers);
+      // let utc_time = data.utc_datetime;
+      // // convert utc_time to 10 index string
+      // let shortened_date = utc_time.substring(0, 8) + "01";
+      // let date = new Date(shortened_date).getTime();
+      const today = new Date().toISOString().split("T")[0];
       if (!permanentWallpapers.date) {
         // first time
+
         fetchWallpapers();
-      } else if (date > new Date(permanentWallpapers.date).getTime()) {
+      } else if (new Date(today) > new Date(permanentWallpapers.date)) {
         // if today's date > stored date "last fetch"
         fetchWallpapers();
       } else {
@@ -181,7 +182,7 @@ export default function ArchiveApi({ navigation }) {
 
   useEffect(() => {
     getAllWallpapers();
-  }, [permanentWallpapers]);
+  }, []);
 
   const monthsArray = [
     "Jan",

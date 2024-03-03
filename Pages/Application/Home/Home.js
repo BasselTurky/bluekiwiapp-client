@@ -37,12 +37,12 @@ export default React.memo(function Home({
         // isViewLoginRef={isViewLoginRef}
         // isWebviewLoadedRef={isWebviewLoadedRef}
       />
-      <HomeWebview
+      {/* <HomeWebview
         viewRef={viewRef}
         mainWebviewUrlRef={mainWebviewUrlRef}
         // isViewLoginRef={isViewLoginRef}
         // isWebviewLoadedRef={isWebviewLoadedRef}
-      />
+      /> */}
     </View>
   );
 });

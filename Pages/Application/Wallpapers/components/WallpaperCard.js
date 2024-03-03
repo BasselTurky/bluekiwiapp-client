@@ -16,6 +16,8 @@ import { z } from "../../../../utils/scaling";
 import { updateDownload_dailyWallpapers } from "../../../../Features/dailyWallpapers";
 import { updateDownloads_permanentWallpapers } from "../../../../Features/permanentWallpapers";
 
+import SingleKiwiCoin from "../../../../Components/SingleKiwiCoin";
+
 import * as SecureStore from "expo-secure-store";
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -130,11 +132,14 @@ export default function WallpaperCard({
             }}
           >
             <BlurView
-              style={[StyleSheet.absoluteFill]}
-              blurAmount={40}
-              blurRadius={2}
-              blurType={"light"}
-              overlayColor={"rgba(0,0,0,0.1)"}
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: "rgba(255,255,255,0.1)" },
+              ]}
+              blurAmount={2}
+              // blurRadius={2}
+              blurType={"dark"}
+              overlayColor={"transparent"}
             />
           </View>
           <View
@@ -151,7 +156,7 @@ export default function WallpaperCard({
               style={{
                 minWidth: z(40),
                 height: z(40),
-                backgroundColor: "rgba(255,255,255,0.2)",
+                backgroundColor: "rgba(0,0,0,0.2)",
                 padding: z(10),
                 borderRadius: z(10),
                 justifyContent: "center",
@@ -172,7 +177,7 @@ export default function WallpaperCard({
             <TouchableOpacity
               style={{
                 minHeight: z(40),
-                backgroundColor: "rgba(255,255,255,0.2)",
+                backgroundColor: "rgba(0,0,0,0.2)",
                 borderRadius: z(10),
                 alignItems: "center",
                 flexDirection: "row",
@@ -180,13 +185,13 @@ export default function WallpaperCard({
               }}
               onPress={checkPermissionsAndDownload}
             >
-              <DownloadIcon fill={"#fff"} width={z(15)} height={z(15)} />
+              <DownloadIcon fill={"#fff"} width={z(24)} height={z(24)} />
               <View
                 style={{
-                  marginLeft: z(5),
+                  marginLeft: z(9),
                 }}
               >
-                <KiwiCoinSVG width={z(30)} height={z(30)} />
+                <SingleKiwiCoin width={z(30)} height={z(30)} />
               </View>
               {required_coins > 1 ? (
                 <Text

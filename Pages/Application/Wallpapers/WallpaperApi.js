@@ -23,10 +23,10 @@ import { setColorsArray } from "../../../Features/colorsArray";
 import WallpaperCard from "./components/WallpaperCard";
 
 import ErrorView from "../../Error/ErrorView";
-
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import PlusIconSVG from "../../../Components/PlusIconSVG";
 import CoinsStack from "../../../Components/CoinsStack";
-
+import SingleKiwiCoin from "../../../Components/SingleKiwiCoin";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AnimatedImageBackground =
@@ -230,9 +230,9 @@ export default function WallpaperApi({ navigation }) {
           >
             <TouchableOpacity
               style={{
-                width: z(40),
-                height: z(40),
-                backgroundColor: "rgba(0,0,0,0.3)",
+                width: zx(40),
+                height: zx(40),
+                backgroundColor: "rgba(0,0,0,0.1)",
                 borderRadius: 100,
                 justifyContent: "center",
                 alignItems: "center",
@@ -241,10 +241,69 @@ export default function WallpaperApi({ navigation }) {
                 navigation.goBack();
               }}
             >
-              <GoBackSVG fill={"#fff"} width={15} height={15} />
+              {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
+              <Entypo name="chevron-left" size={30} color="black" />
             </TouchableOpacity>
-
             <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                // backgroundColor: "blue",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  marginRight: z(10),
+                }}
+                activeOpacity={0.7}
+                onPress={() => {
+                  navigation.navigate("AdsView");
+                }}
+              >
+                <PlusIconSVG height={30} width={30} />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  // flex: 4,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: zx(40),
+                  borderRadius: z(6),
+                  paddingHorizontal: z(10),
+                  width: z(140),
+                  marginRight: z(18),
+                  paddingRightmarginRight: z(20),
+                }}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    right: z(-20),
+                  }}
+                >
+                  <SingleKiwiCoin height={z(46)} width={z(46)} />
+                </View>
+
+                <Text
+                  style={{
+                    fontSize: z(18),
+                    color: "#fff",
+                    // fontFamily: "RobotoRegular",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    letterSpacing: z(2),
+                  }}
+                >
+                  {coins.toString().padStart(4, "0")}
+                </Text>
+              </View>
+            </View>
+
+            {/* <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -280,8 +339,9 @@ export default function WallpaperApi({ navigation }) {
               <View>
                 <CoinsStack height={z(50)} width={z(50)} />
               </View>
-            </View>
+            </View> */}
           </View>
+
           <View
             style={{
               flex: 1,

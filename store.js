@@ -40,6 +40,10 @@ import isLoadingReducer from "./Features/isLoading";
 import isWebviewLoadedReducer from "./Features/isWebviewLoaded";
 import isViewLoginReducer from "./Features/isViewLogin";
 import modalVisibleReducer from "./Features/modalVisible";
+import lastGiveawayXReducer from "./Features/lastGiveawayX";
+import lastGiveawayZReducer from "./Features/lastGiveawayZ";
+import giveawayXReducer from "./Features/giveawayX";
+import giveawayZReducer from "./Features/giveawayZ";
 
 enableMapSet();
 
@@ -77,6 +81,10 @@ const rootReducer = combineReducers({
   isWebviewLoaded: isWebviewLoadedReducer,
   isViewLogin: isViewLoginReducer,
   modalVisible: modalVisibleReducer,
+  lastGiveawayX: lastGiveawayXReducer,
+  lastGiveawayZ: lastGiveawayZReducer,
+  giveawayX: giveawayXReducer,
+  giveawayZ: giveawayZReducer,
 });
 
 const persistConfig = {

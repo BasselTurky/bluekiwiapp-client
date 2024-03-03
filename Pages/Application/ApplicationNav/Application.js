@@ -31,6 +31,10 @@ import { setAuth } from "../../../Features/auth";
 import { setUserData } from "../../../Features/userData";
 import { setCoins } from "../../../Features/coins";
 import { addCoin } from "../../../Features/coins";
+// import { setLastGiveawayX } from "../../../Features/lastGiveawayX";
+// import { setLastGiveawayZ } from "../../../Features/lastGiveawayZ";
+import { setGiveawayX } from "../../../Features/giveawayX";
+import { setGiveawayZ } from "../../../Features/giveawayZ";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -151,6 +155,11 @@ export default function Application() {
         await SplashScreen.hideAsync();
       });
 
+      socket.on("giveawayInfo", (giveawayX, giveawayZ) => {
+        dispatch(setGiveawayX(giveawayX)); // {id:giveawayid, type:'z', participants: [{id:ignore, uid: userid, date: join date},{}]}
+        dispatch(setGiveawayZ(giveawayZ));
+      });
+
       socket.on(
         "start-download",
         (updated_coins, type, item, year, month, wallpaper_id_) => {
@@ -187,26 +196,7 @@ export default function Application() {
 
     if (isSocketConnected) {
       socket.emit("add-user");
-
-      // if (auth === "default") {
-      //   let currentToken = await SecureStore.getItemAsync("token");
-      //   // console.log("default");
-      //   if (currentToken) {
-      //     socket.emit("add-user", currentToken);
-      //     // console.log("default 2");
-      //   }
-      // } else if (auth === "google") {
-      //   const currentUser = await GoogleSignin.getCurrentUser();
-      //   // save currentUser in redux
-      //   // console.log("google");
-      //   socket.emit(
-      //     "check-google-user",
-      //     currentUser.user.id,
-      //     currentUser.user.email,
-      //     currentUser.user.givenName
-      //   );
-      //   // console.log("checked googleUser");
-      // }
+      socket.emit("get-giveaways-info");
     }
   }
 
@@ -299,7 +289,7 @@ export default function Application() {
           }}
         ></Stack.Screen> */}
 
-            <Stack.Screen
+            {/* <Stack.Screen
               name="GalleryContainer"
               // component={ImageApiPage}
               options={{
@@ -323,7 +313,7 @@ export default function Application() {
                   // setIsViewLogin={setIsViewLogin}
                 />
               )}
-            </Stack.Screen>
+            </Stack.Screen> */}
 
             {/* <Stack.Screen
           name="Giveaway"

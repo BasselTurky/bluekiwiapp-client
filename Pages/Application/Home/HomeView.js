@@ -203,7 +203,7 @@ export default React.memo(function HomeView({
               />
             </ApiButton>
 
-            <ApiButton
+            {/* <ApiButton
               navigation={navigation}
               //   isViewLoginRef={isViewLoginRef}
               //   isWebviewLoadedRef={isWebviewLoadedRef}
@@ -221,7 +221,7 @@ export default React.memo(function HomeView({
                   width: "90%",
                 }}
               />
-            </ApiButton>
+            </ApiButton> */}
           </View>
 
           <View

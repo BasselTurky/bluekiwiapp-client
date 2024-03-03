@@ -94,11 +94,25 @@ export default function Main() {
             }
           );
 
-          let data = await response.json();
+          if (!response.ok) {
+            try {
+              const errorData = await response.json();
+              console.error("Error:", errorData.error);
+            } catch (error) {
+              // If parsing fails, log a generic error message
+              console.error(
+                "Failed to parse error response:",
+                response.statusText
+              );
+            }
+          } else {
+            let data = await response.json();
+            // token may be expired
 
-          await save("token", data.token);
+            await save("token", data.token);
 
-          dispatch(setAuth("google"));
+            dispatch(setAuth("google"));
+          }
         } catch (error) {
           console.error(error);
           dispatch(setAuth(false));

@@ -13,7 +13,8 @@ import { useSelector, useDispatch } from "react-redux";
 import GoBackSVG from "../../../Components/GoBackSVG";
 import PlusIconSVG from "../../../Components/PlusIconSVG";
 import CoinsStack from "../../../Components/CoinsStack";
-
+import SingleKiwiCoin from "../../../Components/SingleKiwiCoin";
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import ErrorView from "../../Error/ErrorView";
 
 import * as SecureStore from "expo-secure-store";
@@ -24,7 +25,7 @@ import { setWinner } from "../../../Features/winner";
 import WinnerUI from "./WinnerUI";
 import NonWinnerUI from "./NonWinnerUI";
 
-import { z } from "../../../utils/scaling";
+import { z, zx } from "../../../utils/scaling";
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -112,7 +113,7 @@ export default function Giveaways({ navigation }) {
   }
 
   React.useEffect(() => {
-    refresh();
+    // refresh();
   }, []);
 
   try {
@@ -156,19 +157,14 @@ export default function Giveaways({ navigation }) {
               flexDirection: "row",
               justifyContent: "space-between",
               paddingHorizontal: 17,
-              // backgroundColor: "pink",
-              alignItems: "center",
+              marginBottom: z(10),
             }}
           >
             <TouchableOpacity
               style={{
-                // zIndex: 2,
-                // position: "absolute",
-                // top: 30,
-                // left: 17,
-                width: 40,
-                height: 40,
-                backgroundColor: "rgba(0,0,0,0.3)",
+                width: zx(40),
+                height: zx(40),
+                backgroundColor: "rgba(0,0,0,0.1)",
                 borderRadius: 100,
                 justifyContent: "center",
                 alignItems: "center",
@@ -177,20 +173,76 @@ export default function Giveaways({ navigation }) {
                 navigation.goBack();
               }}
             >
-              <GoBackSVG fill={"#fff"} width={15} height={15} />
+              {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
+              <Entypo name="chevron-left" size={30} color="black" />
             </TouchableOpacity>
-
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                // backgroundColor: "green",
+                // backgroundColor: "blue",
               }}
             >
               <TouchableOpacity
                 style={{
-                  // position: "absolute",
-                  // right: 126,
+                  marginRight: z(10),
+                }}
+                activeOpacity={0.7}
+                onPress={() => {
+                  navigation.navigate("AdsView");
+                }}
+              >
+                <PlusIconSVG height={30} width={30} />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  // flex: 4,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: zx(40),
+                  borderRadius: z(6),
+                  paddingHorizontal: z(10),
+                  width: z(140),
+                  marginRight: z(18),
+                  paddingRightmarginRight: z(20),
+                }}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    right: z(-20),
+                  }}
+                >
+                  <SingleKiwiCoin height={z(46)} width={z(46)} />
+                </View>
+
+                <Text
+                  style={{
+                    fontSize: z(18),
+                    color: "#fff",
+                    // fontFamily: "RobotoRegular",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    letterSpacing: z(2),
+                  }}
+                >
+                  {coins.toString().padStart(4, "0")}
+                </Text>
+              </View>
+            </View>
+
+            {/* <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
                   marginRight: 70,
                 }}
                 activeOpacity={0.7}
@@ -216,17 +268,10 @@ export default function Giveaways({ navigation }) {
                 </Text>
               </View>
 
-              <View
-                style={
-                  {
-                    // position: "absolute",
-                    // right: 17,
-                  }
-                }
-              >
+              <View>
                 <CoinsStack height={z(50)} width={z(50)} />
               </View>
-            </View>
+            </View> */}
           </View>
 
           {winner ? (
