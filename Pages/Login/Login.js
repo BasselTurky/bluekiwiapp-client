@@ -76,11 +76,14 @@ export default function Login({ navigation }) {
         }
       );
 
-      let data = await response.json();
-
-      await save("token", data.token);
-
-      dispatch(setAuth("google"));
+      if (response.ok) {
+        let data = await response.json();
+        console.log(data);
+        await save("token", data.token);
+        dispatch(setAuth("google"));
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow

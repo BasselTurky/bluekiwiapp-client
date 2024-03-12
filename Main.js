@@ -98,6 +98,11 @@ export default function Main() {
             try {
               const errorData = await response.json();
               console.error("Error:", errorData.error);
+
+              deleteValueFor("token");
+              await GoogleSignin.signOut();
+              dispatch(setAuth(false));
+              await SplashScreen.hideAsync();
             } catch (error) {
               // If parsing fails, log a generic error message
               console.error(
@@ -105,6 +110,11 @@ export default function Main() {
                 response.statusText
               );
             }
+
+            deleteValueFor("token");
+            await GoogleSignin.signOut();
+            dispatch(setAuth(false));
+            await SplashScreen.hideAsync();
           } else {
             let data = await response.json();
             // token may be expired
