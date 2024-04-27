@@ -35,7 +35,7 @@ import { addCoin } from "../../../Features/coins";
 // import { setLastGiveawayZ } from "../../../Features/lastGiveawayZ";
 import { setGiveawayX } from "../../../Features/giveawayX";
 import { setGiveawayZ } from "../../../Features/giveawayZ";
-
+import { setHistory } from "../../../Features/giveawayHistory";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 // import { enableMapSet } from "immer";
@@ -155,6 +155,18 @@ export default function Application() {
         await SplashScreen.hideAsync();
       });
 
+      socket.on("giveaway-history", (giveaway_history_array) => {
+        // convert array to object
+
+        const giveaway_history_object = {};
+        giveaway_history_array.forEach((giveaway_object) => {
+          giveaway_history_object[giveaway_object.giveawayId] = giveaway_object;
+        });
+
+        // store history in redux
+        dispatch(setHistory(giveaway_history_object));
+      });
+
       socket.on("giveawayInfo", (giveawayX, giveawayZ) => {
         dispatch(setGiveawayX(giveawayX)); // {id:giveawayid, type:'z', participants: [{id:ignore, uid: userid, date: join date},{}]}
         dispatch(setGiveawayZ(giveawayZ));
@@ -197,6 +209,7 @@ export default function Application() {
     if (isSocketConnected) {
       socket.emit("add-user");
       socket.emit("get-giveaways-info");
+      socket.emit("get-user-giveaway-history");
     }
   }
 
