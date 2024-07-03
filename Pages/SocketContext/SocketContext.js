@@ -10,6 +10,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const setupSocketConnection = async () => {
+      // console.log("trying to connect");
       const token = await SecureStore.getItemAsync("token");
 
       if (token) {
@@ -19,6 +20,7 @@ export const SocketProvider = ({ children }) => {
             token: token,
           },
         });
+        // console.log("setting socket instance");
         setSocket(socketInstance);
       }
     };
