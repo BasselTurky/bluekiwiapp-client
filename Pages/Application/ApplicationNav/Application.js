@@ -156,15 +156,18 @@ export default function Application() {
 
       socket.on("giveaway-history", (giveaway_history_array) => {
         // convert array to object
+        // console.log(giveaway_history_array);
 
         const giveaway_history_object = {};
+
         giveaway_history_array.forEach((giveaway_object) => {
-          giveaway_history_object[giveaway_object.giveawayId] = giveaway_object;
+          giveaway_history_object[giveaway_object.id] = giveaway_object;
         });
 
         // store history in redux
         dispatch(setHistory(giveaway_history_object));
       });
+      // socket.on("add-giveaway-to-history", () => {});
 
       socket.on("giveawayInfo", (giveawayX, giveawayZ) => {
         dispatch(setGiveawayX(giveawayX)); // {id:giveawayid, type:'z', participants: [{id:ignore, uid: userid, date: join date},{}]}

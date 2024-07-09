@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialStateValue = null;
+const initialStateValue = {};
 
 const giveawayHistory = createSlice({
   name: "giveawayHistory",

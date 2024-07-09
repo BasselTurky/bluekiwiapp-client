@@ -16,14 +16,9 @@ export default function NonWinnerUI() {
         width: "100%",
         backgroundColor: "rgba(124,181,208,0.5)",
         alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <Button
-        title="winner-true"
-        onPress={() => {
-          dispatch(setWinner(5));
-        }}
-      />
       <Text>NonWinnerUI</Text>
     </View>
   );

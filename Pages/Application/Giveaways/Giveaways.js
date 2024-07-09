@@ -5,6 +5,7 @@ import {
   ImageBackground,
   Dimensions,
   TouchableOpacity,
+  useWindowDimensions,
   Image,
   Button,
 } from "react-native";
@@ -22,8 +23,15 @@ import { setAuth } from "../../../Features/auth";
 import { setAvailable } from "../../../Features/available";
 import { setWinner } from "../../../Features/winner";
 
+import { TabView, SceneMap } from "react-native-tab-view";
+
 import WinnerUI from "./WinnerUI";
 import NonWinnerUI from "./NonWinnerUI";
+import GiveawaysHeader from "./GiveawaysHeader";
+import ViewX from "./ViewX";
+import ViewZ from "./ViewZ";
+import GiveawaysContainer from "./GiveawaysContainer";
+import HistoryView from "./HistoryView";
 
 import { z, zx } from "../../../utils/scaling";
 import {
@@ -42,274 +50,82 @@ async function deleteValueFor(key) {
 export default function Giveaways({ navigation }) {
   // let currentToken = await SecureStore.getItemAsync("token");
   const dispatch = useDispatch();
-
+  const layout = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
   const coins = useSelector((state) => state.coins.value);
   const available = useSelector((state) => state.available.value);
   const winner = useSelector((state) => state.winner.value);
+  const giveawayX = useSelector((state) => state.giveawayX.value);
+  const giveawayZ = useSelector((state) => state.giveawayZ.value);
+  const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
 
-  const errorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-      text2: "Error",
-      visibilityTime: 3000,
-    });
-  };
+  const FirstRoute = React.useMemo(
+    () => () =>
+      (
+        <GiveawaysContainer />
+        // <View style={styles.cont}>
+        //   <Text>first view</Text>
+        //   <Button
+        //     title="Go Back"
+        //     onPress={() => {
+        //       navigation.goBack();
+        //     }}
+        //   />
+        //   <Button
+        //     title="Log X"
+        //     onPress={() => {
+        //       console.log(giveawayX);
+        //     }}
+        //   />
+        //   <Button
+        //     title="Log Z"
+        //     onPress={() => {
+        //       console.log(giveawayZ);
+        //     }}
+        //   />
+        // </View>
+      ),
+    []
+  );
 
-  function remainingdDigits(number) {
-    var length = (Math.log(number) * Math.LOG10E + 1) | 0;
+  const SecondRoute = React.useMemo(() => () => <HistoryView />, []);
 
-    let remaining = 3 - length;
+  const renderScene = React.useMemo(
+    () =>
+      SceneMap({
+        first: FirstRoute,
+        second: SecondRoute,
+      }),
+    [FirstRoute, SecondRoute]
+  );
 
-    let result = "";
-    for (let i = 0; i < remaining; i++) {
-      result = result.concat("0");
-    }
-
-    return result;
-  }
-
-  async function checkIfWinner() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-
-      let response = await fetch(`${global.server_address}/api/check-winner`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: currentToken }),
-      });
-
-      let data = await response.json();
-    } catch (error) {}
-  }
-
-  async function refresh() {
-    try {
-      let currentToken = await SecureStore.getItemAsync("token");
-
-      let response = await fetch(`${global.server_address}/api/check-winner`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: currentToken }),
-      });
-
-      let data = await response.json();
-
-      console.log("data re ", data);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // post token
-    // update redux
-  }
-
-  React.useEffect(() => {
-    // refresh();
-  }, []);
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "first", title: "First" },
+    { key: "second", title: "Second" },
+  ]);
 
   try {
     return (
-      <SafeAreaProvider>
-        {/* <Image
-          // source={{ uri }}
-          source={require("../../../assets/001.jpg")}
-          blurRadius={2}
-          style={[
-            {
-              width: "100%",
-              height: "100%",
-              resizeMode: "cover",
-            },
-            StyleSheet.absoluteFill,
-          ]}
-        /> */}
-        <View
-          // source={require("../../../assets/whiteLayer.png")}
-          // resizeMode="cover"
-          style={[
-            {
-              flex: 1,
-              alignItems: "center",
-              // justifyContent: "center",
-              paddingTop:
-                height * 0.04 < 24
-                  ? insets.top + height * 0.005
-                  : insets.top + height * 0.015,
-              // paddingTop: insets.top + 10,
-              paddingBottom: insets.bottom,
-              // backgroundColor: "#C88781",
-            },
-            // styles.container,
-          ]}
-        >
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingHorizontal: 17,
-              marginBottom: z(10),
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                width: zx(40),
-                height: zx(40),
-                backgroundColor: "rgba(0,0,0,0.1)",
-                borderRadius: 100,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={() => {
-                navigation.goBack();
-              }}
-            >
-              {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
-              <Entypo name="chevron-left" size={30} color="black" />
-            </TouchableOpacity>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                // backgroundColor: "blue",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  marginRight: z(10),
-                }}
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate("AdsView");
-                }}
-              >
-                <PlusIconSVG height={30} width={30} />
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  // flex: 4,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  backgroundColor: "rgba(0,0,0,0.1)",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: zx(40),
-                  borderRadius: z(6),
-                  paddingHorizontal: z(10),
-                  width: z(140),
-                  marginRight: z(18),
-                  paddingRightmarginRight: z(20),
-                }}
-              >
-                <View
-                  style={{
-                    position: "absolute",
-                    right: z(-20),
-                  }}
-                >
-                  <SingleKiwiCoin height={z(46)} width={z(46)} />
-                </View>
-
-                <Text
-                  style={{
-                    fontSize: z(18),
-                    color: "#fff",
-                    // fontFamily: "RobotoRegular",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    letterSpacing: z(2),
-                  }}
-                >
-                  {coins.toString().padStart(4, "0")}
-                </Text>
-              </View>
-            </View>
-
-            {/* <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  marginRight: 70,
-                }}
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate("AdsView");
-                }}
-              >
-                <PlusIconSVG height={30} width={30} />
-              </TouchableOpacity>
-
-              <View
-                style={[
-                  styles.score,
-                  {
-                    position: "absolute",
-                    right: 26,
-                  },
-                ]}
-              >
-                <Text style={styles.scoreText}>
-                  {remainingdDigits(coins)}
-                  {coins}
-                </Text>
-              </View>
-
-              <View>
-                <CoinsStack height={z(50)} width={z(50)} />
-              </View>
-            </View> */}
-          </View>
-
-          {winner ? (
-            <WinnerUI refresh={refresh} />
-          ) : (
-            <NonWinnerUI refresh={refresh} />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#fff",
+        }}
+      >
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          animationEnabled={true}
+          swipeEnabled={true}
+          renderTabBar={() => (
+            <GiveawaysHeader index={index} setIndex={setIndex} />
           )}
-
-          {/* <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 17,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              // zIndex: 2,
-              // position: "absolute",
-              // top: 30,
-              // left: 17,
-              width: 40,
-              height: 40,
-              backgroundColor: "rgba(0,0,0,0.3)",
-              borderRadius: 100,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <GoBackSVG fill={"#fff"} width={15} height={15} />
-          </TouchableOpacity>
-        </View> */}
-        </View>
-      </SafeAreaProvider>
+        />
+      </View>
     );
   } catch (error) {
     console.log("ErrorID: E059: ", error);
@@ -318,93 +134,10 @@ export default function Giveaways({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  cont: {
     flex: 1,
-    backgroundColor: "#ffcb76",
-    // alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-  },
-  header: {
-    fontSize: 24,
-    fontFamily: "Righteous_400Regular",
-    color: "#fff",
-    paddingBottom: 10,
-    marginBottom: 80,
-    borderBottomColor: "#199187",
-    borderBottomWidth: 1,
-    // fontWeight: "bold",
-    position: "absolute",
-    zIndex: 2,
-    top: 45,
-    left: 65,
-  },
-  goBack: {
-    zIndex: 2,
-    position: "absolute",
-    top: 45,
-    left: 15,
-    padding: 5,
-    // backgroundColor: "grey",
-  },
-  content: {
-    flex: 1,
-    position: "absolute",
-    top: 120,
-    bottom: 120,
-    right: 0,
-    left: 0,
-    // backgroundColor: "pink",
-    marginHorizontal: 20,
-    // borderRadius: 10,
-    zIndex: 2,
-    elevation: 5,
-
-    // marginTop: 120,
-  },
-  buttonStyle: {
-    position: "absolute",
-    width: 140,
-    height: 35,
-    backgroundColor: "#59cbbd",
-    elevation: 3,
-    bottom: 65,
-  },
-  buttonContent: {
-    padding: 0,
-    margin: 0,
-    height: "100%",
-    width: "100%",
-  },
-  buttonLabel: {
-    padding: 0,
-    margin: 0,
-  },
-  score: {
-    width: 80,
-    height: 30,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    borderWidth: 2,
-    borderColor: "#36485f",
-
-    borderRadius: 10,
-
-    alignItems: "flex-start",
-    justifyContent: "center",
-    paddingLeft: 10,
-    // elevation: 5,
-    // position: "absolute",
-    // top: 61,
-    // right: 36,
-    // borderColor: "#ffd69e",
-  },
-  scoreText: {
-    fontFamily: "Righteous_400Regular",
-    fontSize: 16,
-    color: "#36485f",
-    // position: "absolute",
-    // top: -6,
-    // left: 10,
+    alignItems: "center",
   },
 });
 
@@ -531,3 +264,121 @@ style={styles.container}
 />
 </ImageBackground> */
 }
+
+// {
+
+//   <SafeAreaProvider>
+
+//   <View
+
+//     style={[
+//       {
+//         flex: 1,
+//         alignItems: "center",
+//         // justifyContent: "center",
+//         paddingTop:
+//           height * 0.04 < 24
+//             ? insets.top + height * 0.005
+//             : insets.top + height * 0.015,
+//         // paddingTop: insets.top + 10,
+//         paddingBottom: insets.bottom,
+//         // backgroundColor: "#C88781",
+//       },
+//       // styles.container,
+//     ]}
+//   >
+//     <View
+//       style={{
+//         width: "100%",
+//         flexDirection: "row",
+//         justifyContent: "space-between",
+//         paddingHorizontal: 17,
+//         marginBottom: z(10),
+//       }}
+//     >
+//       <TouchableOpacity
+//         style={{
+//           width: zx(40),
+//           height: zx(40),
+//           backgroundColor: "rgba(0,0,0,0.1)",
+//           borderRadius: 100,
+//           justifyContent: "center",
+//           alignItems: "center",
+//         }}
+//         onPress={() => {
+//           navigation.goBack();
+//         }}
+//       >
+//         {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
+//         <Entypo name="chevron-left" size={30} color="black" />
+//       </TouchableOpacity>
+//       <View
+//         style={{
+//           flexDirection: "row",
+//           alignItems: "center",
+//           // backgroundColor: "blue",
+//         }}
+//       >
+//         <TouchableOpacity
+//           style={{
+//             marginRight: z(10),
+//           }}
+//           activeOpacity={0.7}
+//           onPress={() => {
+//             navigation.navigate("AdsView");
+//           }}
+//         >
+//           <PlusIconSVG height={30} width={30} />
+//         </TouchableOpacity>
+
+//         <View
+//           style={{
+//             // flex: 4,
+//             flexDirection: "row",
+//             justifyContent: "center",
+//             backgroundColor: "rgba(0,0,0,0.1)",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             height: zx(40),
+//             borderRadius: z(6),
+//             paddingHorizontal: z(10),
+//             width: z(140),
+//             marginRight: z(18),
+//             paddingRightmarginRight: z(20),
+//           }}
+//         >
+//           <View
+//             style={{
+//               position: "absolute",
+//               right: z(-20),
+//             }}
+//           >
+//             <SingleKiwiCoin height={z(46)} width={z(46)} />
+//           </View>
+
+//           <Text
+//             style={{
+//               fontSize: z(18),
+//               color: "#fff",
+//               // fontFamily: "RobotoRegular",
+//               fontWeight: "bold",
+//               textAlign: "center",
+//               letterSpacing: z(2),
+//             }}
+//           >
+//             {coins.toString().padStart(4, "0")}
+//           </Text>
+//         </View>
+//       </View>
+
+//     </View>
+
+//     {winner ? (
+//       <WinnerUI  />
+//     ) : (
+//       <NonWinnerUI />
+//     )}
+
+//   </View>
+// </SafeAreaProvider>
+// }

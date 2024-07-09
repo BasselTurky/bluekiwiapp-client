@@ -221,41 +221,6 @@ export default function GalleryHeader({
               />
             </TouchableOpacity>
           </View>
-
-          {/* <Button
-            title="Search"
-            onPress={() => {
-              if (inputText !== "" && regex.test(inputText)) {
-                if (lastSearchInput === inputText) {
-                  setInputText("");
-                  return;
-                }
-                try {
-                  setReady(true);
-                  setNewSearch(true);
-                  setUrlData({
-                    input: inputText,
-                    page: 1,
-                  });
-                  setIsLoading(true);
-                  Keyboard.dismiss();
-                } catch (error) {
-                  console.log("L433", error);
-                }
-              }
-            }}
-          /> */}
-
-          {/* <Button
-            title="Portrait"
-            onPress={() => {
-              if (isPortrait) {
-                setIsPortrait(false);
-              } else {
-                setIsPortrait(true);
-              }
-            }}
-          /> */}
         </View>
 
         <View
