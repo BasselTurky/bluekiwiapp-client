@@ -35,6 +35,9 @@ import { addCoin } from "../../../Features/coins";
 // import { setLastGiveawayZ } from "../../../Features/lastGiveawayZ";
 import { setGiveawayX } from "../../../Features/giveawayX";
 import { setGiveawayZ } from "../../../Features/giveawayZ";
+import { addUserToGiveawayListX } from "../../../Features/giveawayX";
+import { addUserToGiveawayListZ } from "../../../Features/giveawayZ";
+
 import { setHistory } from "../../../Features/giveawayHistory";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -137,6 +140,7 @@ export default function Application() {
           type: toast_object.type,
           duration: 3000,
         });
+        // set false
       });
 
       socket.on("userInfo", async (userInfo) => {
@@ -170,9 +174,21 @@ export default function Application() {
       // socket.on("add-giveaway-to-history", () => {});
 
       socket.on("giveawayInfo", (giveawayX, giveawayZ) => {
+        // set state false
         dispatch(setGiveawayX(giveawayX)); // {id:giveawayid, type:'z', participants: [{id:ignore, uid: userid, date: join date},{}]}
         dispatch(setGiveawayZ(giveawayZ));
       });
+
+      socket.on(
+        "participant-joined",
+        (participantInfo, giveawayId, giveawayType) => {
+          if (giveawayType === "x") {
+            dispatch(addUserToGiveawayListX(participantInfo));
+          } else if (giveawayType === "z") {
+            dispatch(addUserToGiveawayListZ(participantInfo));
+          }
+        }
+      );
 
       socket.on(
         "start-download",

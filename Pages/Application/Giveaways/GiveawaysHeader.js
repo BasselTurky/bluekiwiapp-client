@@ -82,6 +82,7 @@ export default function GiveawaysHeader({ index, setIndex }) {
               style={{
                 fontSize: z(18),
                 opacity: index === 0 ? 1 : 0.4,
+                fontFamily: "MontserratRegular",
               }}
             >
               Giveaways
@@ -105,6 +106,7 @@ export default function GiveawaysHeader({ index, setIndex }) {
               style={{
                 fontSize: z(18),
                 opacity: index === 1 ? 1 : 0.4,
+                fontFamily: "MontserratRegular",
               }}
             >
               History

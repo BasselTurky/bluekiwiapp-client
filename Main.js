@@ -68,6 +68,11 @@ export default function Main() {
     PlayfairItalic: require("./assets/fonts/PlayfairDisplay-MediumItalic.ttf"),
     RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+    MontserratLight: require("./assets/fonts/Montserrat-Light.ttf"),
+    MontserratRegular: require("./assets/fonts/Montserrat-Regular.ttf"),
+    MontserratMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
+    MontserratSemiBold: require("./assets/fonts/Montserrat-SemiBold.ttf"),
+    MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
   });
 
   React.useEffect(() => {

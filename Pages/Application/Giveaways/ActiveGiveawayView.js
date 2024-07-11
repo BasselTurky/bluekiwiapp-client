@@ -18,6 +18,7 @@ export default function ActiveGiveawayView({ navigation, giveawayInfo }) {
   const participantsList = giveawayInfo.participants;
   const totalParticipants = giveawayInfo.participants.length;
   const currentGiveawayId = giveawayInfo.info.id;
+  const currentGiveawayType = giveawayInfo.info.type;
   const giveawayHistoryIDs = Object.keys(giveawayHistory);
 
   const [isDisabled, setIsDisabled] = React.useState(
@@ -33,8 +34,10 @@ export default function ActiveGiveawayView({ navigation, giveawayInfo }) {
     // check coins frontend
     try {
       if (coins >= 10) {
+        // set state isLoading true
+
         dispatch(consumeCoins(10));
-        socket.emit("join-giveaway", currentGiveawayId);
+        socket.emit("join-giveaway", currentGiveawayId, currentGiveawayType);
       } else {
         console.log(`Not enough coins`);
         toast.show(`Not enough coins`, {
@@ -86,7 +89,7 @@ export default function ActiveGiveawayView({ navigation, giveawayInfo }) {
       <Button
         title="Can Join"
         onPress={() => {
-          console.log(!isDisabled);
+          console.log(giveawayHistory[currentGiveawayId] ? false : true);
         }}
       />
       <Button
@@ -97,7 +100,7 @@ export default function ActiveGiveawayView({ navigation, giveawayInfo }) {
       />
       <Button
         title="Join Giveaway"
-        disabled={isDisabled}
+        disabled={giveawayHistory[currentGiveawayId] ? true : false}
         onPress={handleJoinGiveaway}
       />
     </View>
