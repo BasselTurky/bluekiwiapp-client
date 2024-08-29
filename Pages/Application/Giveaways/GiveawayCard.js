@@ -2,17 +2,24 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { z, zx } from "../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
-import { FontAwesome6, AntDesign } from "@expo/vector-icons";
+import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
+import OpenButton from "./OpenButton";
+const mainColor = "#735e4d";
 
 export default function GiveawayCard({
-  children,
+  children, // icon
   giveaway,
   title,
   navigation,
+  route,
 }) {
   const participants = giveaway.participants.length;
+  console.log(giveaway);
+
   const reward =
     participants <= 1999 ? 10 : Math.floor(participants / 1000) * 10;
+
+  const isAvailable = true;
   return (
     // <View style={styles.container}>
     <View style={styles.giveawayCard}>
@@ -24,7 +31,7 @@ export default function GiveawayCard({
       </View>
       <View style={styles.row}>
         <View style={styles.iconContainer}>
-          <FontAwesome6 name="user-group" size={zx(16)} color="#404040" />
+          <FontAwesome6 name="user-group" size={zx(16)} color={mainColor} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.counter}>{participants} / 1000</Text>
@@ -32,26 +39,15 @@ export default function GiveawayCard({
       </View>
       <View style={styles.row}>
         <View style={styles.iconContainer}>
-          <AntDesign name="gift" size={zx(22)} color="#404040" />
+          <AntDesign name="gift" size={zx(22)} color={mainColor} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.reward}>$ {reward}</Text>
-          <PaperButton
-            icon="camera"
-            mode="contained"
-            color="black"
-            onPress={() => console.log("Pressed")}
-          >
-            Press me
-          </PaperButton>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => {
-              navigation.navigate("ViewX");
-            }}
-          >
-            <Text style={styles.btnText}>Open</Text>
-          </TouchableOpacity>
+          <OpenButton
+            navigation={navigation}
+            route={route}
+            giveawayId={giveaway.info.id}
+          />
         </View>
       </View>
     </View>
@@ -65,10 +61,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   giveawayCard: {
-    backgroundColor: "white",
+    backgroundColor: "#fff9f4",
     paddingVertical: z(5),
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#c4c4c4",
+
+    // borderBottomWidth: StyleSheet.hairlineWidth,
+    // borderRightWidth: StyleSheet.hairlineWidth,
+    // borderLeftWidth: StyleSheet.hairlineWidth,
+
+    borderColor: "#c4c4c4",
+    marginHorizontal: 15,
+    marginTop: 10,
+    elevation: 5,
+    borderRadius: 3,
+    // elevation: 5,
   },
   row: {
     flexDirection: "row",
@@ -93,17 +98,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "MontserratRegular",
-    color: "#404040",
+    color: mainColor,
   },
 
   counter: {
     fontFamily: "MontserratRegular",
-    color: "#404040",
+    color: mainColor,
   },
 
   reward: {
     fontFamily: "MontserratRegular",
-    color: "#404040",
+    color: mainColor,
   },
   btn: {
     width: zx(70),
@@ -117,7 +122,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "MontserratLight",
-    color: "#404040",
+    // color: "#404040",
     letterSpacing: 1,
     color: "white",
   },

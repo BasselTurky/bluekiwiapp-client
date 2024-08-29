@@ -12,6 +12,8 @@ import { FontAwesome6, AntDesign } from "@expo/vector-icons";
 export default function MainView({ navigation }) {
   const giveawayX = useSelector((state) => state.giveawayX.value);
   const giveawayZ = useSelector((state) => state.giveawayZ.value);
+  const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
+  console.log(giveawayHistory);
 
   //  number of users in state
   // reward value
@@ -61,15 +63,17 @@ export default function MainView({ navigation }) {
         giveaway={giveawayX}
         title={"Single Winner"}
         navigation={navigation}
+        route={"ViewX"}
       >
-        <SingleCircleSVG width={zx(36)} height={zx(36)} fill={"#404040"} />
+        <SingleCircleSVG width={zx(36)} height={zx(36)} fill={"#735e4d"} />
       </GiveawayCard>
       <GiveawayCard
         giveaway={giveawayZ}
         title={"Multipe Winners"}
         navigation={navigation}
+        route={"ViewZ"}
       >
-        <MultiCirclesSVG width={zx(36)} height={zx(36)} fill={"#404040"} />
+        <MultiCirclesSVG width={zx(36)} height={zx(36)} fill={"#735e4d"} />
       </GiveawayCard>
     </View>
   );
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: "center",
     // alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#fff",
   },
   giveawayCard: {
     // height: z(170),

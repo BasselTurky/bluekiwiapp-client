@@ -22,15 +22,6 @@ import Register from "./Pages/Register/Register";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 
 import { setAuth } from "./Features/auth";
-
-import { Righteous_400Regular } from "@expo-google-fonts/righteous";
-import { ConcertOne_400Regular } from "@expo-google-fonts/concert-one";
-import { PinyonScript_400Regular } from "@expo-google-fonts/pinyon-script";
-import { Graduate_400Regular } from "@expo-google-fonts/graduate";
-import { ChelaOne_400Regular } from "@expo-google-fonts/chela-one";
-
-import { GrandHotel_400Regular } from "@expo-google-fonts/grand-hotel";
-
 import { useFonts } from "expo-font";
 
 import * as SplashScreen from "expo-splash-screen";
@@ -56,13 +47,6 @@ export default function Main() {
   const auth = useSelector((state) => state.auth.value);
 
   let [fontsLoaded, error] = useFonts({
-    Righteous_400Regular,
-    ConcertOne_400Regular,
-    PinyonScript_400Regular,
-    Graduate_400Regular,
-    ChelaOne_400Regular,
-
-    GrandHotel_400Regular,
     Playfair: require("./assets/fonts/PlayfairDisplay-Regular.ttf"),
     PlayfairBold: require("./assets/fonts/PlayfairDisplay-SemiBold.ttf"),
     PlayfairItalic: require("./assets/fonts/PlayfairDisplay-MediumItalic.ttf"),

@@ -165,11 +165,12 @@ export default function Application() {
         const giveaway_history_object = {};
 
         giveaway_history_array.forEach((giveaway_object) => {
-          giveaway_history_object[giveaway_object.id] = giveaway_object;
+          giveaway_history_object[giveaway_object.giveawayId] = giveaway_object;
         });
 
         // store history in redux
         dispatch(setHistory(giveaway_history_object));
+        // dispatch(setHistory(giveaway_history_array));
       });
       // socket.on("add-giveaway-to-history", () => {});
 
@@ -243,14 +244,17 @@ export default function Application() {
     //   placement="top"
     //   duration={3000}
     // >
-    <ImageBackground
-      source={require("../../../assets/001.jpg")}
+    <View
+      // source={require("../../../assets/001.jpg")}
       // source={require("../../../assets/splashx2.png")}
-      blurRadius={2}
-      resizeMode="cover"
+      // blurRadius={2}
+      // resizeMode="cover"
       style={{
         flex: 1,
         // backgroundColor: "black",
+
+        opacity: 1,
+        // back,
       }}
     >
       {isSocketConnected ? (
@@ -381,10 +385,27 @@ export default function Application() {
 
             <Stack.Screen
               name="Giveaways"
+              // component={() => {
+              //   return (
+              //     <View
+              //       style={{
+              //         height: "100%",
+              //         backgroundColor: "green",
+              //       }}
+              //     >
+              //       <Text>
+              //         Hellossssssssssssssssssssssss
+              //         ssssssssssssssssssssssssssssssssssssssss
+              //         sssssssssssssssssssssssssssssssssssss
+              //         sssssssssssssssssssssssssssssssssssss
+              //       </Text>
+              //     </View>
+              //   );
+              // }}
               component={Giveaways}
               options={{
                 // animation: "slide_from_right",
-                navigationBarColor: "rgba(0,0,0,0)",
+                // navigationBarColor: "rgba(0,0,0,0)",
                 animation: "fade",
                 headerShown: false,
               }}
@@ -423,7 +444,7 @@ export default function Application() {
         </NavigationContainer>
       ) : null}
       <KeepAwake />
-    </ImageBackground>
+    </View>
     // </ToastProvider>
   );
 }

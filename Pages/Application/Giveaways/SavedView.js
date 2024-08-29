@@ -2,31 +2,14 @@ import { StyleSheet, Text, View, Button, FlatList } from "react-native";
 import React from "react";
 import { z, zx } from "../../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
-import HistoryCard from "./HistoryCard";
 export default function HistoryView() {
   const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
   const giveawayHistoryArray = [...Object.values(giveawayHistory)].reverse();
   return (
     <View style={styles.container}>
       {/* <Text>History View</Text> */}
-      <FlatList
-        data={giveawayHistoryArray}
-        keyExtractor={(item) => item.giveawayId}
-        renderItem={({ item }) => <HistoryCard item={item} />}
-        style={styles.flatlist}
-        // inverted={true}
-        ListFooterComponent={() => {
-          return (
-            <View
-              style={{
-                width: "100%",
-                height: 20,
-              }}
-            ></View>
-          );
-        }}
-      />
-      {/* <Button
+
+      <Button
         title="Log History"
         onPress={() => {
           console.log(giveawayHistory);
@@ -37,9 +20,8 @@ export default function HistoryView() {
         onPress={() => {
           console.log(giveawayHistoryArray);
         }}
-      /> */}
-
-      {/* <View style={styles.tableContainer}>
+      />
+      <View style={styles.tableContainer}>
         <View style={styles.header}>
           <View style={styles.headerCell}>
             <Text>User</Text>
@@ -58,7 +40,7 @@ export default function HistoryView() {
           )}
           style={styles.flatlist}
         />
-      </View> */}
+      </View>
     </View>
   );
 }
@@ -70,15 +52,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // paddingHorizontal: zx(30),
     // paddingVertical: z(30),
-    // paddingVertical: 10,
-    // paddingHorizontal: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     backgroundColor: "#fff",
   },
   flatlist: {
     // backgroundColor: "pink",
-    width: "100%",
-    // flex: 1,
-    // paddingBottom: 120,
   },
   tableContainer: {
     flex: 1,

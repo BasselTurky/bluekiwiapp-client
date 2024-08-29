@@ -111,6 +111,7 @@ export default function Giveaways({ navigation }) {
       <View
         style={{
           flex: 1,
+          opacity: 1,
           backgroundColor: "#fff",
         }}
       >

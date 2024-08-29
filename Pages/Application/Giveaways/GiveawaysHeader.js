@@ -60,19 +60,19 @@ export default function GiveawaysHeader({ index, setIndex }) {
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
-            backgroundColor: "#fff",
+            backgroundColor: "#fff3e8",
             height: z(60),
           }}
         >
           <TouchableOpacity
             style={{
               flex: 1,
-              backgroundColor: "#fff",
+              backgroundColor: "#fff3e8",
               alignItems: "center",
               justifyContent: "center",
               height: "100%",
               borderBottomWidth: z(3),
-              borderBlockColor: index === 0 ? "lightblue" : "#f0f0f0",
+              borderBlockColor: index === 0 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
               setIndex(0);
@@ -82,7 +82,8 @@ export default function GiveawaysHeader({ index, setIndex }) {
               style={{
                 fontSize: z(18),
                 opacity: index === 0 ? 1 : 0.4,
-                fontFamily: "MontserratRegular",
+                fontFamily: "MontserratMedium",
+                color: "#735e4d",
               }}
             >
               Giveaways
@@ -91,12 +92,12 @@ export default function GiveawaysHeader({ index, setIndex }) {
           <TouchableOpacity
             style={{
               flex: 1,
-              backgroundColor: "#fff",
+              backgroundColor: "#fff3e8",
               alignItems: "center",
               justifyContent: "center",
               height: "100%",
               borderBottomWidth: z(3),
-              borderBlockColor: index === 1 ? "lightblue" : "#f0f0f0",
+              borderBlockColor: index === 1 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
               setIndex(1);
@@ -106,7 +107,8 @@ export default function GiveawaysHeader({ index, setIndex }) {
               style={{
                 fontSize: z(18),
                 opacity: index === 1 ? 1 : 0.4,
-                fontFamily: "MontserratRegular",
+                fontFamily: "MontserratMedium",
+                color: "#735e4d",
               }}
             >
               History
@@ -122,5 +124,6 @@ const styles = StyleSheet.create({
   container: {
     zIndex: 2,
     elevation: 5,
+    backgroundColor: "#fff3e8",
   },
 });
