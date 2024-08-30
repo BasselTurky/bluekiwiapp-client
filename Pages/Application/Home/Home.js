@@ -16,8 +16,8 @@ import HomeWebview from "./HomeWebview";
 
 export default React.memo(function Home({
   navigation,
-  viewRef,
-  mainWebviewUrlRef,
+  // viewRef,
+  // mainWebviewUrlRef,
 }) {
   console.log("Home");
 
@@ -32,8 +32,8 @@ export default React.memo(function Home({
     >
       <HomeView
         navigation={navigation}
-        viewRef={viewRef}
-        mainWebviewUrlRef={mainWebviewUrlRef}
+        // viewRef={viewRef}
+        // mainWebviewUrlRef={mainWebviewUrlRef}
         // isViewLoginRef={isViewLoginRef}
         // isWebviewLoadedRef={isWebviewLoadedRef}
       />

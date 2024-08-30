@@ -45,6 +45,7 @@ import lastGiveawayZReducer from "./Features/lastGiveawayZ";
 import giveawayXReducer from "./Features/giveawayX";
 import giveawayZReducer from "./Features/giveawayZ";
 import giveawayHistoryReducer from "./Features/giveawayHistory";
+import headerIndexReducer from "./Pages/Application/Giveaway/components/header/state/headerIndex";
 
 enableMapSet();
 
@@ -87,6 +88,7 @@ const rootReducer = combineReducers({
   giveawayX: giveawayXReducer,
   giveawayZ: giveawayZReducer,
   giveawayHistory: giveawayHistoryReducer,
+  headerIndex: headerIndexReducer,
 });
 
 const persistConfig = {

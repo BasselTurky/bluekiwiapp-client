@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../../../../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Button as PaperButton } from "react-native-paper";
-import SingleCircleSVG from "../../../Components/SingleCircleSVG";
-import MultiCirclesSVG from "../../../Components/MultiCirclesSVG";
-import WinnerIconSVG from "../../../Components/WinnerIconSVG";
+import SingleCircleSVG from "../../../../../../Components/SingleCircleSVG";
+import MultiCirclesSVG from "../../../../../../Components/MultiCirclesSVG";
+import WinnerIconSVG from "../../../../../../Components/WinnerIconSVG";
 import ClaimButton from "./ClaimButton";
-const mainColor = "#735e4d";
+// const mainColor = "#735e4d";
 
 export default function HistoryCard({ item }) {
   const userData = useSelector((state) => state.userData.value);
@@ -29,7 +29,7 @@ export default function HistoryCard({ item }) {
           }}
         > */}
         <View style={styles.iconContainer}>
-          <FontAwesome6 name="user-group" size={zx(16)} color={mainColor} />
+          <FontAwesome6 name="user-group" size={zx(16)} color={"#735e4d"} />
         </View>
         <View
           style={{
@@ -51,7 +51,7 @@ export default function HistoryCard({ item }) {
           }}
         > */}
         <View style={styles.iconContainer}>
-          <AntDesign name="gift" size={zx(22)} color={mainColor} />
+          <AntDesign name="gift" size={zx(22)} color={"#735e4d"} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.reward}>$ {item.reward_value_usd}</Text>
@@ -107,7 +107,7 @@ export default function HistoryCard({ item }) {
         </View>
 
         <View>
-          <ClaimButton user={user} />
+          <ClaimButton item={item} />
         </View>
       </View>
     </View>
@@ -173,21 +173,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "MontserratRegular",
-    color: mainColor,
+    color: "#735e4d",
   },
 
   counter: {
     fontFamily: "MontserratRegular",
-    color: mainColor,
+    color: "#735e4d",
   },
 
   reward: {
     fontFamily: "MontserratRegular",
-    color: mainColor,
+    color: "#735e4d",
   },
   winner: {
     fontFamily: "MontserratRegular",
-    color: mainColor,
+    color: "#735e4d",
     fontSize: 11,
   },
   btn: {

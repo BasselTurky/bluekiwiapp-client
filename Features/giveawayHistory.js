@@ -4,10 +4,14 @@ const initialStateValue = {};
 
 const giveawayHistory = createSlice({
   name: "giveawayHistory",
-  initialState: { value: initialStateValue },
+  initialState: {
+    value: initialStateValue,
+    reversed: null,
+  },
   reducers: {
     setHistory: (state, action) => {
       state.value = action.payload;
+      state.reversed = [...Object.values(action.payload)].reverse();
     },
   },
 });

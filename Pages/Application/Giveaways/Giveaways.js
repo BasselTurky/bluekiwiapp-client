@@ -106,32 +106,45 @@ export default function Giveaways({ navigation }) {
     { key: "second", title: "Second" },
   ]);
 
-  try {
-    return (
-      <View
-        style={{
-          flex: 1,
-          opacity: 1,
-          backgroundColor: "#fff",
+  // try {
+  return (
+    <View
+      style={{
+        flex: 1,
+        // opacity: 1,
+        backgroundColor: "#fff",
+        // justifyContent: "center",
+        // alignItems: "center",
+      }}
+    >
+      {/* <Button
+        title="back"
+        onPress={() => {
+          navigation.goBack();
         }}
-      >
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: layout.width }}
-          animationEnabled={true}
-          swipeEnabled={true}
-          renderTabBar={() => (
-            <GiveawaysHeader index={index} setIndex={setIndex} />
-          )}
-        />
-      </View>
-    );
-  } catch (error) {
-    console.log("ErrorID: E059: ", error);
-    return <ErrorView Error={"ErrorID: E059"} />;
-  }
+      /> */}
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        animationEnabled={true}
+        swipeEnabled={true}
+        renderTabBar={() => (
+          <GiveawaysHeader
+            index={index}
+            setIndex={setIndex}
+            navigation={navigation}
+          />
+        )}
+        // sceneContainerStyle={{ opacity: 1, backgroundColor: "#fff" }}
+      />
+    </View>
+  );
+  // } catch (error) {
+  //   console.log("ErrorID: E059: ", error);
+  //   return <ErrorView Error={"ErrorID: E059"} />;
+  // }
 }
 
 const styles = StyleSheet.create({

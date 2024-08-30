@@ -9,7 +9,8 @@ import { z } from "../../../utils/scaling";
 import Home from "../Home/Home";
 import ProfilePage from "../Profile/ProfilePage";
 import AdsView from "../AdsView/AdsView";
-
+import MainView from "../Giveaway/MainView";
+import MainViewHeader from "../Giveaway/components/header/MainViewHeader";
 import KeepAwake from "react-native-keep-awake";
 
 import ImageApiPage from "../Gallery/ImageApiPage";
@@ -58,8 +59,8 @@ export default function Application() {
 
   const homeFlatlistRef = useRef(null);
 
-  const viewRef = React.useRef(null);
-  const mainWebviewUrlRef = useRef("https://pixabay.com");
+  // const viewRef = React.useRef(null);
+  // const mainWebviewUrlRef = useRef("https://pixabay.com");
   // change pageUrl to redux
   // const [pageUrl, setPageUrl] = React.useState("https://pixabay.com");
 
@@ -105,7 +106,8 @@ export default function Application() {
     if (socket) {
       socket.on("connect", async () => {
         console.log("socket connected");
-        setIsSocketConnected(true);
+        addUser();
+        // setIsSocketConnected(true);
       });
       socket.on("connect_error", (error) => {
         console.error("Connection failed:", error.message);
@@ -216,25 +218,24 @@ export default function Application() {
         socket.off("connect"); // Unsubscribe from the "connect" event
         socket.removeAllListeners();
         socket.close();
-        setIsSocketConnected(false);
+        // setIsSocketConnected(false);
       };
     }
   }, [socket]);
 
   async function addUser() {
     console.log("addUser");
-    console.log(isSocketConnected);
-
+    // console.log(isSocketConnected);
+    socket.emit("add-user");
+    socket.emit("get-giveaways-info");
+    socket.emit("get-user-giveaway-history");
     if (isSocketConnected) {
-      socket.emit("add-user");
-      socket.emit("get-giveaways-info");
-      socket.emit("get-user-giveaway-history");
     }
   }
 
-  useEffect(() => {
-    addUser();
-  }, [isSocketConnected]);
+  // useEffect(() => {
+  //   addUser();
+  // }, [isSocketConnected]);
 
   // console.log("application");
   return (
@@ -244,54 +245,53 @@ export default function Application() {
     //   placement="top"
     //   duration={3000}
     // >
-    <View
-      // source={require("../../../assets/001.jpg")}
+    <ImageBackground
+      source={require("../../../assets/001.jpg")}
       // source={require("../../../assets/splashx2.png")}
-      // blurRadius={2}
-      // resizeMode="cover"
+      blurRadius={2}
+      resizeMode="cover"
       style={{
         flex: 1,
-        // backgroundColor: "black",
-
-        opacity: 1,
-        // back,
+        // backgroundColor: "blue",
+        backgroundColor: "#fff",
+        // opacity: 1,
       }}
     >
-      {isSocketConnected ? (
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              contentStyle: {
-                backgroundColor: "transparent",
-              },
+      {/* {isSocketConnected ? ( */}
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        >
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              // animation: "slide_from_bottom",
+              navigationBarColor: "rgba(0,0,0,0)",
+              animation: "fade",
+              headerShown: false,
             }}
           >
-            <Stack.Screen
-              name="Home"
-              // component={Home}
-              options={{
-                // animation: "slide_from_bottom",
-                navigationBarColor: "rgba(0,0,0,0)",
-                animation: "fade",
-                headerShown: false,
-              }}
-            >
-              {(props) => (
-                <Home
-                  {...props}
-                  viewRef={viewRef}
-                  mainWebviewUrlRef={mainWebviewUrlRef}
-                  // pageUrl={pageUrl}
-                  // setPageUrl={setPageUrl}
-                  // isWebviewLoaded={isWebviewLoaded}
-                  // setIsWebviewLoaded={setIsWebviewLoaded}
-                  // isViewLogin={isViewLogin}
-                  // setIsViewLogin={setIsViewLogin}
-                />
-              )}
-            </Stack.Screen>
+            {/* {(props) => (
+              <Home
+                {...props}
+                // viewRef={viewRef}
+                // mainWebviewUrlRef={mainWebviewUrlRef}
+                // pageUrl={pageUrl}
+                // setPageUrl={setPageUrl}
+                // isWebviewLoaded={isWebviewLoaded}
+                // setIsWebviewLoaded={setIsWebviewLoaded}
+                // isViewLogin={isViewLogin}
+                // setIsViewLogin={setIsViewLogin}
+              />
+            )} */}
+          </Stack.Screen>
 
-            {/* <Stack.Screen
+          {/* <Stack.Screen
               name="ProfilePage"
               component={ProfilePage}
               options={{
@@ -302,7 +302,7 @@ export default function Application() {
               }}
             ></Stack.Screen> */}
 
-            {/* <Stack.Screen
+          {/* <Stack.Screen
           name="DogAPI"
           component={DogAPI}
           options={{
@@ -324,7 +324,7 @@ export default function Application() {
           }}
         ></Stack.Screen> */}
 
-            {/* <Stack.Screen
+          {/* <Stack.Screen
               name="GalleryContainer"
               // component={ImageApiPage}
               options={{
@@ -350,7 +350,7 @@ export default function Application() {
               )}
             </Stack.Screen> */}
 
-            {/* <Stack.Screen
+          {/* <Stack.Screen
           name="Giveaway"
           component={Giveaway}
           options={{
@@ -361,68 +361,70 @@ export default function Application() {
           }}
         ></Stack.Screen> */}
 
-            <Stack.Screen
-              name="ArchiveApiPage"
-              component={ArchiveApiPage}
-              options={{
-                // animation: "slide_from_left",
-                navigationBarColor: "rgba(0,0,0,0)",
-                animation: "fade",
-                headerShown: false,
-              }}
-            ></Stack.Screen>
+          <Stack.Screen
+            name="ArchiveApiPage"
+            component={ArchiveApiPage}
+            options={{
+              // animation: "slide_from_left",
+              navigationBarColor: "rgba(0,0,0,0)",
+              animation: "fade",
+              headerShown: false,
+            }}
+          ></Stack.Screen>
 
-            <Stack.Screen
-              name="WallpaperApi"
-              component={WallpaperApi}
-              options={{
-                // animation: "slide_from_left",
-                navigationBarColor: "rgba(0,0,0,0)",
-                animation: "fade",
-                headerShown: false,
-              }}
-            ></Stack.Screen>
+          <Stack.Screen
+            name="WallpaperApi"
+            component={WallpaperApi}
+            options={{
+              // animation: "slide_from_left",
+              navigationBarColor: "rgba(0,0,0,0)",
+              animation: "fade",
+              headerShown: false,
+            }}
+          ></Stack.Screen>
 
-            <Stack.Screen
-              name="Giveaways"
-              // component={() => {
-              //   return (
-              //     <View
-              //       style={{
-              //         height: "100%",
-              //         backgroundColor: "green",
-              //       }}
-              //     >
-              //       <Text>
-              //         Hellossssssssssssssssssssssss
-              //         ssssssssssssssssssssssssssssssssssssssss
-              //         sssssssssssssssssssssssssssssssssssss
-              //         sssssssssssssssssssssssssssssssssssss
-              //       </Text>
-              //     </View>
-              //   );
-              // }}
-              component={Giveaways}
-              options={{
-                // animation: "slide_from_right",
-                // navigationBarColor: "rgba(0,0,0,0)",
-                animation: "fade",
-                headerShown: false,
-              }}
-            ></Stack.Screen>
+          <Stack.Screen
+            name="Giveaways"
+            // component={() => {
+            //   return (
+            //     <View
+            //       style={{
+            //         height: "100%",
+            //         backgroundColor: "green",
+            //       }}
+            //     >
+            //       <Text>
+            //         Hellossssssssssssssssssssssss
+            //         ssssssssssssssssssssssssssssssssssssssss
+            //         sssssssssssssssssssssssssssssssssssss
+            //         sssssssssssssssssssssssssssssssssssss
+            //       </Text>
+            //     </View>
+            //   );
+            // }}
+            component={MainView}
+            options={{
+              // animation: "slide_from_right",
+              navigationBarColor: "rgba(0,0,0,0)",
+              animation: "fade",
+              // headerTitle: ,
+              // header: (props) => <MainViewHeader {...props} />,
+              headerShown: false,
+            }}
+          ></Stack.Screen>
 
-            <Stack.Screen
-              name="AdsView"
-              component={AdsView}
-              options={{
-                animation: "fade",
-                // animation: "slide_from_bottom",
-                navigationBarColor: "rgba(0,0,0,0)",
-                // animation: "fade",
-                headerShown: false,
-              }}
-            >
-              {/* {(props) => (
+          <Stack.Screen
+            name="AdsView"
+            component={AdsView}
+            options={{
+              animation: "fade",
+              // animation: "slide_from_bottom",
+              navigationBarColor: "rgba(0,0,0,0)",
+              // animation: "fade",
+              headerShown: false,
+            }}
+          >
+            {/* {(props) => (
             <AdsView
               {...props}
               AdAlert={AdAlert}
@@ -430,10 +432,10 @@ export default function Application() {
               KiwiCoinSVG={KiwiCoinSVG}
             />
           )} */}
-            </Stack.Screen>
-          </Stack.Navigator>
+          </Stack.Screen>
+        </Stack.Navigator>
 
-          {/* <Toast
+        {/* <Toast
             topOffset={20}
             // config={toastConfig}
 
@@ -441,10 +443,10 @@ export default function Application() {
               Toast.hide();
             }}
           /> */}
-        </NavigationContainer>
-      ) : null}
+      </NavigationContainer>
+      {/* ) : null} */}
       <KeepAwake />
-    </View>
+    </ImageBackground>
     // </ToastProvider>
   );
 }

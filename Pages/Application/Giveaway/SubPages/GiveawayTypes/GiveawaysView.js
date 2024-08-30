@@ -1,18 +1,17 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainView from "./MainView";
-import ViewX from "./ViewX";
-import ViewZ from "./ViewZ";
+import FrontView from "./NavigationViews/FrontView/FrontView";
+import GiveawayXView from "./NavigationViews/GiveawayXView/GiveawayXView";
+import GiveawayZView from "./NavigationViews/GiveawayZView/GiveawayZView";
 
 const Stack = createNativeStackNavigator();
-
-export default function GiveawaysContainer() {
+export default function GiveawaysView() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="MainView"
-        component={MainView}
+        name="FrontView"
+        component={FrontView}
         options={{
           headerShown: false,
           animation: "fade",
@@ -20,8 +19,8 @@ export default function GiveawaysContainer() {
       />
 
       <Stack.Screen
-        name="ViewX"
-        component={ViewX}
+        name="GiveawayXView"
+        component={GiveawayXView}
         options={{
           headerShown: false,
           animation: "fade",
@@ -29,21 +28,20 @@ export default function GiveawaysContainer() {
       />
 
       <Stack.Screen
-        name="ViewZ"
-        component={ViewZ}
+        name="GiveawayZView"
+        component={GiveawayZView}
         options={{
           headerShown: false,
           animation: "fade",
         }}
       />
     </Stack.Navigator>
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     backgroundColor: "green",
-    //   }}
-    // ></View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "red",
+  },
+});

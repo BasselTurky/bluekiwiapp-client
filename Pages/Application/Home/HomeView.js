@@ -35,8 +35,8 @@ const height = Dimensions.get("window").height;
 
 export default React.memo(function HomeView({
   navigation,
-  viewRef,
-  mainWebviewUrlRef,
+  // viewRef,
+  // mainWebviewUrlRef,
   //   isViewLoginRef,
   //   isWebviewLoadedRef,
   //   isWebviewLoaded,
@@ -53,7 +53,7 @@ export default React.memo(function HomeView({
 
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);
-  console.log("user: ", userData);
+  // console.log("user: ", userData);
   //   const coins = useSelector((state) => state.coins.value);
   const favArray = useSelector((state) => state.favArray.value);
 

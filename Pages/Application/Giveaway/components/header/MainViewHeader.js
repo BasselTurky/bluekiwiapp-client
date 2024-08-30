@@ -14,13 +14,17 @@ import React, { useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../../../../utils/scaling";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
-
-export default function GiveawaysHeader({ index, setIndex, navigation }) {
-  // const navigation = useNavigation();
+import { useNavigationState } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
+export default function MainViewHeader({ state, navigation }) {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  //   const indexs = useNavigationState((state) => state.index);
+  //   const headerIndex = useSelector((state) => state.headerIndex.value);
+  //   const [indexs, setIndexs] = useState(0);
+  //   const navigation = useNavigation();
 
   return (
     <View style={[styles.container, { height: insets.top + z(116) }]}>
@@ -47,6 +51,9 @@ export default function GiveawaysHeader({ index, setIndex, navigation }) {
             }}
             onPress={() => {
               // navigation.goBack();
+              //   console.log(state.index);
+              //   console.log(state.routes);
+
               if (navigation.isFocused()) {
                 navigation.goBack();
               }
@@ -55,7 +62,7 @@ export default function GiveawaysHeader({ index, setIndex, navigation }) {
             <Entypo name="chevron-left" size={z(36)} color="black" />
           </TouchableOpacity>
 
-          <View></View>
+          {/* <View></View> */}
         </View>
 
         <View
@@ -76,16 +83,17 @@ export default function GiveawaysHeader({ index, setIndex, navigation }) {
               justifyContent: "center",
               height: "100%",
               borderBottomWidth: z(3),
-              borderBlockColor: index === 0 ? "#a9bac7" : "#f5f0ec",
+              borderBlockColor: state.index === 0 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
-              setIndex(0);
+              //   setIndexs(0);
+              navigation.navigate("GiveawaysView");
             }}
           >
             <Text
               style={{
                 fontSize: z(18),
-                opacity: index === 0 ? 1 : 0.4,
+                opacity: state.index === 0 ? 1 : 0.4,
                 fontFamily: "MontserratMedium",
                 color: "#735e4d",
               }}
@@ -101,16 +109,17 @@ export default function GiveawaysHeader({ index, setIndex, navigation }) {
               justifyContent: "center",
               height: "100%",
               borderBottomWidth: z(3),
-              borderBlockColor: index === 1 ? "#a9bac7" : "#f5f0ec",
+              borderBlockColor: state.index === 1 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
-              setIndex(1);
+              //   setIndexs(1);
+              navigation.navigate("HistoryView");
             }}
           >
             <Text
               style={{
                 fontSize: z(18),
-                opacity: index === 1 ? 1 : 0.4,
+                opacity: state.index === 1 ? 1 : 0.4,
                 fontFamily: "MontserratMedium",
                 color: "#735e4d",
               }}

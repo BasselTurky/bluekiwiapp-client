@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../../../../../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
-import OpenButton from "./OpenButton";
+import OpenButton from "../../../../../../Giveaways/OpenButton";
 const mainColor = "#735e4d";
 
 export default function GiveawayCard({
@@ -14,7 +14,7 @@ export default function GiveawayCard({
   route,
 }) {
   const participants = giveaway.participants.length;
-  console.log(giveaway);
+  // console.log(giveaway);
 
   const reward =
     participants <= 1999 ? 10 : Math.floor(participants / 1000) * 10;
