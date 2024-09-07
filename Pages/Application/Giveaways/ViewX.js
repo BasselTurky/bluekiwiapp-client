@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import ActiveGiveawayView from "./ActiveGiveawayView";
+import ActiveGiveawayView from "../Giveaway/SubPages/GiveawayTypes/NavigationViews/ActiveGiveaway/ActiveGiveawayView";
 
 export default function ViewX({ navigation }) {
   const giveawayX = useSelector((state) => state.giveawayX.value);

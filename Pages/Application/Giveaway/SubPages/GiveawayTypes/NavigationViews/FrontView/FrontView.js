@@ -9,23 +9,31 @@ import { z, zx } from "../../../../../../../utils/scaling";
 import GiveawayCard from "./components/GiveawayCard";
 
 export default function FrontView({ navigation }) {
-  const giveawayX = useSelector((state) => state.giveawayX.value);
-  const giveawayZ = useSelector((state) => state.giveawayZ.value);
+  const activeGiveawayX = useSelector((state) => state.activeGiveawayX.value);
+  const activeGiveawayZ = useSelector((state) => state.activeGiveawayZ.value);
+  const participantsGiveawayX = useSelector(
+    (state) => state.participantsGiveawayX.value
+  );
+  const participantsGiveawayZ = useSelector(
+    (state) => state.participantsGiveawayZ.value
+  );
   return (
     <View style={styles.container}>
       <GiveawayCard
-        giveaway={giveawayX}
+        giveaway={activeGiveawayX}
+        participants={participantsGiveawayX}
         title={"Single Winner"}
         navigation={navigation}
-        route={"GiveawayXView"}
+        route={"Single"}
       >
         <SingleCircleSVG width={zx(36)} height={zx(36)} fill={"#735e4d"} />
       </GiveawayCard>
       <GiveawayCard
-        giveaway={giveawayZ}
+        giveaway={activeGiveawayZ}
+        participants={participantsGiveawayZ}
         title={"Multipe Winners"}
         navigation={navigation}
-        route={"GiveawayZView"}
+        route={"Multiple"}
       >
         <MultiCirclesSVG width={zx(36)} height={zx(36)} fill={"#735e4d"} />
       </GiveawayCard>

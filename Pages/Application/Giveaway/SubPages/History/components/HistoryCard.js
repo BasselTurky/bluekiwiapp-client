@@ -1,20 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { z, zx } from "../../../../../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
 import { Button as PaperButton } from "react-native-paper";
 import SingleCircleSVG from "../../../../../../Components/SingleCircleSVG";
 import MultiCirclesSVG from "../../../../../../Components/MultiCirclesSVG";
 import WinnerIconSVG from "../../../../../../Components/WinnerIconSVG";
 import ClaimButton from "./ClaimButton";
+
+import { setIsVisible } from "../state/modalState";
+import { setContent } from "../state/modalState";
 // const mainColor = "#735e4d";
 
 export default function HistoryCard({ item }) {
-  const userData = useSelector((state) => state.userData.value);
-  const user = item.winners.find(
-    (participant) => participant.userId === userData.uid
-  );
+  const dispatch = useDispatch();
+  // const userData = useSelector((state) => state.userData.value);
+
   return (
     <View style={styles.historyCard}>
       <View style={styles.row}>
@@ -101,7 +104,28 @@ export default function HistoryCard({ item }) {
             {item.type === "x" ? (
               <Text style={styles.winner}>{item.winners[0].userId}</Text>
             ) : (
-              <Text style={styles.winner}>{item.winners.length} winners</Text>
+              <TouchableOpacity
+                style={{
+                  elevation: 3,
+                  backgroundColor: "#ebe5e1",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  alignItems: "center",
+                  width: zx(65),
+                  height: zx(40),
+                  borderRadius: 4,
+                }}
+                onPress={() => {
+                  // display modal, with list of winners
+                  // console.log(item.winners);
+
+                  dispatch(setContent(item.winners));
+                  dispatch(setIsVisible(true));
+                }}
+              >
+                <Text style={styles.winner}>{item.winners.length} </Text>
+                <Entypo name="list" size={zx(24)} color="#735e4d" />
+              </TouchableOpacity>
             )}
           </View>
         </View>

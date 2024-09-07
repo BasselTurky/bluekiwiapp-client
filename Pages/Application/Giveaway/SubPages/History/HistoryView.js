@@ -3,15 +3,26 @@ import React from "react";
 import { z, zx } from "../../../../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
 import HistoryCard from "./components/HistoryCard";
+import WinnersModal from "./components/WinnersModal";
+import { setIsVisible } from "./state/modalState";
 export default function HistoryView() {
+  const dispatch = useDispatch();
   const giveawayHistoryRev = useSelector(
     (state) => state.giveawayHistory.reversed
   );
+  const historyGiveaways = useSelector((state) => state.historyGiveaways.value);
+
+  React.useEffect(() => {
+    return () => {
+      dispatch(setIsVisible(false));
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* <Text>History View</Text> */}
       <FlatList
-        data={giveawayHistoryRev}
+        data={historyGiveaways}
         keyExtractor={(item, index) => item.giveawayId}
         renderItem={({ item }) => <HistoryCard item={item} />}
         style={styles.flatlist}
@@ -33,6 +44,7 @@ export default function HistoryView() {
         console.log(giveawayHistoryRev);
       }}
     /> */}
+      <WinnersModal />
     </View>
   );
 }

@@ -17,6 +17,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z, zx } from "../../../../../utils/scaling";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigationState } from "@react-navigation/native";
+import { setIsVisible } from "../../SubPages/History/state/modalState";
+
 // import { useNavigation } from "@react-navigation/native";
 export default function MainViewHeader({ state, navigation }) {
   const dispatch = useDispatch();
@@ -25,6 +27,13 @@ export default function MainViewHeader({ state, navigation }) {
   //   const headerIndex = useSelector((state) => state.headerIndex.value);
   //   const [indexs, setIndexs] = useState(0);
   //   const navigation = useNavigation();
+  React.useEffect(() => {
+    if (state.index === 0) {
+      dispatch(setIsVisible(false));
+    }
+
+    return () => {};
+  }, [state.index]);
 
   return (
     <View style={[styles.container, { height: insets.top + z(116) }]}>

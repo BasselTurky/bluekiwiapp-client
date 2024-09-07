@@ -46,6 +46,12 @@ import giveawayXReducer from "./Features/giveawayX";
 import giveawayZReducer from "./Features/giveawayZ";
 import giveawayHistoryReducer from "./Features/giveawayHistory";
 import headerIndexReducer from "./Pages/Application/Giveaway/components/header/state/headerIndex";
+import modalStateReducer from "./Pages/Application/Giveaway/SubPages/History/state/modalState";
+import activeGiveawayXReducer from "./Pages/Application/Giveaway/Redux States/activeGiveawayX";
+import activeGiveawayZReducer from "./Pages/Application/Giveaway/Redux States/activeGiveawayZ";
+import participantsGiveawayXReducer from "./Pages/Application/Giveaway/Redux States/participantsGiveawayX";
+import participantsGiveawayZReducer from "./Pages/Application/Giveaway/Redux States/participantsGiveawayZ";
+import historyGiveawaysReducer from "./Pages/Application/Giveaway/Redux States/historyGiveaways";
 
 enableMapSet();
 
@@ -89,6 +95,12 @@ const rootReducer = combineReducers({
   giveawayZ: giveawayZReducer,
   giveawayHistory: giveawayHistoryReducer,
   headerIndex: headerIndexReducer,
+  modalState: modalStateReducer,
+  activeGiveawayX: activeGiveawayXReducer,
+  activeGiveawayZ: activeGiveawayZReducer,
+  participantsGiveawayX: participantsGiveawayXReducer,
+  participantsGiveawayZ: participantsGiveawayZReducer,
+  historyGiveaways: historyGiveawaysReducer,
 });
 
 const persistConfig = {
@@ -104,6 +116,11 @@ const persistConfig = {
     // "searchPage",
     "lastSearchInput",
     "deleteAccountModal",
+    "activeGiveawayX",
+    "activeGiveawayZ",
+    "participantsGiveawayX",
+    "participantsGiveawayZ",
+    "historyGiveaways",
   ],
 };
 

@@ -19,6 +19,7 @@ export default function MainView() {
         contentStyle: {
           backgroundColor: "transparent",
         },
+        // swipeEnabled: false,
         // tabBarStyle: { display: "none" },
       }}
     >

@@ -4,12 +4,17 @@ import { z, zx } from "../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-export default function OpenButton({ navigation, route, giveawayId }) {
-  const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
+export default function OpenButton({
+  navigation,
+  route,
+  // giveawayId,
+  isUserParticipant,
+}) {
+  // const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
   return (
     <PaperButton
       icon={({ size, color }) =>
-        giveawayHistory[giveawayId] ? null : (
+        isUserParticipant ? null : (
           <FontAwesome name="circle" size={12} color="red" />
         )
       }

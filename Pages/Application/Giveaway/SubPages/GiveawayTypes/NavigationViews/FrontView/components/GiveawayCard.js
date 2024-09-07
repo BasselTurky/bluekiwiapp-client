@@ -3,21 +3,24 @@ import React from "react";
 import { z, zx } from "../../../../../../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
-import OpenButton from "../../../../../../Giveaways/OpenButton";
+import OpenButton from "./OpenButton";
 const mainColor = "#735e4d";
 
 export default function GiveawayCard({
   children, // icon
   giveaway,
+  participants,
   title,
   navigation,
   route,
 }) {
-  const participants = giveaway.participants.length;
+  const participantsLength = participants.length;
   // console.log(giveaway);
 
   const reward =
-    participants <= 1999 ? 10 : Math.floor(participants / 1000) * 10;
+    participantsLength <= 1999
+      ? 10
+      : Math.floor(participantsLength / 1000) * 10;
 
   const isAvailable = true;
   return (
@@ -34,7 +37,7 @@ export default function GiveawayCard({
           <FontAwesome6 name="user-group" size={zx(16)} color={mainColor} />
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.counter}>{participants} / 1000</Text>
+          <Text style={styles.counter}>{participantsLength} / 1000</Text>
         </View>
       </View>
       <View style={styles.row}>
@@ -46,7 +49,8 @@ export default function GiveawayCard({
           <OpenButton
             navigation={navigation}
             route={route}
-            giveawayId={giveaway.info.id}
+            // giveawayId={giveaway.info.id}
+            isUserParticipant={giveaway.isUserParticipant}
           />
         </View>
       </View>
