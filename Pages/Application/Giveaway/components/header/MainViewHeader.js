@@ -18,7 +18,9 @@ import { z, zx } from "../../../../../utils/scaling";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigationState } from "@react-navigation/native";
 import { setIsVisible } from "../../SubPages/History/state/modalState";
+import { hidePrizeModal } from "../../Redux States/prizeModalState";
 
+import CoinsDisplay from "../../../../../CustomComponents/CoinsDisplay";
 // import { useNavigation } from "@react-navigation/native";
 export default function MainViewHeader({ state, navigation }) {
   const dispatch = useDispatch();
@@ -30,6 +32,7 @@ export default function MainViewHeader({ state, navigation }) {
   React.useEffect(() => {
     if (state.index === 0) {
       dispatch(setIsVisible(false));
+      dispatch(hidePrizeModal(false));
     }
 
     return () => {};
@@ -50,13 +53,17 @@ export default function MainViewHeader({ state, navigation }) {
             flex: 1,
             width: "100%",
             flexDirection: "row",
+            // backgroundColor: "pink",
+            paddingHorizontal: zx(8),
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
           <TouchableOpacity
             style={{
               justifyContent: "center",
               alignItems: "center",
-              paddingHorizontal: zx(8),
+              // paddingHorizontal: zx(8),
             }}
             onPress={() => {
               // navigation.goBack();
@@ -70,7 +77,7 @@ export default function MainViewHeader({ state, navigation }) {
           >
             <Entypo name="chevron-left" size={z(36)} color="black" />
           </TouchableOpacity>
-
+          <CoinsDisplay coinPosition={"right"} />
           {/* <View></View> */}
         </View>
 

@@ -9,19 +9,19 @@ import { z, zx } from "../../../../../../../utils/scaling";
 import GiveawayCard from "./components/GiveawayCard";
 
 export default function FrontView({ navigation }) {
-  const activeGiveawayX = useSelector((state) => state.activeGiveawayX.value);
-  const activeGiveawayZ = useSelector((state) => state.activeGiveawayZ.value);
-  const participantsGiveawayX = useSelector(
-    (state) => state.participantsGiveawayX.value
-  );
-  const participantsGiveawayZ = useSelector(
-    (state) => state.participantsGiveawayZ.value
-  );
+  // const activeGiveawayX = useSelector((state) => state.activeGiveawayX.value);
+  // const activeGiveawayZ = useSelector((state) => state.activeGiveawayZ.value);
+  // const participantsGiveawayX = useSelector(
+  //   (state) => state.participantsGiveawayX.value
+  // );
+  // const participantsGiveawayZ = useSelector(
+  //   (state) => state.participantsGiveawayZ.value
+  // );
   return (
     <View style={styles.container}>
       <GiveawayCard
-        giveaway={activeGiveawayX}
-        participants={participantsGiveawayX}
+        activeGiveawayString={"activeGiveawayX"}
+        participantsGiveawayString={"participantsGiveawayX"}
         title={"Single Winner"}
         navigation={navigation}
         route={"Single"}
@@ -29,8 +29,8 @@ export default function FrontView({ navigation }) {
         <SingleCircleSVG width={zx(36)} height={zx(36)} fill={"#735e4d"} />
       </GiveawayCard>
       <GiveawayCard
-        giveaway={activeGiveawayZ}
-        participants={participantsGiveawayZ}
+        activeGiveawayString={"activeGiveawayZ"}
+        participantsGiveawayString={"participantsGiveawayZ"}
         title={"Multipe Winners"}
         navigation={navigation}
         route={"Multiple"}

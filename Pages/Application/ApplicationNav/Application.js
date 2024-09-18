@@ -53,9 +53,18 @@ const Stack = createNativeStackNavigator();
 // async function deleteValueFor(key) {
 //   await SecureStore.deleteItemAsync(key);
 // }
+async function saveData() {
+  await SecureStore.setItemAsync("myKey", "myValue");
+}
 
 export default function Application() {
   // console.log("app");
+  useEffect(() => {
+    saveData();
+
+    return () => {};
+  }, []);
+
   // const toast = useToast();
   // const dispatch = useDispatch();
   // const socket = useSocket();

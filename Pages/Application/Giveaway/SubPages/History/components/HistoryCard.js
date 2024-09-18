@@ -101,7 +101,7 @@ export default function HistoryCard({ item }) {
           </View>
 
           <View style={styles.textContainer}>
-            {item.type === "x" ? (
+            {item.type === "x" || item.winners.length === 1 ? (
               <Text style={styles.winner}>{item.winners[0].userId}</Text>
             ) : (
               <TouchableOpacity
@@ -117,13 +117,15 @@ export default function HistoryCard({ item }) {
                 }}
                 onPress={() => {
                   // display modal, with list of winners
-                  // console.log(item.winners);
+                  if (item.winners) {
+                    console.log(item.winners);
+                  }
 
                   dispatch(setContent(item.winners));
                   dispatch(setIsVisible(true));
                 }}
               >
-                <Text style={styles.winner}>{item.winners.length} </Text>
+                <Text style={styles.winner}>{item.winners.length}</Text>
                 <Entypo name="list" size={zx(24)} color="#735e4d" />
               </TouchableOpacity>
             )}

@@ -10,6 +10,9 @@ import { useSocket } from "../../SocketContext/SocketContext";
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch, useSelector } from "react-redux";
 
+import { verifyPayload } from "../../../utils/validationFunction";
+import { claimedRewardSchema } from "../../../utils/validationSchemas";
+
 import { setAuth } from "../../../Features/auth";
 import { setUserData } from "../../../Features/userData";
 import { setCoins } from "../../../Features/coins";
@@ -29,9 +32,9 @@ import { addParticipantsX } from "../Giveaway/Redux States/participantsGiveawayX
 import { addParticipantsZ } from "../Giveaway/Redux States/participantsGiveawayZ";
 import { setHistoryGiveaways } from "../Giveaway/Redux States/historyGiveaways";
 import { addHistoryGiveaaway } from "../Giveaway/Redux States/historyGiveaways";
-
-import { persistor } from "../../../store";
-import storage from "redux-persist/lib/storage";
+import { updateHistoryGiveaway } from "../Giveaway/Redux States/historyGiveaways";
+// import { persistor } from "../../../store";
+// import storage from "redux-persist/lib/storage";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -77,6 +80,7 @@ export default function SocketComponent() {
 
     if (activeGiveaway === null) {
       // get giveaway
+      console.log("fetchActiveGiveaway");
       socket.emit("get-active-giveaway", type);
       return;
     }
@@ -95,6 +99,7 @@ export default function SocketComponent() {
 
     if (participants.value === null) {
       // get all participants in active giveaway
+      console.log("fetchAllParticipants");
       socket.emit("get-all-participants", type);
       return;
     }
@@ -116,18 +121,22 @@ export default function SocketComponent() {
 
   async function fetchGiveawayHistory() {
     if (historyGiveaways === null) {
+      console.log("set");
+
       socket.emit("get-history-giveaways", "set", 0);
       return;
     }
 
     if (historyGiveaways) {
       const offset = historyGiveaways.length;
+      console.log("historyGiveaways offset", offset);
+
       socket.emit("get-history-giveaways", "add", offset);
       return;
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (socket) {
       socket.on("connect", async () => {
         console.log("socket connected");
@@ -159,11 +168,17 @@ export default function SocketComponent() {
 
       socket.on("force-disconnect", async () => {
         // force logout the user
+        console.log("force logout");
+
         deleteValueFor("token");
         // console.log("token deleted");
         await GoogleSignin.signOut();
         // console.log("google signed out");
+
         dispatch(setAuth(false));
+        dispatch(globalReset());
+
+        // TODO reset history if new user detected
         // delete token
       });
 
@@ -287,6 +302,16 @@ export default function SocketComponent() {
           default:
             console.log(`Unknown type: ${type} history-giveaways`);
         }
+      });
+
+      socket.on("reward-claimed", (payload) => {
+        const isValid = verifyPayload(payload, claimedRewardSchema);
+        if (!isValid) {
+          console.error("Invalid payload : reward-claimed");
+          return;
+        }
+
+        dispatch(updateHistoryGiveaway(payload));
       });
 
       socket.on(

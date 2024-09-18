@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { globalReset } from "../../../../GlobalActions-Redux/globalActions";
 
 const initialStateValue = null;
 
@@ -19,6 +20,11 @@ const activeGiveawayZ = createSlice({
         state.value.isUserParticipant = action.payload ?? false;
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(globalReset, (state) => {
+      state.value = initialStateValue;
+    });
   },
 });
 

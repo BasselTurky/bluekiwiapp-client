@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { z, zx } from "../../../utils/scaling";
+// import { z, zx } from "../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";

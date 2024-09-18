@@ -55,7 +55,7 @@ export default React.memo(function HomeView({
   const userData = useSelector((state) => state.userData.value);
   // console.log("user: ", userData);
   //   const coins = useSelector((state) => state.coins.value);
-  const favArray = useSelector((state) => state.favArray.value);
+  // const favArray = useSelector((state) => state.favArray.value);
 
   //   const isWebviewLoaded = useSelector((state) => state.isWebviewLoaded.value);
   //   const isViewLogin = useSelector((state) => state.isViewLogin.value);
@@ -79,35 +79,35 @@ export default React.memo(function HomeView({
   //     }
   //   }, [isViewLogin]);
 
-  useEffect(() => {
-    if (userData) {
-      let email = userData.email;
-      // console.log(userData.email);
-      // console.log(favArray);
-      // let userKey = favArray[email];
-      // if (favArray) {
-      // console.log(favArray, "sss");
-      if (!favArray[email]) {
-        dispatch(createUserFav(email));
-      }
-      // }
-    }
-  }, [userData]);
+  // useEffect(() => {
+  //   if (userData) {
+  //     let email = userData.email;
+  //     // console.log(userData.email);
+  //     // console.log(favArray);
+  //     // let userKey = favArray[email];
+  //     // if (favArray) {
+  //     // console.log(favArray, "sss");
+  //     if (!favArray[email]) {
+  //       dispatch(createUserFav(email));
+  //     }
+  //     // }
+  //   }
+  // }, [userData]);
 
-  useEffect(() => {
-    return () => {
-      // clear search result
-      dispatch(setSearchResult(null));
+  // useEffect(() => {
+  //   return () => {
+  //     // clear search result
+  //     dispatch(setSearchResult(null));
 
-      //   dispatch(setPageUrl("https://pixabay.com"));
-      dispatch(
-        setPages({
-          current: "",
-          total: "",
-        })
-      );
-    };
-  }, []);
+  //     //   dispatch(setPageUrl("https://pixabay.com"));
+  //     dispatch(
+  //       setPages({
+  //         current: "",
+  //         total: "",
+  //       })
+  //     );
+  //   };
+  // }, []);
 
   try {
     return (

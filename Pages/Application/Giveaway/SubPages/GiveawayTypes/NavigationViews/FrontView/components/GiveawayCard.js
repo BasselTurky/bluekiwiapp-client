@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { z, zx } from "../../../../../../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
@@ -8,15 +9,26 @@ const mainColor = "#735e4d";
 
 export default function GiveawayCard({
   children, // icon
-  giveaway,
-  participants,
+  activeGiveawayString,
+  participantsGiveawayString,
   title,
   navigation,
   route,
 }) {
-  const participantsLength = participants.length;
-  // console.log(giveaway);
+  console.log(activeGiveawayString, participantsGiveawayString);
 
+  const activeGiveaway = useSelector(
+    (state) => state[activeGiveawayString].value
+  );
+  const participants = useSelector(
+    (state) => state[participantsGiveawayString].value
+  );
+
+  // console.log("participants: ", participants);
+
+  const participantsLength = participants?.length ?? 0;
+  // console.log(giveaway);
+  // console.log("participantsLength: ", participantsLength);
   const reward =
     participantsLength <= 1999
       ? 10
@@ -50,7 +62,7 @@ export default function GiveawayCard({
             navigation={navigation}
             route={route}
             // giveawayId={giveaway.info.id}
-            isUserParticipant={giveaway.isUserParticipant}
+            isUserParticipant={activeGiveaway?.isUserParticipant}
           />
         </View>
       </View>

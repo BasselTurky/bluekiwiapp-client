@@ -39,7 +39,7 @@ export default function App() {
             {/* </ToastProvider> */}
           </SafeAreaProvider>
 
-          <StatusBar style="auto" />
+          <StatusBar style="dark" />
         </GestureHandlerRootView>
       </PersistGate>
     </Provider>

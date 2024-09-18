@@ -31,6 +31,11 @@ NavigationBar.setBackgroundColorAsync("transparent");
 
 const Stack = createNativeStackNavigator();
 
+async function getData() {
+  const value = await SecureStore.getItemAsync("myKey");
+  console.log(value); // Should print 'myValue' if data is persisted
+}
+
 // Function to save a value to secure storage
 async function saveToSecureStore(key, value) {
   await SecureStore.setItemAsync(key, value);
@@ -60,6 +65,10 @@ export default function Main() {
   });
 
   React.useEffect(() => {
+    getData();
+  }, []);
+
+  React.useEffect(() => {
     if (fontsLoaded) {
       checkForToken();
     }
@@ -69,14 +78,18 @@ export default function Main() {
   async function checkForToken() {
     try {
       // Check if the user is signed in with Google
-      if (await GoogleSignin.isSignedIn()) {
+      const userInfo = await GoogleSignin.getCurrentUser();
+      if (userInfo) {
         await handleGoogleSignIn();
       } else {
         // If not signed in with Google, check secure storage for a token
         await handleSecureStoreToken();
       }
     } catch (error) {
+      console.log(error);
+
       // Handle errors and reset authentication state
+
       resetAuth();
     }
   }
@@ -172,6 +185,8 @@ export default function Main() {
 
   // Function to reset authentication state
   async function resetAuth() {
+    console.log("reset Auth");
+
     dispatch(setAuth(false)); // Set authentication state to false
     await deleteFromSecureStore("token"); // Delete token from secure storage
     await SplashScreen.hideAsync(); // Hide splash screen

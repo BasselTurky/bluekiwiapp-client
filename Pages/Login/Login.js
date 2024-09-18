@@ -53,6 +53,11 @@ async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
 }
 
+async function getToken() {
+  const token = await SecureStore.getItemAsync("token");
+  console.log("token: ", token);
+}
+
 import { s, z } from "../../utils/scaling";
 
 export default function Login({ navigation }) {
@@ -110,10 +115,11 @@ export default function Login({ navigation }) {
 
   const passwordInput = useRef();
 
-  const headerHeight = useHeaderHeight();
+  // const headerHeight = useHeaderHeight();
 
-  const animateMenuX = React.useRef(new Animated.Value(0)).current;
-  const animateMenuY = React.useRef(new Animated.Value(0)).current;
+  // const animateMenuX = React.useRef(new Animated.Value(0)).current;
+  // const animateMenuY = React.useRef(new Animated.Value(0)).current;
+  getToken();
 
   // function toggleMenu(value) {
   //   Animated.timing(animateMenuX, {

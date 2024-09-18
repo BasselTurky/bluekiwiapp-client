@@ -52,6 +52,9 @@ import activeGiveawayZReducer from "./Pages/Application/Giveaway/Redux States/ac
 import participantsGiveawayXReducer from "./Pages/Application/Giveaway/Redux States/participantsGiveawayX";
 import participantsGiveawayZReducer from "./Pages/Application/Giveaway/Redux States/participantsGiveawayZ";
 import historyGiveawaysReducer from "./Pages/Application/Giveaway/Redux States/historyGiveaways";
+import prizeModalStateReducer from "./Pages/Application/Giveaway/Redux States/prizeModalState";
+import prizeInfoModalStateReducer from "./Pages/Application/Giveaway/Redux States/prizeInfoModalState";
+import selectedGiveawayReducer from "./Pages/Application/Giveaway/Redux States/selectedGiveaway";
 
 enableMapSet();
 
@@ -101,6 +104,9 @@ const rootReducer = combineReducers({
   participantsGiveawayX: participantsGiveawayXReducer,
   participantsGiveawayZ: participantsGiveawayZReducer,
   historyGiveaways: historyGiveawaysReducer,
+  prizeModalState: prizeModalStateReducer,
+  prizeInfoModalState: prizeInfoModalStateReducer,
+  selectedGiveaway: selectedGiveawayReducer,
 });
 
 const persistConfig = {

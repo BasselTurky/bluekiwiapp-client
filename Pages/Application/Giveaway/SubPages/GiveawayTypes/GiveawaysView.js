@@ -23,7 +23,7 @@ export default function GiveawaysView() {
       },
       props: {
         giveawayType: "giveawayX",
-        activeGiveaway: "activeGiveawayX",
+        activeGiveawayString: "activeGiveawayX",
         participants: "participantsGiveawayX",
       },
     },
@@ -36,7 +36,7 @@ export default function GiveawaysView() {
       },
       props: {
         giveawayType: "giveawayZ",
-        activeGiveaway: "activeGiveawayZ",
+        activeGiveawayString: "activeGiveawayZ",
         participants: "participantsGiveawayZ",
       },
     },

@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { globalReset } from "../../../../GlobalActions-Redux/globalActions";
 
 const initialStateValue = null;
 
 const participantsGiveawayZ = createSlice({
   name: "participantsGiveawayZ",
-  initialState: { value: initialStateValue, giveawayId: null },
+  initialState: { value: initialStateValue, giveawayId: initialStateValue },
   reducers: {
     setParticipantsZ: (state, action) => {
       state.value = action.payload.participants;
@@ -21,6 +22,12 @@ const participantsGiveawayZ = createSlice({
         }
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(globalReset, (state) => {
+      state.value = initialStateValue;
+      state.giveawayId = initialStateValue;
+    });
   },
 });
 

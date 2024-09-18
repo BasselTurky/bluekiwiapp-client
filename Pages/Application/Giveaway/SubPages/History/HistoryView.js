@@ -5,12 +5,16 @@ import { useSelector, useDispatch } from "react-redux";
 import HistoryCard from "./components/HistoryCard";
 import WinnersModal from "./components/WinnersModal";
 import { setIsVisible } from "./state/modalState";
+import PrizeModal from "../GiveawayTypes/NavigationViews/ActiveGiveaway/components/PrizeModal";
+
 export default function HistoryView() {
   const dispatch = useDispatch();
-  const giveawayHistoryRev = useSelector(
-    (state) => state.giveawayHistory.reversed
-  );
-  const historyGiveaways = useSelector((state) => state.historyGiveaways.value);
+  // const giveawayHistoryRev = useSelector(
+  //   (state) => state.giveawayHistory.reversed
+  // );
+  const historyGiveaways =
+    useSelector((state) => state.historyGiveaways.value) ?? [];
+  const prizeModalState = useSelector((state) => state.prizeModalState.value);
 
   React.useEffect(() => {
     return () => {
@@ -22,8 +26,8 @@ export default function HistoryView() {
     <View style={styles.container}>
       {/* <Text>History View</Text> */}
       <FlatList
-        data={historyGiveaways}
-        keyExtractor={(item, index) => item.giveawayId}
+        data={[...historyGiveaways].reverse()}
+        keyExtractor={(item, index) => `${item.giveawayId}`}
         renderItem={({ item }) => <HistoryCard item={item} />}
         style={styles.flatlist}
         // inverted={true}
@@ -33,6 +37,7 @@ export default function HistoryView() {
               style={{
                 width: "100%",
                 height: 20,
+                // backgroundColor: "pink",
               }}
             ></View>
           );
@@ -45,6 +50,7 @@ export default function HistoryView() {
       }}
     /> */}
       <WinnersModal />
+      {prizeModalState ? <PrizeModal /> : null}
     </View>
   );
 }
@@ -52,17 +58,20 @@ export default function HistoryView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
+    // justifyContent: "flex-end",
     alignItems: "center",
     // paddingHorizontal: zx(30),
     // paddingVertical: z(30),
     // paddingVertical: 10,
     // paddingHorizontal: 15,
+
     backgroundColor: "#fff",
   },
   flatlist: {
     // backgroundColor: "pink",
     width: "100%",
+    // justifyContent: "flex-end",
+
     // flex: 1,
     // paddingBottom: 120,
   },

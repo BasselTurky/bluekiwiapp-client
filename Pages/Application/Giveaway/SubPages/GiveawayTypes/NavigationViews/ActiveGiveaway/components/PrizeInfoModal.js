@@ -9,80 +9,54 @@ import {
 } from "react-native";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setIsVisible } from "../state/modalState";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import CloseThinSVG from "../../../../../../Components/CloseThinSVG";
 import { Button as PaperButton } from "react-native-paper";
+import CloseThinSVG from "../../../../../../../../Components/CloseThinSVG";
+import { z, zx } from "../../../../../../../../utils/scaling";
+import { displayInfoModal } from "../../../../../Redux States/prizeInfoModalState";
+import { hideInfoModal } from "../../../../../Redux States/prizeInfoModalState";
 
-import { z, zx } from "../../../../../../utils/scaling";
-export default function WinnersModal() {
-  const modalState = useSelector((state) => state.modalState.value);
+export default function PrizeInfoModal() {
+  const prizeInfoModalState = useSelector(
+    (state) => state.prizeInfoModalState.value
+  );
   const dispatch = useDispatch();
-  const testArray = [
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-    { userId: "Test Id" },
-  ];
   return (
     <>
-      {modalState.isVisible ? (
+      {prizeInfoModalState ? (
         // <TouchableWithoutFeedback>
         //   <View style={styles.overlay}>
         //     <TouchableWithoutFeedback>
         <View style={styles.overlay}>
           <View style={styles.tableContainer}>
-            <View style={styles.header}>
-              <View style={styles.headerCell}>
-                <Text style={styles.title}>Winners</Text>
-              </View>
-              {/* <View style={[styles.headerCell, { alignItems: "flex-end" }]}>
-                    <AntDesign name="close" size={24} color="black" />
-                  </View> */}
+            {/* <View style={styles.header}>
+            <View style={styles.headerCell}>
+              <Text style={styles.title}>Winners</Text>
             </View>
-            <FlatList
-              data={modalState.content}
-              //   data={testArray}
-              keyExtractor={(item, index) => `${item.id}`}
-              renderItem={({ item }) => (
-                <View style={styles.winnerCard}>
-                  <Text style={styles.text}>{item.userId}</Text>
-                </View>
-              )}
-              style={styles.flatlist}
-              nestedScrollEnabled={true}
-              ListFooterComponent={() => {
-                return (
-                  <View
-                    style={{
-                      width: "100%",
-                      height: 20,
-                    }}
-                  ></View>
-                );
-              }}
-            />
+          </View> */}
+
+            {/* <FlatList
+            data={modalState.content}
+            //   data={testArray}
+            keyExtractor={(item, index) => `${item.id}`}
+            renderItem={({ item }) => (
+              <View style={styles.winnerCard}>
+                <Text style={styles.text}>{item.userId}</Text>
+              </View>
+            )}
+            style={styles.flatlist}
+            nestedScrollEnabled={true}
+            ListFooterComponent={() => {
+              return (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 20,
+                  }}
+                ></View>
+              );
+            }}
+          /> */}
+            <View style={{ flex: 1 }}></View>
             <View
               style={{
                 width: "100%",
@@ -110,7 +84,7 @@ export default function WinnersModal() {
                 buttonColor="white"
                 //   buttonColor="#84c4ff"
                 onPress={() => {
-                  dispatch(setIsVisible(false));
+                  dispatch(hideInfoModal(false));
                 }}
               >
                 Close
