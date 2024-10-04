@@ -140,7 +140,7 @@ export default function SocketComponent() {
     if (socket) {
       socket.on("connect", async () => {
         console.log("socket connected");
-        addUser();
+        // addUser();
         fetchActiveGiveaway("x");
         fetchActiveGiveaway("z");
         fetchAllParticipants("x");

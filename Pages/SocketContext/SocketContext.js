@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
 import * as SecureStore from "expo-secure-store";
-//TODO get client jwt from SecureStore and send it with Socket connection at auth : { token: jwt }
 
 const SocketContext = createContext();
 
@@ -10,7 +9,6 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const setupSocketConnection = async () => {
-      // console.log("trying to connect");
       const token = await SecureStore.getItemAsync("token");
 
       if (token) {
@@ -20,19 +18,14 @@ export const SocketProvider = ({ children }) => {
             token: token,
           },
         });
-        // console.log("setting socket instance");
+
         setSocket(socketInstance);
       }
     };
 
     setupSocketConnection();
-    // console.log("socket");
 
-    // console.log("socket 2");
-
-    // console.log("socket 3");
     return () => {
-      // console.log("socket 4");
       // socketInstance.disconnect();
     };
   }, []);

@@ -23,7 +23,8 @@ import { setAuth } from "../../Features/auth";
 import moment from "moment";
 import GoogleColoredIcon from "../../Components/GoogleColoredIcon";
 import { useToast } from "react-native-toast-notifications";
-
+import { jwtDecode } from "jwt-decode";
+import { globalReset } from "../../GlobalActions-Redux/globalActions";
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -46,6 +47,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+import { sendLoginDataToServer } from "./utils/sendLoginDataToServer";
+import { googleSignIn } from "./utils/googleSignIn";
+
 var width = Dimensions.get("window").width;
 var height = Dimensions.get("window").height;
 
@@ -61,51 +65,6 @@ async function getToken() {
 import { s, z } from "../../utils/scaling";
 
 export default function Login({ navigation }) {
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      // TODO send token to backend, verify it, extract data, add data to jwt, send it back to frontend, store it in secure store, attach token to each socket io connection
-
-      let response = await fetch(
-        `${global.server_address}/auth/sign-google-idToken`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idToken: userInfo.idToken,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        let data = await response.json();
-        console.log(data);
-        await save("token", data.token);
-        dispatch(setAuth("google"));
-      } else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-        console.log("user cancelled the login flow");
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-        console.log("operation (e.g. sign in) is in progress already");
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-        console.log("play services not available or outdated");
-      } else {
-        // some other error happened
-        console.log("some other error happened : ", error);
-      }
-    }
-  };
-
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const dispatch = useDispatch();
@@ -115,11 +74,168 @@ export default function Login({ navigation }) {
 
   const passwordInput = useRef();
 
+  const handleGoogleSignIn = () => {
+    googleSignIn(dispatch, toast);
+  };
+  const handleLogin = (email, password) => {
+    sendLoginDataToServer(email, password, dispatch, toast);
+  };
+
+  // const signIn = async () => {
+  //   try {
+  //     await GoogleSignin.hasPlayServices();
+  //     const userInfo = await GoogleSignin.signIn();
+
+  //     let response = await fetch(
+  //       `${global.server_address}/auth/sign-google-idToken`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: userInfo.idToken,
+  //         }),
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       let data = await response.json();
+  //       console.log(data);
+
+  //       const latestUserUid = await SecureStore.getItemAsync('latestUserUid')
+  //       if(latestUserUid){
+  //         const decoded = jwtDecode(data.token)
+  //         if(decoded && decoded.uid !== latestUserUid){
+  //           // new user
+  //             await save('latestUserUid',decoded.uid)
+  //             dispatch(globalReset())
+  //             await save("token", data.token);
+  //             dispatch(setAuth("google"));
+  //         }else if(decoded && decoded.uid === latestUserUid){
+  //           // same user
+  //           await save("token", data.token);
+  //           dispatch(setAuth("google"));
+  //         }
+
+  //       }else{
+  //         const decoded = jwtDecode(data.token)
+  //         await save('latestUserUid',decoded.uid)
+  //          await save("token", data.token);
+  //       dispatch(setAuth("google"));
+  //       }
+
+  //     } else {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+  //       // user cancelled the login flow
+  //       console.log("user cancelled the login flow");
+  //     } else if (error.code === statusCodes.IN_PROGRESS) {
+  //       // operation (e.g. sign in) is in progress already
+  //       console.log("operation (e.g. sign in) is in progress already");
+  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+  //       // play services not available or outdated
+  //       console.log("play services not available or outdated");
+  //     } else {
+  //       // some other error happened
+  //       console.log("some other error happened : ", error);
+  //     }
+  //   }
+  // };
+
+  // const signIn = async () => {
+  //   try {
+  //     await GoogleSignin.hasPlayServices();
+  //     const userInfo = await GoogleSignin.signIn();
+
+  //     const response = await fetchGoogleIdToken(userInfo.idToken);
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       await handleToken(data.token);
+  //     } else {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     handleError(error);
+  //   }
+  // };
+
+  // // Fetch request to send the Google ID token to your backend
+  // const fetchGoogleIdToken = async (idToken) => {
+  //   return await fetch(`${global.server_address}/auth/sign-google-idToken`, {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ idToken }),
+  //   });
+  // };
+
+  // // Handle the token, check for new user, and save to secure storage
+  // const handleToken = async (token) => {
+  //   const latestUserUid = await SecureStore.getItemAsync("latestUserUid");
+  //   const decoded = jwtDecode(token);
+
+  //   if (decoded) {
+  //     if (latestUserUid && decoded.uid !== latestUserUid) {
+  //       // New user logic
+  //       await saveNewUser(decoded.uid, token);
+  //     } else {
+  //       // Same user or first login logic
+  //       await saveExistingUser(decoded.uid, token, !latestUserUid);
+  //     }
+  //   }
+  // };
+
+  // // Handle new user
+  // const saveNewUser = async (uid, token) => {
+  //   await save("latestUserUid", uid);
+  //   dispatch(globalReset());
+  //   await saveTokenAndSetAuth(token, "google");
+  // };
+
+  // // Handle existing user
+  // const saveExistingUser = async (uid, token, isFirstLogin = false) => {
+  //   if (isFirstLogin) {
+  //     await save("latestUserUid", uid);
+  //     dispatch(globalReset());
+  //   }
+  //   await saveTokenAndSetAuth(token, "google");
+  // };
+
+  // // Save the token and set authentication
+  // const saveTokenAndSetAuth = async (token, authType) => {
+  //   await save("token", token);
+  //   dispatch(setAuth(authType));
+  // };
+
+  // // Handle error cases in sign-in flow
+  // const handleError = (error) => {
+  //   switch (error.code) {
+  //     case statusCodes.SIGN_IN_CANCELLED:
+  //       console.log("User cancelled the login flow");
+  //       break;
+  //     case statusCodes.IN_PROGRESS:
+  //       console.log("Operation (e.g. sign in) is in progress already");
+  //       break;
+  //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+  //       console.log("Play services not available or outdated");
+  //       break;
+  //     default:
+  //       console.error("An unexpected error occurred: ", error);
+  //   }
+  // };
+
   // const headerHeight = useHeaderHeight();
 
   // const animateMenuX = React.useRef(new Animated.Value(0)).current;
   // const animateMenuY = React.useRef(new Animated.Value(0)).current;
-  getToken();
+  // getToken();
 
   // function toggleMenu(value) {
   //   Animated.timing(animateMenuX, {
@@ -137,55 +253,73 @@ export default function Login({ navigation }) {
   //   });
   // }
 
-  const sendLoginDataToServer = async () => {
-    let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  // const sendLoginDataToServer = async () => {
+  //   let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-    if (email === "" || password === "") {
-      toast.show("Fields can't be empty!!", { type: "error" });
-    } else if (!regex.test(email)) {
-      toast.show("Please enter valid email format", { type: "error" });
-    } else if (password.length < 8 || password.length > 16) {
-      toast.show("Password should be between 8-16 characters", {
-        type: "error",
-      });
-    } else {
-      try {
-        let date = moment().format("MMMM Do YYYY, h:mm:ss a");
+  //   if (email === "" || password === "") {
+  //     toast.show("Fields can't be empty!!", { type: "error" });
+  //   } else if (!regex.test(email)) {
+  //     toast.show("Please enter valid email format", { type: "error" });
+  //   } else if (password.length < 8 || password.length > 16) {
+  //     toast.show("Password should be between 8-16 characters", {
+  //       type: "error",
+  //     });
+  //   } else {
+  //     try {
+  //       let date = moment().format("MMMM Do YYYY, h:mm:ss a");
 
-        let response = await fetch(`${global.server_address}/auth/login-data`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            date: date,
-          }),
-        });
+  //       let response = await fetch(`${global.server_address}/auth/login-data`, {
+  //         method: "POST",
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           email: email,
+  //           password: password,
+  //           date: date,
+  //         }),
+  //       });
 
-        let data = await response.json();
+  //       let data = await response.json();
 
-        if (data.type === "error") {
-          toast.show(data.message, { type: "error" });
-          return;
-        } else if (data.type === "success") {
-          await save("token", data.token);
-          dispatch(setAuth("default"));
+  //       // if response ok: handleToken
 
-          return;
-        } else {
-          toast.show("ErrorID: E006", { type: "error" });
-          return;
-        }
-      } catch (error) {
-        console.log("ErrorID E005: ", error);
-        toast.show("ErrorID: E005", { type: "error" });
-        return;
-      }
-    }
-  };
+  //       // const latestUserUid = await SecureStore.getItemAsync("latestUserUid");
+  //       // const decoded = jwtDecode(token);
+
+  //       // if (decoded) {
+  //       //   if (latestUserUid && decoded.uid !== latestUserUid) {
+  //       //     // New user logic
+  //       //     await saveNewUser(decoded.uid, token);
+  //       //   } else {
+  //       //     // Same user or first login logic
+  //       //     await saveExistingUser(decoded.uid, token, !latestUserUid);
+  //       //   }
+  //       // }
+
+  //       if (data.type === "error") {
+  //         toast.show(data.message, { type: "error" });
+  //         return;
+  //       } else if (data.type === "success") {
+
+  //         await save("token", data.token);
+  //         dispatch(setAuth("default"));
+
+  //         return;
+  //       } else {
+  //         toast.show("ErrorID: E006", { type: "error" });
+  //         return;
+  //       }
+  //     } catch (error) {
+  //       console.log("ErrorID E005: ", error);
+  //       toast.show("ErrorID: E005", { type: "error" });
+  //       return;
+  //     }
+  //   }
+  // };
+
+  // toast.show(data.message, { type: "error" });
 
   return (
     <TouchableWithoutFeedback
@@ -327,7 +461,7 @@ export default function Login({ navigation }) {
             </TouchableOpacity>
           </View>
           <PaperButton
-            onPress={sendLoginDataToServer}
+            onPress={() => handleLogin(email, password)}
             style={styles.buttonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
@@ -368,7 +502,7 @@ export default function Login({ navigation }) {
           </View>
 
           <PaperButton
-            onPress={signIn}
+            onPress={() => handleGoogleSignIn()}
             style={styles.googleButtonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}

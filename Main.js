@@ -27,6 +27,8 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { z } from "./utils/scaling";
 
+import { handleToken } from "./Pages/Login/utils/handleToken";
+
 NavigationBar.setBackgroundColorAsync("transparent");
 
 const Stack = createNativeStackNavigator();
@@ -99,11 +101,14 @@ export default function Main() {
     try {
       const tokens = await GoogleSignin.getTokens(); // Get tokens from Google Sign-In
       const response = await sendGoogleTokenToServer(tokens.idToken); // Send token to server for verification
+      const data = await response.json();
 
-      if (response.ok) {
-        const data = await response.json(); // Parse response data
-        await saveToSecureStore("token", data.token); // Save token to secure storage
-        dispatch(setAuth("google")); // Set authentication state to Google
+      if (response.ok && data.token) {
+        // Parse response data
+        await handleToken(data.token, dispatch, "google");
+        //TODO add handleToken function here
+        // await saveToSecureStore("token", data.token); // Save token to secure storage
+        // dispatch(setAuth("google")); // Set authentication state to Google
       } else {
         resetAuth(); // Reset authentication if response is not OK
       }
@@ -176,6 +181,7 @@ export default function Main() {
     if (data.type === "expired" || data.type === "error") {
       resetAuth(); // Reset authentication if token expired or error
     } else if (data.type === "pass") {
+      //TODO add handleToken function here
       await saveToSecureStore("token", data.token); // Save new token to secure storage
       dispatch(setAuth("default")); // Set authentication state to default
     } else {
