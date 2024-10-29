@@ -25,6 +25,8 @@ export const googleSignIn = async (dispatch, toast) => {
     }
   } catch (error) {
     // TODO think about it // if auth false
+    console.log(error);
+
     handleError(error, toast);
   }
 };

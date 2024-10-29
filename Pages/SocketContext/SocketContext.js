@@ -9,13 +9,13 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const setupSocketConnection = async () => {
-      const token = await SecureStore.getItemAsync("token");
+      const accessToken = await SecureStore.getItemAsync("accessToken");
 
       if (token) {
         const socketInstance = io("https://bluekiwiapp.com", {
           timeout: 30000,
           auth: {
-            token: token,
+            accessToken: accessToken,
           },
         });
 

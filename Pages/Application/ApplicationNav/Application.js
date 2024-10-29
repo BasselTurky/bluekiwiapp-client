@@ -29,7 +29,7 @@ import { ToastProvider, useToast } from "react-native-toast-notifications";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+import { jwtDecode } from "jwt-decode";
 import { setAuth } from "../../../Features/auth";
 import { setUserData } from "../../../Features/userData";
 import { setCoins } from "../../../Features/coins";
@@ -45,7 +45,9 @@ import { setActiveGiveawayZ } from "../Giveaway/Redux States/activeGiveawayZ";
 
 import { setHistory } from "../../../Features/giveawayHistory";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { globalReset } from "../../../GlobalActions-Redux/globalActions";
 
+import { resetTokens } from "../../../utils/resetTokens";
 // import { enableMapSet } from "immer";
 // enableMapSet();
 const Stack = createNativeStackNavigator();
@@ -53,16 +55,64 @@ const Stack = createNativeStackNavigator();
 // async function deleteValueFor(key) {
 //   await SecureStore.deleteItemAsync(key);
 // }
-async function saveData() {
-  await SecureStore.setItemAsync("myKey", "myValue");
-}
+// async function saveData() {
+//   await SecureStore.setItemAsync("myKey", "myValue");
+// }
 
 export default function Application() {
+  const dispatch = useDispatch();
+
   // console.log("app");
   useEffect(() => {
-    saveData();
+    async function setUpAccessToken() {
+      try {
+        const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
-    return () => {};
+        if (!refreshToken) {
+          resetTokens();
+          dispatch(setAuth(false));
+
+          return;
+        }
+
+        const response = await fetch(
+          `${global.server_address}/auth/refreshToken`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              refreshToken,
+            }),
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok && data.accessToken) {
+          const accessToken = data.accessToken;
+
+          await SecureStore.setItemAsync("accessToken", accessToken);
+        } else {
+          resetTokens();
+          dispatch(setAuth(false));
+        }
+      } catch (error) {
+        console.log(error);
+        resetTokens();
+        dispatch(setAuth(false));
+      }
+    }
+
+    setUpAccessToken();
+
+    const intervalId = setInterval(() => {
+      setUpAccessToken();
+    }, 720000); // 12 min
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   // const toast = useToast();
