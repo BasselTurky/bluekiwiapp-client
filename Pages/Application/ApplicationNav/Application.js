@@ -63,64 +63,64 @@ export default function Application() {
   const dispatch = useDispatch();
 
   // console.log("app");
-  // useEffect(() => {
-  //   console.log("useEffect");
+  useEffect(() => {
+    console.log("useEffect");
 
-  //   async function setUpAccessToken() {
-  //     try {
-  //       const refreshToken = await SecureStore.getItemAsync("refreshToken");
+    async function setUpAccessToken() {
+      try {
+        const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
-  //       if (!refreshToken) {
-  //         console.log("here1x");
+        if (!refreshToken) {
+          console.log("here1x");
 
-  //         resetTokens();
-  //         dispatch(setAuth(false));
+          resetTokens();
+          dispatch(setAuth(false));
 
-  //         return;
-  //       }
-  //       console.log(refreshToken);
+          return;
+        }
+        console.log(refreshToken);
 
-  //       const response = await fetch(
-  //         `${global.server_address}/auth/refreshToken`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             Accept: "application/json",
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             refreshToken,
-  //           }),
-  //         }
-  //       );
+        const response = await fetch(
+          `${global.server_address}/auth/refreshToken`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              refreshToken,
+            }),
+          }
+        );
 
-  //       const data = await response.json();
-  //       if (response.ok && data.accessToken) {
-  //         const accessToken = data.accessToken;
+        const data = await response.json();
+        if (response.ok && data.accessToken) {
+          const accessToken = data.accessToken;
 
-  //         await SecureStore.setItemAsync("accessToken", accessToken);
-  //       } else {
-  //         console.log("here2x");
-  //         resetTokens();
-  //         dispatch(setAuth(false));
-  //       }
-  //     } catch (error) {
-  //       console.log("here3x");
-  //       console.log(error);
-  //       resetTokens();
-  //       dispatch(setAuth(false));
-  //     }
-  //   }
+          await SecureStore.setItemAsync("accessToken", accessToken);
+        } else {
+          console.log("here2x");
+          resetTokens();
+          dispatch(setAuth(false));
+        }
+      } catch (error) {
+        console.log("here3x");
+        console.log(error);
+        resetTokens();
+        dispatch(setAuth(false));
+      }
+    }
 
-  //   setUpAccessToken();
+    setUpAccessToken();
 
-  //   const intervalId = setInterval(() => {
-  //     setUpAccessToken();
-  //   }, 720000); // 12 min
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, []);
+    const intervalId = setInterval(() => {
+      setUpAccessToken();
+    }, 720000); // 12 min
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   // const toast = useToast();
   // const dispatch = useDispatch();

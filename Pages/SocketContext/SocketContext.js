@@ -14,7 +14,7 @@ export const SocketProvider = ({ children }) => {
       const accessToken = await SecureStore.getItemAsync("accessToken");
       console.log(accessToken);
 
-      if (token) {
+      if (accessToken) {
         const socketInstance = io("https://bluekiwiapp.com", {
           timeout: 30000,
           auth: {
