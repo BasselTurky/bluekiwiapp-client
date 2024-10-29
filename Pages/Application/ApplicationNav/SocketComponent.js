@@ -137,6 +137,8 @@ export default function SocketComponent() {
   }
 
   React.useEffect(() => {
+    console.log("check socket");
+
     if (socket) {
       socket.on("connect", async () => {
         console.log("socket connected");
@@ -341,6 +343,8 @@ export default function SocketComponent() {
         socket.close();
         // setIsSocketConnected(false);
       };
+    } else {
+      console.log("no socket");
     }
   }, [socket]);
 

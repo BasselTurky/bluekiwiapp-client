@@ -9,7 +9,10 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const setupSocketConnection = async () => {
+      console.log("socket test");
+
       const accessToken = await SecureStore.getItemAsync("accessToken");
+      console.log(accessToken);
 
       if (token) {
         const socketInstance = io("https://bluekiwiapp.com", {
@@ -18,6 +21,9 @@ export const SocketProvider = ({ children }) => {
             accessToken: accessToken,
           },
         });
+        if (socketInstance) {
+          console.log("socketInstance");
+        }
 
         setSocket(socketInstance);
       }

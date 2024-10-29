@@ -63,57 +63,64 @@ export default function Application() {
   const dispatch = useDispatch();
 
   // console.log("app");
-  useEffect(() => {
-    async function setUpAccessToken() {
-      try {
-        const refreshToken = await SecureStore.getItemAsync("refreshToken");
+  // useEffect(() => {
+  //   console.log("useEffect");
 
-        if (!refreshToken) {
-          resetTokens();
-          dispatch(setAuth(false));
+  //   async function setUpAccessToken() {
+  //     try {
+  //       const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
-          return;
-        }
+  //       if (!refreshToken) {
+  //         console.log("here1x");
 
-        const response = await fetch(
-          `${global.server_address}/auth/refreshToken`,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              refreshToken,
-            }),
-          }
-        );
+  //         resetTokens();
+  //         dispatch(setAuth(false));
 
-        const data = await response.json();
-        if (response.ok && data.accessToken) {
-          const accessToken = data.accessToken;
+  //         return;
+  //       }
+  //       console.log(refreshToken);
 
-          await SecureStore.setItemAsync("accessToken", accessToken);
-        } else {
-          resetTokens();
-          dispatch(setAuth(false));
-        }
-      } catch (error) {
-        console.log(error);
-        resetTokens();
-        dispatch(setAuth(false));
-      }
-    }
+  //       const response = await fetch(
+  //         `${global.server_address}/auth/refreshToken`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             Accept: "application/json",
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             refreshToken,
+  //           }),
+  //         }
+  //       );
 
-    setUpAccessToken();
+  //       const data = await response.json();
+  //       if (response.ok && data.accessToken) {
+  //         const accessToken = data.accessToken;
 
-    const intervalId = setInterval(() => {
-      setUpAccessToken();
-    }, 720000); // 12 min
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+  //         await SecureStore.setItemAsync("accessToken", accessToken);
+  //       } else {
+  //         console.log("here2x");
+  //         resetTokens();
+  //         dispatch(setAuth(false));
+  //       }
+  //     } catch (error) {
+  //       console.log("here3x");
+  //       console.log(error);
+  //       resetTokens();
+  //       dispatch(setAuth(false));
+  //     }
+  //   }
+
+  //   setUpAccessToken();
+
+  //   const intervalId = setInterval(() => {
+  //     setUpAccessToken();
+  //   }, 720000); // 12 min
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
 
   // const toast = useToast();
   // const dispatch = useDispatch();
