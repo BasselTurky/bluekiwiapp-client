@@ -24,7 +24,7 @@ export const googleSignIn = async (dispatch, toast) => {
       // throw new Error(`HTTP error! Status: ${response.status}`);
     }
   } catch (error) {
-    // TODO think about it
+    // TODO think about it // if auth false
     handleError(error, toast);
   }
 };

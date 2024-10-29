@@ -1,4 +1,4 @@
-import { StyleSheet, ImageBackground } from "react-native";
+import { StyleSheet, ImageBackground, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import * as NavigationBar from "expo-navigation-bar";
@@ -33,10 +33,10 @@ NavigationBar.setBackgroundColorAsync("transparent");
 
 const Stack = createNativeStackNavigator();
 
-async function getData() {
-  const value = await SecureStore.getItemAsync("myKey");
-  console.log(value); // Should print 'myValue' if data is persisted
-}
+// async function getData() {
+//   const value = await SecureStore.getItemAsync("myKey");
+//   console.log(value); // Should print 'myValue' if data is persisted
+// }
 
 // Function to save a value to secure storage
 async function saveToSecureStore(key, value) {
@@ -66,135 +66,170 @@ export default function Main() {
     MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
   });
 
-  React.useEffect(() => {
-    getData();
-  }, []);
+  // React.useEffect(() => {
+  //   getData();
+  // }, []);
+
+  async function checkRefreshToken() {
+    const refreshToken = await SecureStore.getItemAsync("refreshToken");
+
+    if (!refreshToken) {
+      resetAuth();
+    }
+
+    const response = await fetch(`${global.server_address}/auth/refreshToken`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refreshToken,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok && data.accessToken) {
+      const accessToken = data.accessToken;
+
+      await SecureStore.setItemAsync("accessToken", accessToken);
+
+      dispatch(setAuth(true));
+    } else {
+      dispatch(setAuth(false));
+      resetAuth();
+      Alert.alert("Login failed", "Session expired");
+      // toast.show("Login failed!", { type: "error" });
+    }
+  }
 
   React.useEffect(() => {
     if (fontsLoaded) {
-      checkForToken();
+      // checkForToken();
+      checkRefreshToken();
     }
   }, [fontsLoaded]);
 
   // Main function to check for an authentication token
-  async function checkForToken() {
-    try {
-      // Check if the user is signed in with Google
-      const userInfo = await GoogleSignin.getCurrentUser();
-      if (userInfo) {
-        await handleGoogleSignIn();
-      } else {
-        // If not signed in with Google, check secure storage for a token
-        await handleSecureStoreToken();
-      }
-    } catch (error) {
-      console.log(error);
+  // async function checkForToken() {
+  //   try {
+  //     // Check if the user is signed in with Google
+  //     const userInfo = await GoogleSignin.getCurrentUser();
+  //     if (userInfo) {
+  //       await handleGoogleSignIn();
+  //     } else {
+  //       // If not signed in with Google, check secure storage for a token
+  //       await handleSecureStoreToken();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
 
-      // Handle errors and reset authentication state
+  //     // Handle errors and reset authentication state
 
-      resetAuth();
-    }
-  }
+  //     resetAuth();
+  //   }
+  // }
 
   // Function to handle Google Sign-In
-  async function handleGoogleSignIn() {
-    try {
-      const tokens = await GoogleSignin.getTokens(); // Get tokens from Google Sign-In
-      const response = await sendGoogleTokenToServer(tokens.idToken); // Send token to server for verification
-      const data = await response.json();
+  // async function handleGoogleSignIn() {
+  //   try {
+  //     const tokens = await GoogleSignin.getTokens(); // Get tokens from Google Sign-In
+  //     const response = await sendGoogleTokenToServer(tokens.idToken); // Send token to server for verification
+  //     const data = await response.json();
 
-      if (response.ok && data.token) {
-        // Parse response data
-        await handleToken(data.token, dispatch, "google");
-        //TODO add handleToken function here
-        // await saveToSecureStore("token", data.token); // Save token to secure storage
-        // dispatch(setAuth("google")); // Set authentication state to Google
-      } else {
-        resetAuth(); // Reset authentication if response is not OK
-      }
-    } catch (error) {
-      resetAuth(); // Reset authentication on error
-    }
-  }
+  //     if (response.ok && data.token) {
+  //       // Parse response data
+  //       await handleToken(data.token, dispatch, "google");
+  //       //TODO add handleToken function here
+  //       // await saveToSecureStore("token", data.token); // Save token to secure storage
+  //       // dispatch(setAuth("google")); // Set authentication state to Google
+  //     } else {
+  //       resetAuth(); // Reset authentication if response is not OK
+  //     }
+  //   } catch (error) {
+  //     resetAuth(); // Reset authentication on error
+  //   }
+  // }
 
   // Function to send Google token to server
-  async function sendGoogleTokenToServer(idToken) {
-    return fetch(`${global.server_address}/auth/sign-google-idToken`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken }),
-    });
-  }
+  // async function sendGoogleTokenToServer(idToken) {
+  //   return fetch(`${global.server_address}/auth/sign-google-idToken`, {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ idToken }),
+  //   });
+  // }
 
   // Function to handle token from secure storage
-  async function handleSecureStoreToken() {
-    const token = await SecureStore.getItemAsync("token"); // Get token from secure storage
+  // async function handleSecureStoreToken() {
+  //   const token = await SecureStore.getItemAsync("token"); // Get token from secure storage
 
-    if (!token) {
-      resetAuth(); // Reset authentication if no token found
-      return;
-    }
+  //   if (!token) {
+  //     resetAuth(); // Reset authentication if no token found
+  //     return;
+  //   }
 
-    const response = await sendTokenToServer(token); // Send token to server for verification
-    const jsonData = await response.json(); // Parse response data
+  //   const response = await sendTokenToServer(token); // Send token to server for verification
+  //   const jsonData = await response.json(); // Parse response data
 
-    if (jsonData === "error") {
-      resetAuth(); // Reset authentication on error response
-    } else if (jsonData === "pass") {
-      await refreshAuthToken(token); // Refresh authentication token if pass response
-    } else {
-      resetAuth(); // Reset authentication for any other response
-    }
-  }
+  //   if (jsonData === "error") {
+  //     resetAuth(); // Reset authentication on error response
+  //   } else if (jsonData === "pass") {
+  //     await refreshAuthToken(token); // Refresh authentication token if pass response
+  //   } else {
+  //     resetAuth(); // Reset authentication for any other response
+  //   }
+  // }
 
   // Function to send token to server for verification
-  async function sendTokenToServer(token) {
-    return fetch(`${global.server_address}/auth/check-token`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token }),
-    });
-  }
+  // async function sendTokenToServer(token) {
+  //   return fetch(`${global.server_address}/auth/check-token`, {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ token }),
+  //   });
+  // }
 
   // Function to refresh authentication token
-  async function refreshAuthToken(token) {
-    const response = await fetch(
-      `${global.server_address}/auth/refresh-token`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      }
-    );
+  // async function refreshAuthToken(token) {
+  //   const response = await fetch(
+  //     `${global.server_address}/auth/refresh-token`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ token }),
+  //     }
+  //   );
 
-    const data = await response.json(); // Parse response data
+  //   const data = await response.json(); // Parse response data
 
-    if (data.type === "expired" || data.type === "error") {
-      resetAuth(); // Reset authentication if token expired or error
-    } else if (data.type === "pass") {
-      //TODO add handleToken function here
-      await saveToSecureStore("token", data.token); // Save new token to secure storage
-      dispatch(setAuth("default")); // Set authentication state to default
-    } else {
-      resetAuth(); // Reset authentication for any other response
-    }
-  }
+  //   if (data.type === "expired" || data.type === "error") {
+  //     resetAuth(); // Reset authentication if token expired or error
+  //   } else if (data.type === "pass") {
+  //     //TODO add handleToken function here
+  //     await saveToSecureStore("token", data.token); // Save new token to secure storage
+  //     dispatch(setAuth("default")); // Set authentication state to default
+  //   } else {
+  //     resetAuth(); // Reset authentication for any other response
+  //   }
+  // }
 
   // Function to reset authentication state
   async function resetAuth() {
     console.log("reset Auth");
 
     dispatch(setAuth(false)); // Set authentication state to false
-    await deleteFromSecureStore("token"); // Delete token from secure storage
+    await deleteFromSecureStore("accessToken"); // Delete token from secure storage
+    await deleteFromSecureStore("refreshToken"); // Delete token from secure storage
     await SplashScreen.hideAsync(); // Hide splash screen
   }
 

@@ -38,6 +38,7 @@ const handleExistingUser = async (
   if (isFirstLogin) {
     //   await save('latestUserUid', uid);
     await SecureStore.setItemAsync("latestUserUid", uid);
+    dispatch(globalReset());
   }
   await saveTokenAndSetAuth(tokens, dispatch);
 };
