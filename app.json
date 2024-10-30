@@ -15,9 +15,7 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/a4c72648-0f2a-4523-bdb9-a4861f797947"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.basselturky.bluekiwiapp",
@@ -41,7 +39,7 @@
         "com.google.android.gms.permission.AD_ID"
       ],
       "versionCode": 15,
-      "runtimeVersion": "1.0.0"
+      "runtimeVersion": "1.1.3"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,9 +49,7 @@
         "projectId": "a4c72648-0f2a-4523-bdb9-a4861f797947"
       }
     },
-    "plugins": [
-      "@react-native-google-signin/google-signin"
-    ]
+    "plugins": ["@react-native-google-signin/google-signin"]
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4213110958189376~3405929057",

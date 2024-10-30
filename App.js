@@ -11,9 +11,9 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { persistor, store } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
-
+import * as Updates from "expo-updates";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 global.server_address = "https://bluekiwiapp.com";
@@ -23,6 +23,23 @@ LogBox.ignoreAllLogs();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  async function onFetchUpdateAsync() {
+    try {
+      const update = await Updates.checkForUpdateAsync();
+
+      if (update.isAvailable) {
+        await Updates.fetchUpdateAsync();
+        await Updates.reloadAsync();
+      }
+    } catch (error) {
+      // You can also add an alert() to see the error message in case of an error when fetching updates.
+      alert(`Error fetching latest Expo update: ${error}`);
+    }
+  }
+
+  useEffect(() => {
+    onFetchUpdateAsync();
+  }, []);
   // const insets = useSafeAreaInsets();
   return (
     <Provider store={store}>
