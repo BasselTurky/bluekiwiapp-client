@@ -98,7 +98,7 @@ export default function Main() {
     } else {
       dispatch(setAuth(false));
       resetAuth();
-      Alert.alert("Login failed", "Session expired");
+      Alert.alert("Login error", "Session expired");
       // toast.show("Login failed!", { type: "error" });
     }
   }
