@@ -1,6 +1,6 @@
 import moment from "moment";
 import { handleToken } from "./handleToken";
-
+import { logErrorOnServer } from "../../../utils/logErrorFunction";
 // Separate input validation function for readability
 const validateInput = (email, password) => {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -54,7 +54,7 @@ export const sendLoginDataToServer = async (
     });
 
     const data = await response.json();
-
+    logErrorOnServer(data);
     // Handle the response
     if (response.ok && data.accessToken && data.refreshToken) {
       const tokens = {
@@ -65,9 +65,11 @@ export const sendLoginDataToServer = async (
       // use access token in handleToken function
       await handleToken(tokens, dispatch);
     } else {
+      logErrorOnServer(response);
       toast.show("Login failed!", { type: "error" });
     }
   } catch (error) {
+    logErrorOnServer(error);
     console.error("ErrorID E005: ", error);
     toast.show("An unexpected error occurred. Please try again.", {
       type: "error",

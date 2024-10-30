@@ -13,6 +13,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Button,
 } from "react-native";
 import { Ionicons, Entypo, AntDesign, Foundation } from "@expo/vector-icons";
 // import AnimatedNumbers from "react-native-animated-numbers";
@@ -186,6 +187,9 @@ export default function DrawerView() {
                 >
                   {coins.toString().padStart(4, "0")}
                 </Text>
+                {/* <Button title="Ads" onPress={()=>{
+
+                }}/> */}
               </View>
             </View>
             <View

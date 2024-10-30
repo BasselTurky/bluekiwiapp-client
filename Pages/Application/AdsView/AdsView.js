@@ -152,27 +152,6 @@ export default function AdsView({ navigation }) {
 
   async function gainReward() {
     socket.emit("save-coin", revenue);
-    // if (auth === "default") {
-    //   let currentToken = await SecureStore.getItemAsync("token");
-    //   socket.emit(
-    //     "save-coin",
-    //     { type: "default", token: currentToken },
-    //     revenue
-    //   );
-    // } else if (auth === "google") {
-    //   const isSignedIn = await GoogleSignin.isSignedIn();
-    //   if (isSignedIn) {
-    //     const currentUser = await GoogleSignin.getCurrentUser();
-    //     socket.emit(
-    //       "save-coin",
-    //       {
-    //         type: "google",
-    //         email: currentUser.user.email,
-    //       },
-    //       revenue
-    //     );
-    //   }
-    // }
   }
 
   async function gainReward_() {

@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   Keyboard,
+  Button,
 } from "react-native";
 import { z } from "../../../utils/scaling";
 import React, { useState, useEffect } from "react";
@@ -223,6 +224,13 @@ export default React.memo(function HomeView({
                 }}
               />
             </ApiButton> */}
+
+            <Button
+              title="ADS"
+              onPress={() => {
+                navigation.navigate("AdsView");
+              }}
+            />
           </View>
 
           <View

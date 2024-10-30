@@ -4,6 +4,7 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import { logErrorOnServer } from "../../../utils/logErrorFunction";
 
 export const googleSignIn = async (dispatch, toast) => {
   try {
@@ -20,6 +21,7 @@ export const googleSignIn = async (dispatch, toast) => {
       };
       await handleToken(tokens, dispatch);
     } else {
+      logErrorOnServer(response);
       toast.show("Login failed!", { type: "error" });
       // throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -44,6 +46,7 @@ const fetchGoogleIdToken = async (idToken) => {
 };
 
 const handleError = (error, toast) => {
+  logErrorOnServer(error);
   toast.show("An unexpected error occurred. Please try again.", {
     type: "error",
   });
