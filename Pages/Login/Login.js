@@ -384,7 +384,7 @@ export default function Login({ navigation }) {
               marginBottom: z(5),
             }}
           >
-            Blue Kiwiz
+            Blue Kiwi
           </Text>
         </View>
 

@@ -93,8 +93,8 @@ android {
         applicationId 'com.basselturky.bluekiwiapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "1.1.3"
+        versionCode 17
+        versionName "1.1.5"
     }
     signingConfigs {
         debug {
