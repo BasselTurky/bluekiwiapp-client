@@ -6,6 +6,12 @@ import {
 } from "@react-native-google-signin/google-signin";
 import { logErrorOnServer } from "../../../utils/logErrorFunction";
 
+GoogleSignin.configure({
+  webClientId:
+    "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+  // "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+});
+
 export const googleSignIn = async (dispatch, toast) => {
   try {
     await GoogleSignin.hasPlayServices();
