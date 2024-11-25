@@ -1,16 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-// import { z, zx } from "../../../utils/scaling";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
-export default function OpenButton({
-  navigation,
-  route,
-  // giveawayId,
-  isUserParticipant,
-}) {
-  // const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
+export default function OpenButton({ navigation, route, isUserParticipant }) {
   return (
     <PaperButton
       icon={({ size, color }) =>
@@ -34,7 +26,6 @@ export default function OpenButton({
 const styles = StyleSheet.create({
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     letterSpacing: 1,
     color: "white",
   },

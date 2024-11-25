@@ -69,14 +69,9 @@ export default function YearButton({
         mode="contained"
         uppercase={false}
       >
-        {/* <View>
-<ArchiveIcon width={30} height={30} />
-</View> */}
-
         <Text
           style={{
             fontSize: 20,
-            // fontFamily: "PlayfairBold",
             fontFamily: "Graduate_400Regular",
             color: "#ffffffcc",
           }}
@@ -91,13 +86,9 @@ export default function YearButton({
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    // position: "absolute",
-    // top: height * 0.5,
-    // backgroundColor: "transparent",
     backgroundColor: "#af919999",
     elevation: 0,
     alignSelf: "center",
-    // marginBottom: 180,
     width: 100,
     height: 100,
     borderRadius: 100,
@@ -109,14 +100,12 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "100%",
     width: "100%",
-    // elevation: 0,
   },
   buttonLabel: {
     padding: 0,
     margin: 0,
     marginVertical: 0,
     marginHorizontal: 0,
-    // elevation: 0,
     width: "100%",
   },
 });

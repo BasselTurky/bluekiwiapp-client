@@ -9,9 +9,6 @@ import PrizeModal from "../GiveawayTypes/NavigationViews/ActiveGiveaway/componen
 
 export default function HistoryView() {
   const dispatch = useDispatch();
-  // const giveawayHistoryRev = useSelector(
-  //   (state) => state.giveawayHistory.reversed
-  // );
   const historyGiveaways =
     useSelector((state) => state.historyGiveaways.value) ?? [];
   const prizeModalState = useSelector((state) => state.prizeModalState.value);
@@ -24,31 +21,22 @@ export default function HistoryView() {
 
   return (
     <View style={styles.container}>
-      {/* <Text>History View</Text> */}
       <FlatList
         data={[...historyGiveaways].reverse()}
         keyExtractor={(item, index) => `${item.giveawayId}`}
         renderItem={({ item }) => <HistoryCard item={item} />}
         style={styles.flatlist}
-        // inverted={true}
         ListFooterComponent={() => {
           return (
             <View
               style={{
                 width: "100%",
                 height: 20,
-                // backgroundColor: "pink",
               }}
             ></View>
           );
         }}
       />
-      {/* <Button
-      title="Log"
-      onPress={() => {
-        console.log(giveawayHistoryRev);
-      }}
-    /> */}
       <WinnersModal />
       {prizeModalState ? <PrizeModal /> : null}
     </View>
@@ -58,61 +46,38 @@ export default function HistoryView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "flex-end",
     alignItems: "center",
-    // paddingHorizontal: zx(30),
-    // paddingVertical: z(30),
-    // paddingVertical: 10,
-    // paddingHorizontal: 15,
-
     backgroundColor: "#fff",
   },
   flatlist: {
-    // backgroundColor: "pink",
     width: "100%",
-    // justifyContent: "flex-end",
-
-    // flex: 1,
-    // paddingBottom: 120,
   },
   historyCard: {
     backgroundColor: "#fff9f4",
     paddingVertical: z(5),
-    // flexDirection: "row",
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderRightWidth: StyleSheet.hairlineWidth,
-    // borderLeftWidth: StyleSheet.hairlineWidth,
-    // width: "100%",
     borderColor: "#c4c4c4",
     marginHorizontal: 15,
     marginTop: 10,
     elevation: 5,
     borderRadius: 3,
-    // elevation: 5,
   },
   row: {
     flexDirection: "row",
-    // backgroundColor: "#eeeeee",
     alignItems: "center",
     paddingHorizontal: zx(10),
     height: z(50),
-    // justifyContent: "space-around",
-    // width: "100%",
-    // flex: 1,
   },
   iconContainer: {
     width: zx(40),
     height: zx(40),
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "pink",
   },
   iconMainContainer: {
     width: zx(26),
     height: zx(26),
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "pink",
   },
   iconPosition: {
     position: "absolute",
@@ -120,12 +85,7 @@ const styles = StyleSheet.create({
     right: 5,
   },
   textContainer: {
-    // flex: 1,
-    // flexDirection: "row",
-    // height: "100%",
     paddingHorizontal: zx(10),
-    // alignItems: "center",
-    // justifyContent: "space-between",
   },
   title: {
     fontFamily: "MontserratRegular",
@@ -158,7 +118,6 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     letterSpacing: 1,
     color: "white",
   },
@@ -167,8 +126,6 @@ const styles = StyleSheet.create({
     height: z(34),
     elevation: 5,
     alignSelf: "center",
-    // marginBottom: z(20),
-    // backgroundColor: "#59cbbd",
     backgroundColor: "#84c4ff",
     borderRadius: z(6),
   },
@@ -178,13 +135,9 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "100%",
     width: "100%",
-
-    // backgroundColor: "pink",
   },
   buttonLabel: {
     padding: 0,
     margin: 0,
-    // width: "100%",
-    // backgroundColor: "green",
   },
 });

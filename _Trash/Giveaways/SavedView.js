@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Button, FlatList } from "react-native";
 import React from "react";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
 export default function HistoryView() {
   const giveawayHistory = useSelector((state) => state.giveawayHistory.value);

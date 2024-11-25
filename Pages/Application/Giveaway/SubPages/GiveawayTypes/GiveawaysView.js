@@ -66,32 +66,3 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
   },
 });
-
-// {
-//     <Stack.Screen
-//     name="FrontView"
-//     component={FrontView}
-//     options={{
-//       headerShown: false,
-//       animation: "fade",
-//     }}
-//   />
-
-//   <Stack.Screen
-//     name="GiveawayXView"
-//     component={GiveawayXView}
-//     options={{
-//       headerShown: false,
-//       animation: "fade",
-//     }}
-//   />
-
-//   <Stack.Screen
-//     name="GiveawayZView"
-//     component={GiveawayZView}
-//     options={{
-//       headerShown: false,
-//       animation: "fade",
-//     }}
-//   />
-// }

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Blue Kiwi",
     "slug": "BlueKiwi",
-    "version": "1.1.5",
+    "version": "1.2.15",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,7 +24,8 @@
       }
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
+      "softwareKeyboardLayoutMode": "pan",
+
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
@@ -38,8 +39,8 @@
         "WRITE_EXTERNAL_STORAGE",
         "com.google.android.gms.permission.AD_ID"
       ],
-      "versionCode": 17,
-      "runtimeVersion": "1.1.5"
+      "versionCode": 37,
+      "runtimeVersion": "1.2.15"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -49,7 +50,10 @@
         "projectId": "a4c72648-0f2a-4523-bdb9-a4861f797947"
       }
     },
-    "plugins": ["@react-native-google-signin/google-signin"]
+    "plugins": [
+      "@react-native-google-signin/google-signin",
+      "expo-build-properties"
+    ]
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4213110958189376~3405929057",

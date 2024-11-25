@@ -14,18 +14,13 @@ import { useSocket } from "../../SocketContext/SocketContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { z, zx } from "../../../utils/scaling";
 import { useToast } from "react-native-toast-notifications";
-import GoBackSVG from "../../../Components/GoBackSVG";
-
 import { setDailyWallpapers } from "../../../Features/dailyWallpapers";
 import Carousel from "react-native-snap-carousel";
 import { setColorsArray } from "../../../Features/colorsArray";
-
 import WallpaperCard from "./components/WallpaperCard";
-
 import ErrorView from "../../Error/ErrorView";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import PlusIconSVG from "../../../Components/PlusIconSVG";
-import CoinsStack from "../../../Components/CoinsStack";
 import SingleKiwiCoin from "../../../Components/SingleKiwiCoin";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -64,7 +59,6 @@ export default function WallpaperApi({ navigation }) {
 
   function toggleMenu() {}
   Animated.timing(animateMenuX, {
-    // toValue: { x: 0, y: yInt },
     toValue: tipsMenuWallpaper ? xInt : 0,
     duration: 1000,
     useNativeDriver: false,
@@ -135,32 +129,7 @@ export default function WallpaperApi({ navigation }) {
 
   async function getDailyWallpapers() {
     try {
-      // const currentUtcTime = new Date().toUTCString();
-      // const currentDate = new Date();
-      // console.log(
-      //   "🚀 ~ file: WallpaperApi.js:135 ~ getDailyWallpapers ~ currentUtcTime:",
-      //   currentUtcTime
-      // );
-      // let response = await fetch(
-      //   `https://worldtimeapi.org/api/timezone/Etc/UTC`
-      // );
-      // let data = await response.json();
-      // console.log(
-      //   "🚀 ~ file: WallpaperApi.js:138 ~ getDailyWallpapers ~ data:",
-      //   data
-      // );
-      // let utc_time = data.utc_datetime;
-      // let utc_time = data.utc_datetime;
-
-      // let shortened_date = utc_time.substring(0, 10);
       const today = new Date().toISOString().split("T")[0];
-      // let date = new Date(today).getTime();
-      // console.log(
-      //   "🚀 ~ file: WallpaperApi.js:142 ~ getDailyWallpapers ~ date:",
-      //   date
-      // );
-
-      // check if date is not null
       if (!dailyWallpapers.date) {
         // call api
         console.log("date null");
@@ -172,7 +141,6 @@ export default function WallpaperApi({ navigation }) {
       } else {
         // do nuthing
         console.log("doing nothing");
-        // console.log(dailyWallpapers);
       }
     } catch (error) {
       console.log("ErrorID: E040: ", error);
@@ -241,14 +209,12 @@ export default function WallpaperApi({ navigation }) {
                 navigation.goBack();
               }}
             >
-              {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
               <Entypo name="chevron-left" size={30} color="black" />
             </TouchableOpacity>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                // backgroundColor: "blue",
               }}
             >
               <TouchableOpacity
@@ -265,7 +231,6 @@ export default function WallpaperApi({ navigation }) {
 
               <View
                 style={{
-                  // flex: 4,
                   flexDirection: "row",
                   justifyContent: "center",
                   backgroundColor: "rgba(0,0,0,0.1)",
@@ -292,7 +257,6 @@ export default function WallpaperApi({ navigation }) {
                   style={{
                     fontSize: z(18),
                     color: "#fff",
-                    // fontFamily: "RobotoRegular",
                     fontWeight: "bold",
                     textAlign: "center",
                     letterSpacing: z(2),
@@ -302,44 +266,6 @@ export default function WallpaperApi({ navigation }) {
                 </Text>
               </View>
             </View>
-
-            {/* <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  marginRight: 70,
-                }}
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate("AdsView");
-                }}
-              >
-                <PlusIconSVG height={30} width={30} />
-              </TouchableOpacity>
-
-              <View
-                style={[
-                  styles.score,
-                  {
-                    position: "absolute",
-                    right: 26,
-                  },
-                ]}
-              >
-                <Text style={styles.scoreText}>
-                  {remainingdDigits(coins)}
-                  {coins}
-                </Text>
-              </View>
-
-              <View>
-                <CoinsStack height={z(50)} width={z(50)} />
-              </View>
-            </View> */}
           </View>
 
           <View
@@ -414,7 +340,6 @@ const styles = StyleSheet.create({
     marginBottom: 80,
     borderBottomColor: "#199187",
     borderBottomWidth: 1,
-    // fontWeight: "bold",
     position: "absolute",
     zIndex: 2,
     top: 45,
@@ -426,7 +351,6 @@ const styles = StyleSheet.create({
     top: 45,
     left: 15,
     padding: 5,
-    // backgroundColor: "grey",
   },
   content: {
     flex: 1,
@@ -437,11 +361,8 @@ const styles = StyleSheet.create({
     left: 0,
     backgroundColor: "#C88781",
     marginHorizontal: 20,
-    // borderRadius: 10,
     zIndex: 2,
     elevation: 5,
-
-    // marginTop: 120,
   },
   buttonStyle: {
     position: "absolute",
@@ -481,127 +402,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     paddingLeft: 10,
-    // elevation: 5,
-    // position: "absolute",
-    // top: 61,
-    // right: 36,
-    // borderColor: "#ffd69e",
   },
   scoreText: {
     fontFamily: "Righteous_400Regular",
     fontSize: 16,
     color: "#36485f",
-    // position: "absolute",
-    // top: -6,
-    // left: 10,
   },
 });
-
-{
-  /* <View
-            style={{
-              // backgroundColor: "rgba(0,0,0,0.1)",
-              alignItems: "center",
-              justifyContent: "center",
-              height: viewHeight,
-              width: width,
-              // overflow: "hidden",
-              // borderRadius: 80,
-              // borderBottomLeftRadius: 80,
-              // borderBottomRightRadius: 80,
-              // elevation: 5,
-              // borderWidth: StyleSheet.hairlineWidth,
-              // borderColor: "rgba(0,0,0,0.5)",
-            }}
-          >
-            <Carousel
-              // ref={carouselRef}
-              // vertical={true}
-              data={dailyWallpapers.value}
-              itemWidth={item_height * (30 / 49)}
-              // itemHeight={height * 0.325}
-              itemHeight={item_height}
-              sliderWidth={width}
-              sliderHeight={viewHeight}
-              enableMomentum={true}
-              onSnapToItem={(index) => {
-                // setCurrentSlide(index);
-                // console.log(iniColor);
-                // console.log(index);
-                // console.log(nextColor);
-                // setNextColor(colorsArray[index]);
-                // console.log(nextColor);
-                setNextColor({ color: colorsArray[index], index: index });
-                // animate(iniIndex, index);
-
-                // console.log(iniColor);
-              }}
-              // loop={true}
-              containerCustomStyle={{
-                // backgroundColor: "pink",
-                // alignItems: "center",
-                // marginVertical: 40,
-                width: width,
-                // padding: 10,
-                // borderWidth: 3,
-
-                // height: height * 0.5,
-                borderRadius: 50,
-              }}
-              contentContainerCustomStyle={{
-                // backgroundColor: "lightyellow",
-                // height: height * 0.5,
-                alignItems: "center",
-                // width: width * 0.4,
-                // padding: 20,
-                // borderWidth: 3,
-                borderColor: "green",
-                // borderRadius: 50,
-              }}
-              slideStyle={{
-                // backgroundColor: "grey",
-                // width: width * 0.5,
-                // height: height * 0.5,
-                // borderRadius: 50,
-
-                // padding: 10,
-                // borderWidth: 3,
-
-                borderColor: "blue",
-
-                // alignItems: "center",
-                justifyContent: "center",
-                height: item_height,
-                width: item_height * (30 / 49),
-                // overflow: "hidden",
-              }}
-              // pagingEnabled={true}
-              renderItem={({ item, index }) => {
-                return (
-                  <View
-                    style={{
-                      backgroundColor: "black",
-                      height: "100%",
-                      width: "100%",
-                      borderRadius: 30,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Image
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        // borderRadius: 20,
-                      }}
-                      resizeMode="contain"
-                      // resizeMethod={"resize"}
-                      source={{
-                        uri: item.img_link,
-                      }}
-                    />
-                  </View>
-                );
-              }}
-            />
-          </View> */
-}

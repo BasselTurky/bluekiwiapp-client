@@ -3,19 +3,22 @@ import { jwtDecode } from "jwt-decode";
 import { setAuth } from "../../../Features/auth";
 import { globalReset } from "../../../GlobalActions-Redux/globalActions";
 
-// : 'google' or 'default'
-
 export const handleToken = async (tokens, dispatch) => {
   const latestUserUid = await SecureStore.getItemAsync("latestUserUid");
   const decoded = jwtDecode(tokens.refreshToken);
 
   if (decoded) {
-    if (latestUserUid && decoded.uid !== latestUserUid) {
+    if (latestUserUid && decoded.username !== latestUserUid) {
       // New user logic
-      await handleNewUser(decoded.uid, tokens, dispatch);
+      await handleNewUser(decoded.username, tokens, dispatch);
     } else {
       // Existing user logic or first login
-      await handleExistingUser(decoded.uid, tokens, dispatch, !latestUserUid);
+      await handleExistingUser(
+        decoded.username,
+        tokens,
+        dispatch,
+        !latestUserUid
+      );
     }
   }
 };

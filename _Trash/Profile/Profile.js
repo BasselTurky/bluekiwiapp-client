@@ -17,31 +17,31 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import MaskedView from "@react-native-masked-view/masked-view";
-import ErrorView from "../../Error/ErrorView";
+import ErrorView from "../../Pages/Error/ErrorView";
 import {
   SafeAreaView,
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { z } from "../../../utils/scaling";
+import { z } from "../../utils/scaling";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
 import { Button as PaperButton } from "react-native-paper";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useSocket } from "../../SocketContext/SocketContext";
-import { setAuth } from "../../../Features/auth";
+import { useSocket } from "../../Pages/SocketContext/SocketContext";
+import { setAuth } from "../../Features/auth";
 
-import GoBackSVG from "../../../Components/GoBackSVG";
-import ProfileSVG from "../../../Components/ProfileSVG";
-import DeleteIconSVG from "../../../Components/DeleteIconSVG";
-import TrashIconSVG from "../../../Components/TrashIconSVG";
-import ProfileIconStroke from "../../../Components/ProfileIconStroke";
-import EmailIcon from "../../../Components/EmailIcon";
-import PasswordIcon from "../../../Components/PasswordIcon";
-import LogoutIcon from "../../../Components/LogoutIcon";
-import NextSVG from "../../../Components/NextSVG";
-import UpdatePasswordIcon from "../../../Components/UpdatePasswordIcon";
+import GoBackSVG from "../../Components/GoBackSVG";
+import ProfileSVG from "../../Components/ProfileSVG";
+import DeleteIconSVG from "../../Components/DeleteIconSVG";
+import TrashIconSVG from "../../Components/TrashIconSVG";
+import ProfileIconStroke from "../../Components/ProfileIconStroke";
+import EmailIcon from "../../Components/EmailIcon";
+import PasswordIcon from "../../Components/PasswordIcon";
+import LogoutIcon from "../../Components/LogoutIcon";
+import NextSVG from "../../Components/NextSVG";
+import UpdatePasswordIcon from "../../Components/UpdatePasswordIcon";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);

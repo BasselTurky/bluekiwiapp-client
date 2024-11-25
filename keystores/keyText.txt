@@ -1,0 +1,95 @@
+C:\Users\101\Desktop\New folder (3)>keytool -list -v -keystore bluekiwi-release-key.jks -alias bluekiwi-prod-alias
+
+Enter keystore password: Blue1117734644
+
+Alias name: bluekiwi-prod-alias
+Creation date: Nov 6, 2024
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=bassel turky, OU=bluekiwiapp, O=bluekiwi, L=cairo, ST=obour, C=EG
+Issuer: CN=bassel turky, OU=bluekiwiapp, O=bluekiwi, L=cairo, ST=obour, C=EG
+Serial number: 8e47067c7c7a9989
+Valid from: Wed Nov 06 11:53:00 EET 2024 until: Sun Mar 24 11:53:00 EET 2052
+Certificate fingerprints:
+         SHA1: 37:12:52:E5:D4:A3:68:89:AF:18:5C:25:41:EE:12:BB:A0:5E:5B:DD
+         SHA256: DB:75:8F:9A:5E:10:60:82:EE:0B:5A:ED:14:D6:E3:5B:F7:57:83:D9:08:B5:EA:1B:14:E7:F8:84:0B:70:BF:A1
+Signature algorithm name: SHA384withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 3C FF D9 E6 EE DD 6E EF   B9 C8 1E 36 9E 72 26 9D  <.....n....6.r&.
+0010: 6E 2D 47 36                                        n-G6
+]
+]
+
+
+--------------------
+
+C:\Users\101\Desktop\New folder (3)>keytool -list -v -keystore bluekiwi-dev-key.jks -alias bluekiwi-dev-alias
+
+Enter keystore password: Bb6708294
+
+Alias name: bluekiwi-dev-alias
+Creation date: Nov 6, 2024
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=bassel turky, OU=bluekiwiapp, O=bluekiwi, L=cair, ST=obour, C=EG
+Issuer: CN=bassel turky, OU=bluekiwiapp, O=bluekiwi, L=cair, ST=obour, C=EG
+Serial number: d32dbdb5caddbc01
+Valid from: Wed Nov 06 11:56:13 EET 2024 until: Sun Mar 24 11:56:13 EET 2052
+Certificate fingerprints:
+         SHA1: E1:63:F1:D4:0F:EE:E5:20:6A:C0:0C:53:D9:E3:FF:78:15:0D:4A:A6
+         SHA256: A4:24:E9:AA:EC:41:F8:6C:B0:CB:C1:50:9E:D2:D2:23:7F:D6:80:76:CF:67:3C:F8:0F:BA:B9:57:F2:B7:00:88
+Signature algorithm name: SHA384withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: EF 5C C4 94 36 4A BA 86   7C 2F C6 4B 31 99 D6 94  .\..6J.../.K1...
+0010: CD 85 12 96                                        ....
+]
+]
+
+
+
+
+
+--------------------
+
+
+
+{
+  "android": {
+    "keystore": {
+      "keystorePath": "credentials/android/keystore.jks",
+      "keystorePassword": "29bbd4b2cf652b59cc2edbf8f3f32dcc",
+      "keyAlias": "2d7385dfa7e09f4be905c944717a1f2b",
+      "keyPassword": "7d095e3c7260d7c4693e7ca72bc4a84c"
+    }
+  }
+}
+
+
+
+
+http://localhost
+http://localhost:5000
+https://pc-api-5679197225760885144-473.firebaseapp.com
+https://pc-api-5679197225760885144-473.firebaseapp.com/__/auth/handler
+
+
+
+
+,
+    "plugins": ["@react-native-google-signin/google-signin"]

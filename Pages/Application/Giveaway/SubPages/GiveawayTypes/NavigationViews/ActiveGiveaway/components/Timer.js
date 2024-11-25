@@ -4,8 +4,6 @@ import moment from "moment";
 
 export default function Timer({ style, totalParticipants }) {
   const [timeLeft, setTimeLeft] = useState("");
-  // if total users more than 1000|
-  // else display null
   useEffect(() => {
     if (totalParticipants <= 1000) {
       setTimeLeft("-");
@@ -13,9 +11,7 @@ export default function Timer({ style, totalParticipants }) {
     }
 
     const calculateTimeLeft = () => {
-      // const now = moment("2024-09-16T02:00:01+02:00");
       const now = moment();
-      // const midnight = moment().startOf("day").add(1, "day");
       const midnight = moment().utc().startOf("day").add(1, "day");
       const duration = moment.duration(midnight.diff(now));
 

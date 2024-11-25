@@ -6,8 +6,6 @@ import React from "react";
 import Main from "./Main";
 import "react-native-get-random-values";
 import { z } from "./utils/scaling";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ToastProvider } from "react-native-toast-notifications";
 import { persistor, store } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
@@ -40,22 +38,14 @@ export default function App() {
   useEffect(() => {
     onFetchUpdateAsync();
   }, []);
-  // const insets = useSafeAreaInsets();
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            {/* <ToastProvider
-              offsetTop={z(40)}
-              animationType="slide-in"
-              placement="top"
-              duration={3000}
-            > */}
             <Main />
-            {/* </ToastProvider> */}
           </SafeAreaProvider>
-
           <StatusBar style="dark" />
         </GestureHandlerRootView>
       </PersistGate>

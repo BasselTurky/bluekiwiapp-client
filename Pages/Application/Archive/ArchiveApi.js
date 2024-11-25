@@ -1,62 +1,27 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSocket } from "../../SocketContext/SocketContext";
 import { z } from "../../../utils/scaling";
-import * as SecureStore from "expo-secure-store";
 import GoBackSVG from "../../../Components/GoBackSVG";
-
 import { setPermanentWallpapers } from "../../../Features/permanentWallpapers";
-
-import { Button as PaperButton } from "react-native-paper";
-import ArchiveIcon from "../../../Components/ArchiveIcon";
-
-import Toast, { BaseToast } from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
-import MonthButton from "./components/MonthButton";
 import YearButton from "./components/YearButton";
-
 import ErrorView from "../../Error/ErrorView";
-
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   SafeAreaView,
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-async function deleteValueFor(key) {
-  await SecureStore.deleteItemAsync(key);
-}
-import { setAuth } from "../../../Features/auth";
-
-const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
-
 export default function ArchiveApi({ navigation }) {
   const socket = useSocket();
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const dispatch = useDispatch();
-  const dailyWallpapers = useSelector((state) => state.dailyWallpapers.value);
   const permanentWallpapers = useSelector(
     (state) => state.permanentWallpapers.value
   );
-
-  // const [isScaled, setIsScaled] = useState(false);
-
-  // const angels = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 
   function fetchWallpapers() {
     socket.emit("get-all-wallpapers");
@@ -92,80 +57,10 @@ export default function ArchiveApi({ navigation }) {
     });
   }, []);
 
-  // async function fetchWallpapers() {
-  //   try {
-  //     let currentToken = await SecureStore.getItemAsync("token");
-  //     const response = await fetch(
-  //       `${global.server_address}/api/get-all-wallpapers`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           Accept: "application/json",
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           token: currentToken,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-  //     if (data.type === "success") {
-  //       let total = {};
-
-  //       for (let i = 0; i < data.result.length; i++) {
-  //         let row = data.result[i];
-  //         let year = row.date.substring(0, 4);
-  //         let month = row.date.substring(5, 7);
-  //         let day = row.date.substring(8, 10);
-
-  //         if (!total[year]) {
-  //           total[year] = {};
-  //         }
-
-  //         if (!total[year][month]) {
-  //           total[year][month] = [];
-  //         }
-
-  //         total[year][month].push(row);
-  //       }
-
-  //       dispatch(
-  //         setPermanentWallpapers({
-  //           date: data.date,
-  //           value: total,
-  //         })
-  //       );
-  //     } else if (data.type === "wrong-device") {
-  //       deleteValueFor("token");
-  //       dispatch(setAuth(false));
-  //     } else if (data.type === "error") {
-  //       // ErrorID: E052
-  //       errorToast(data.message);
-  //     } else {
-  //       errorToast("ErrorID: E051");
-  //     }
-  //   } catch (error) {
-  //     console.log("ErrorID: E050: ", error);
-  //     errorToast("ErrorID: E050");
-  //   }
-  // }
-
   async function getAllWallpapers() {
     try {
-      // let response = await fetch(
-      //   `https://worldtimeapi.org/api/timezone/Etc/UTC`
-      // );
-      // let data = await response.json();
-      console.log(permanentWallpapers);
-      // let utc_time = data.utc_datetime;
-      // // convert utc_time to 10 index string
-      // let shortened_date = utc_time.substring(0, 8) + "01";
-      // let date = new Date(shortened_date).getTime();
       const today = new Date().toISOString().split("T")[0];
       if (!permanentWallpapers.date) {
-        // first time
-
         fetchWallpapers();
       } else if (new Date(today) > new Date(permanentWallpapers.date)) {
         // if today's date > stored date "last fetch"
@@ -199,76 +94,6 @@ export default function ArchiveApi({ navigation }) {
     "Dec",
   ];
 
-  // function renderMonth(year) {
-  //   // let months = Object.keys(permanentWallpapers.value[year]);
-  //   let months = [
-  //     "01",
-  //     "02",
-  //     "03",
-  //     "04",
-  //     "05",
-  //     "06",
-  //     "07",
-  //     "08",
-  //     "09",
-  //     "10",
-  //     "11",
-  //     "12",
-  //   ];
-  //   return months.map((month, index) => {
-  //     let delay = 300;
-  //     return (
-  //       <MonthButton
-  //         permanentWallpapers={permanentWallpapers}
-  //         year={year}
-  //         month={month}
-  //         monthsArray={monthsArray}
-  //         isScaled={isScaled}
-  //       />
-  //     );
-  //   });
-  // }
-  // <PaperButton
-  //   onPress={() => {}}
-  //   style={{
-  //     position: "absolute",
-  //     width: 45,
-  //     height: 45,
-  //     borderRadius: 45,
-  //     backgroundColor: "#af9199",
-  //     // justifyContent: "center",
-  //     // alignItems: "center",
-  //     padding: 0,
-  //     margin: 0,
-  //     minWidth: 0,
-  //     // elevation: 5,
-  //     opacity: permanentWallpapers.value[year][month]
-  //       ? 1
-  //       : 0.5 - Number(month) / 25,
-  //     transform: [
-  //       {
-  //         translateX:
-  //           100 * Math.sin((Math.PI * 2 * (Number(month) * 30)) / 360),
-  //       },
-  //       {
-  //         translateY:
-  //           100 * Math.cos((Math.PI * 2 * (Number(month) * 30)) / 360),
-  //       },
-  //       // {
-  //       //   scale: 0.5,
-  //       // },
-  //     ],
-  //   }}
-  //   contentStyle={styles.buttonContent}
-  //   labelStyle={styles.buttonLabel}
-  //   mode="contained"
-  //   uppercase={false}
-  // >
-  //   {permanentWallpapers.value[year][month] ? (
-  //     <Text>{monthsArray[Number(month) - 1]}</Text>
-  //   ) : null}
-  //   {/* <Text>{monthsArray[Number(month) - 1]}</Text> */}
-  // </PaperButton>
   function renderYears() {
     if (permanentWallpapers) {
       let years = Object.keys(permanentWallpapers.value);
@@ -282,46 +107,10 @@ export default function ArchiveApi({ navigation }) {
             year={year}
             monthsArray={monthsArray}
           />
-          //       <View
-          //         style={{
-          //           flex: 1,
-          //           justifyContent: "center",
-          //           alignItems: "center",
-          //         }}
-          //       >
-          //         <PaperButton
-          //           onPress={() => {}}
-          //           style={styles.buttonStyle}
-          //           contentStyle={styles.buttonContent}
-          //           labelStyle={styles.buttonLabel}
-          //           // color="green"
-          //           mode="contained"
-          //           uppercase={false}
-          //         >
-          //           {/* <View>
-          //   <ArchiveIcon width={30} height={30} />
-          // </View> */}
-
-          //           <Text
-          //             style={{
-          //               fontSize: 20,
-          //               // fontFamily: "PlayfairBold",
-          //               fontFamily: "Graduate_400Regular",
-          //               color: "#ffffffcc",
-          //             }}
-          //           >
-          //             {year}
-          //           </Text>
-          //         </PaperButton>
-          //         {renderMonth(year)}
-          //       </View>
         );
       });
     }
   }
-
-  // x: xInt + 64 * Math.cos(135 * (Math.PI / 180)),
-  // y: yInt + 64 * Math.sin(135 * (Math.PI / 180)),
 
   try {
     return (
@@ -331,24 +120,13 @@ export default function ArchiveApi({ navigation }) {
         }}
       >
         <View
-          // source={require("../../../assets/001.jpg")}
-          // source={require("../../../assets/whiteLayer.png")}
-          // blurRadius={2}
-          // resizeMode="cover"
           style={[
             {
               flex: 1,
               alignItems: "center",
-              // justifyContent: "center",
-              // paddingTop:
-              //   height * 0.04 < 24
-              //     ? insets.top + height * 0.005
-              //     : insets.top + height * 0.015,
               paddingTop: insets.top,
               paddingBottom: insets.bottom,
-              // backgroundColor: "#C88781",
             },
-            // styles.container,
           ]}
         >
           <View
@@ -361,10 +139,6 @@ export default function ArchiveApi({ navigation }) {
           >
             <TouchableOpacity
               style={{
-                // zIndex: 2,
-                // position: "absolute",
-                // top: 30,
-                // left: 17,
                 width: z(40),
                 height: z(40),
                 backgroundColor: "rgba(0,0,0,0.3)",
@@ -389,70 +163,7 @@ export default function ArchiveApi({ navigation }) {
             }}
           >
             {renderYears()}
-            {/* {permanentWallpapers
-              ? Object.keys(permanentWallpapers.value).map((year) => {
-                  
-                  );
-                })
-              : null} */}
           </View>
-
-          {/* <View
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: 0,
-              backgroundColor: "pink",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {angels.map((angel) => {
-              return (
-                <View
-                  style={{
-                    position: "absolute",
-                    width: 25,
-                    height: 25,
-                    borderRadius: 25,
-                    backgroundColor: "green",
-                    transform: [
-                      {
-                        translateX: 100 * Math.sin((Math.PI * 2 * angel) / 360),
-                      },
-                      {
-                        translateY: 100 * Math.cos((Math.PI * 2 * angel) / 360),
-                      },
-                    ],
-                  }}
-                ></View>
-              );
-            })}
-            <View
-              style={{
-                position: "absolute",
-                width: 60,
-                height: 60,
-                borderRadius: 60,
-                backgroundColor: "red",
-              }}
-            ></View>
-          </View> */}
-
-          {/* <Button
-            title="hello"
-            onPress={() => {
-              console.log(permanentWallpapers);
-            }}
-          /> */}
-          {/* <Button
-            title="go"
-            onPress={() => {
-              navigation.navigate("ArchiveMonth");
-            }}
-          /> */}
         </View>
       </View>
     );
@@ -478,7 +189,6 @@ const styles = StyleSheet.create({
     marginBottom: 80,
     borderBottomColor: "#199187",
     borderBottomWidth: 1,
-    // fontWeight: "bold",
     position: "absolute",
     zIndex: 2,
     top: 45,
@@ -491,7 +201,6 @@ const styles = StyleSheet.create({
     left: 15,
     padding: 5,
     zIndex: 91,
-    // backgroundColor: "grey",
   },
   content: {
     flex: 1,
@@ -500,21 +209,14 @@ const styles = StyleSheet.create({
     bottom: 120,
     right: 0,
     left: 0,
-    // backgroundColor: "pink",
     marginHorizontal: 20,
-    // borderRadius: 10,
     zIndex: 2,
     elevation: 5,
-
-    // marginTop: 120,
   },
   buttonStyle: {
-    // position: "absolute",
-    // top: height * 0.5,
     backgroundColor: "#af9199",
     elevation: 10,
     alignSelf: "center",
-    // marginBottom: 180,
     width: 100,
     height: 100,
     borderRadius: 100,

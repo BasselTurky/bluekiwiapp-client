@@ -3,8 +3,8 @@ import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WebView } from "react-native-webview";
 
-import { setIsWebviewLoaded } from "../../../Features/isWebviewLoaded";
-import { setIsViewLogin } from "../../../Features/isViewLogin";
+import { setIsWebviewLoaded } from "../Features/isWebviewLoaded";
+import { setIsViewLogin } from "../Features/isViewLogin";
 
 export default React.memo(function HomeWebview({
   viewRef,

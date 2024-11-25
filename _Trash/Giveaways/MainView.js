@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { z, zx } from "../../../utils/scaling";
-import SingleCircleSVG from "../../../Components/SingleCircleSVG";
-import MultiCirclesSVG from "../../../Components/MultiCirclesSVG";
+import { z, zx } from "../../utils/scaling";
+import SingleCircleSVG from "../../Components/SingleCircleSVG";
+import MultiCirclesSVG from "../../Components/MultiCirclesSVG";
 
-import GiveawayCard from "../Giveaway/SubPages/GiveawayTypes/NavigationViews/FrontView/components/GiveawayCard";
+import GiveawayCard from "../../Pages/Application/Giveaway/SubPages/GiveawayTypes/NavigationViews/FrontView/components/GiveawayCard";
 
 import { FontAwesome6, AntDesign } from "@expo/vector-icons";
 

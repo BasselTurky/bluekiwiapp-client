@@ -9,27 +9,19 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import LinearGradient from "react-native-linear-gradient";
-
 import { setAuth } from "../../../../../Features/auth";
 import { updateDownload_dailyWallpapers } from "../../../../../Features/dailyWallpapers";
-
 import * as SecureStore from "expo-secure-store";
-async function deleteValueFor(key) {
-  await SecureStore.deleteItemAsync(key);
-}
-
-import { consumeCoins } from "../../../../../Features/coins";
 import { setCoins } from "../../../../../Features/coins";
-
 import RNFetchBlob from "rn-fetch-blob";
 import DownloadIcon from "../../../../../Components/DownloadIcon";
 import KiwiCoinSVG from "../../../../../Components/KiwiCoinSVG";
 
-import { BlurView, VibrancyView } from "@react-native-community/blur";
+import { BlurView } from "@react-native-community/blur";
 
-const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
+async function deleteValueFor(key) {
+  await SecureStore.deleteItemAsync(key);
+}
 
 export default function WallpaperCardArchive({ item, toast, errorToast }) {
   const dispatch = useDispatch();
@@ -52,7 +44,6 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
       toast.show({
         type: "success",
         text1: "Download started!",
-        // text2: "Error",
         visibilityTime: 3000,
       });
       dispatch(setCoins(updated_coins));
@@ -94,7 +85,6 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
         deleteValueFor("token");
         dispatch(setAuth(false));
       } else if (data.type === "error") {
-        // ErrorID: E045X
         errorToast(data.message + "X");
       } else {
         errorToast("ErrorID: E049");
@@ -148,13 +138,6 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
       />
       {showLayer ? (
         <View
-          // locations={[0.1, 0.3, 0.7, 0.9]}
-          // colors={[
-          //   "transparent",
-          //   "transparent",
-          //   "transparent",
-          //   "rgba(0,0,0,0.8)",
-          // ]}
           style={{
             position: "absolute",
             top: 0,
@@ -171,7 +154,6 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
               width: "100%",
               bottom: 0,
               height: 90,
-              // backgroundColor: "yellow",
             }}
           >
             <BlurView
@@ -195,16 +177,11 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
           >
             <View
               style={{
-                // position: "absolute",
-                // bottom: 15,
-                // right: 15,
                 minWidth: 40,
                 height: 40,
                 backgroundColor: "rgba(255,255,255,0.2)",
                 padding: 10,
-                // paddingVertical: 12,
                 borderRadius: 10,
-                // marginHorizontal: 10,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -212,7 +189,6 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
               <Text
                 style={{
                   color: "#fff",
-                  // fontFamily: "Righteous_400Regular",
                   fontFamily: "Graduate_400Regular",
                 }}
               >
@@ -221,17 +197,9 @@ export default function WallpaperCardArchive({ item, toast, errorToast }) {
             </View>
             <TouchableOpacity
               style={{
-                // position: "absolute",
-                // bottom: 15,
-                // right: 15,
                 minHeight: 40,
-                // minWidth: 80,
                 backgroundColor: "rgba(255,255,255,0.2)",
-                // padding: 10,
-                // paddingVertical: 12,
                 borderRadius: 10,
-                // marginHorizontal: 10,
-                // justifyContent: "space-around",
                 alignItems: "center",
                 flexDirection: "row",
                 paddingHorizontal: 10,

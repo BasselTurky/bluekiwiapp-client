@@ -11,17 +11,17 @@ import {
 } from "react-native";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import GoBackSVG from "../../../Components/GoBackSVG";
-import PlusIconSVG from "../../../Components/PlusIconSVG";
-import CoinsStack from "../../../Components/CoinsStack";
-import SingleKiwiCoin from "../../../Components/SingleKiwiCoin";
+import GoBackSVG from "../../Components/GoBackSVG";
+import PlusIconSVG from "../../Components/PlusIconSVG";
+import CoinsStack from "../../Components/CoinsStack";
+import SingleKiwiCoin from "../../Components/SingleKiwiCoin";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
-import ErrorView from "../../Error/ErrorView";
+import ErrorView from "../../Pages/Error/ErrorView";
 
 import * as SecureStore from "expo-secure-store";
-import { setAuth } from "../../../Features/auth";
-import { setAvailable } from "../../../Features/available";
-import { setWinner } from "../../../Features/winner";
+import { setAuth } from "../../Features/auth";
+import { setAvailable } from "../../Features/available";
+import { setWinner } from "../../Features/winner";
 
 import { TabView, SceneMap } from "react-native-tab-view";
 
@@ -33,7 +33,7 @@ import ViewZ from "./ViewZ";
 import GiveawaysContainer from "./GiveawaysContainer";
 import HistoryView from "./HistoryView";
 
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../utils/scaling";
 import {
   SafeAreaView,
   SafeAreaProvider,

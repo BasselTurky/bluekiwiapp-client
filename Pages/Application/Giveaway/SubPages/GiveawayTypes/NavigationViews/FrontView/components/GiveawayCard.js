@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { z, zx } from "../../../../../../../../utils/scaling";
-import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
 import OpenButton from "./OpenButton";
 const mainColor = "#735e4d";
@@ -24,19 +23,13 @@ export default function GiveawayCard({
     (state) => state[participantsGiveawayString].value
   );
 
-  // console.log("participants: ", participants);
-
   const participantsLength = participants?.length ?? 0;
-  // console.log(giveaway);
-  // console.log("participantsLength: ", participantsLength);
   const reward =
     participantsLength <= 1999
       ? 10
       : Math.floor(participantsLength / 1000) * 10;
 
-  const isAvailable = true;
   return (
-    // <View style={styles.container}>
     <View style={styles.giveawayCard}>
       <View style={styles.row}>
         <View style={styles.iconContainer}>{children}</View>
@@ -61,13 +54,11 @@ export default function GiveawayCard({
           <OpenButton
             navigation={navigation}
             route={route}
-            // giveawayId={giveaway.info.id}
             isUserParticipant={activeGiveaway?.isUserParticipant}
           />
         </View>
       </View>
     </View>
-    // </View>
   );
 }
 
@@ -79,21 +70,14 @@ const styles = StyleSheet.create({
   giveawayCard: {
     backgroundColor: "#fff9f4",
     paddingVertical: z(5),
-
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderRightWidth: StyleSheet.hairlineWidth,
-    // borderLeftWidth: StyleSheet.hairlineWidth,
-
     borderColor: "#c4c4c4",
     marginHorizontal: 15,
     marginTop: 10,
     elevation: 5,
     borderRadius: 3,
-    // elevation: 5,
   },
   row: {
     flexDirection: "row",
-    // backgroundColor: "#eeeeee",
     alignItems: "center",
     paddingHorizontal: zx(10),
     height: z(50),
@@ -138,7 +122,6 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     letterSpacing: 1,
     color: "white",
   },
@@ -147,8 +130,6 @@ const styles = StyleSheet.create({
     height: z(34),
     elevation: 5,
     alignSelf: "center",
-    // marginBottom: z(20),
-    // backgroundColor: "#59cbbd",
     backgroundColor: "#84c4ff",
     borderRadius: z(6),
   },
@@ -158,13 +139,9 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "100%",
     width: "100%",
-
-    // backgroundColor: "pink",
   },
   buttonLabel: {
     padding: 0,
     margin: 0,
-    // width: "100%",
-    // backgroundColor: "green",
   },
 });

@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import GiveawaysView from "./SubPages/GiveawayTypes/GiveawaysView";
 import HistoryView from "./SubPages/History/HistoryView";
@@ -19,8 +18,6 @@ export default function MainView() {
         contentStyle: {
           backgroundColor: "transparent",
         },
-        // swipeEnabled: false,
-        // tabBarStyle: { display: "none" },
       }}
     >
       <Stack.Screen

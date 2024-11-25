@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Dimensions,
   KeyboardAvoidingView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,14 +14,11 @@ import { Button as PaperButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { z, zx } from "../../../../utils/scaling";
 import { setAuth } from "../../../../Features/auth";
-// import GoBackSVG from "../../../../Components/GoBackSVG";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
 }
-
-var height = Dimensions.get("window").height;
 
 export default function ChangePassword({ setShowChangePass, light }) {
   const insets = useSafeAreaInsets();
@@ -116,7 +112,6 @@ export default function ChangePassword({ setShowChangePass, light }) {
           paddingHorizontal: 17,
           flexDirection: "row",
           zIndex: 2,
-          // backgroundColor: "#2b2d31",
         }}
       >
         <TouchableOpacity
@@ -132,7 +127,6 @@ export default function ChangePassword({ setShowChangePass, light }) {
             setShowChangePass(false);
           }}
         >
-          {/* <GoBackSVG fill={"#fff"} width={zx(15)} height={zx(15)} /> */}
           <Entypo name="chevron-left" size={30} color="black" />
         </TouchableOpacity>
 
@@ -234,7 +228,6 @@ export default function ChangePassword({ setShowChangePass, light }) {
             <Text
               style={{
                 fontSize: z(18),
-                // fontFamily: "PlayfairBold",
                 color: "#ffffffcc",
               }}
             >
@@ -256,7 +249,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginHorizontal: z(30),
     fontSize: z(15),
-    // fontFamily: "Playfair",
   },
   buttonStyle: {
     width: z(200),

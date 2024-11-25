@@ -17,15 +17,10 @@ import { setAuth } from "../../../Features/auth";
 import { setUserData } from "../../../Features/userData";
 import { setCoins } from "../../../Features/coins";
 import { addCoin } from "../../../Features/coins";
-import { setGiveawayX } from "../../../Features/giveawayX";
-import { setGiveawayZ } from "../../../Features/giveawayZ";
-import { addUserToGiveawayListX } from "../../../Features/giveawayX";
-import { addUserToGiveawayListZ } from "../../../Features/giveawayZ";
 import { setActiveGiveawayX } from "../Giveaway/Redux States/activeGiveawayX";
 import { updateIsUserParticipantX } from "../Giveaway/Redux States/activeGiveawayX";
 import { setActiveGiveawayZ } from "../Giveaway/Redux States/activeGiveawayZ";
 import { updateIsUserParticipantZ } from "../Giveaway/Redux States/activeGiveawayZ";
-import { setHistory } from "../../../Features/giveawayHistory";
 import { setParticipantsX } from "../Giveaway/Redux States/participantsGiveawayX";
 import { setParticipantsZ } from "../Giveaway/Redux States/participantsGiveawayZ";
 import { addParticipantsX } from "../Giveaway/Redux States/participantsGiveawayX";
@@ -33,8 +28,6 @@ import { addParticipantsZ } from "../Giveaway/Redux States/participantsGiveawayZ
 import { setHistoryGiveaways } from "../Giveaway/Redux States/historyGiveaways";
 import { addHistoryGiveaaway } from "../Giveaway/Redux States/historyGiveaways";
 import { updateHistoryGiveaway } from "../Giveaway/Redux States/historyGiveaways";
-// import { persistor } from "../../../store";
-// import storage from "redux-persist/lib/storage";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -65,14 +58,6 @@ export default function SocketComponent() {
       animationType: "slide-in",
       placement: "top",
     });
-  }
-
-  async function addUser() {
-    console.log("addUser");
-    // console.log(isSocketConnected);
-    socket.emit("add-user");
-    // socket.emit("get-giveaways-info"); // TODO edit
-    // socket.emit("get-user-giveaway-history"); // TODO update history
   }
 
   async function fetchActiveGiveaway(type) {
@@ -171,12 +156,8 @@ export default function SocketComponent() {
       socket.on("force-disconnect", async () => {
         // force logout the user
         console.log("force logout");
-
         deleteValueFor("token");
-        // console.log("token deleted");
         await GoogleSignin.signOut();
-        // console.log("google signed out");
-
         dispatch(setAuth(false));
         dispatch(globalReset());
 
@@ -189,55 +170,21 @@ export default function SocketComponent() {
           type: toast_object.type,
           duration: 3000,
         });
-        // set false
       });
 
       socket.on("userInfo", async (userInfo) => {
-        // console.log(" user");
         let userDataObj = {
-          name: userInfo.name,
+          firstname: userInfo.firstname,
+          lastname: userInfo.lastname,
           email: userInfo.email,
-          uid: userInfo.uid,
+          uid: userInfo.username,
           coins: userInfo.coins,
-          // uid: userInfo.uid,
         };
         dispatch(setUserData(userDataObj));
         dispatch(setCoins(userDataObj.coins));
         console.log("user added");
         await SplashScreen.hideAsync();
       });
-
-      //   socket.on("giveaway-history", (giveaway_history_array) => {
-      //     // convert array to object
-      //     // console.log(giveaway_history_array);
-
-      //     const giveaway_history_object = {};
-
-      //     giveaway_history_array.forEach((giveaway_object) => {
-      //       giveaway_history_object[giveaway_object.giveawayId] = giveaway_object;
-      //     });
-
-      //     // store history in redux
-      //     dispatch(setHistory(giveaway_history_object));
-      //     // dispatch(setHistory(giveaway_history_array));
-      //   });
-
-      // socket.on("add-giveaway-to-history", () => {});
-
-      //   socket.on("giveawayInfo", (giveawayX, giveawayZ) => {
-      //     // set state false
-      //     dispatch(setGiveawayX(giveawayX)); // {id:giveawayid, type:'z', participants: [{id:ignore, uid: userid, date: join date},{}]}
-      //     dispatch(setGiveawayZ(giveawayZ));
-      //   });
-
-      //   socket.on("active-giveaway-x", (giveawayX) => {
-      //     // save in redux state
-      //     dispatch(setActiveGiveawayX(giveawayX));
-      //   });
-      //   socket.on("active-giveaway-z", (giveawayZ) => {
-      //     // save in another redux state
-      //     dispatch(setActiveGiveawayZ(giveawayZ));
-      //   });
 
       socket.on("active-giveaway", (activeGiveaway, type) => {
         switch (type) {
@@ -328,7 +275,6 @@ export default function SocketComponent() {
             wallpaper_id_,
             dispatch,
             showToast
-            // setToastData
           );
         }
       );
@@ -341,7 +287,6 @@ export default function SocketComponent() {
         socket.off("connect"); // Unsubscribe from the "connect" event
         socket.removeAllListeners();
         socket.close();
-        // setIsSocketConnected(false);
       };
     } else {
       console.log("no socket");

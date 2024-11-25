@@ -17,7 +17,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { z } from "../../../../utils/scaling";
+import { z } from "../../../utils/scaling";
 import React, { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
@@ -25,10 +25,10 @@ import { Button as PaperButton } from "react-native-paper";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import GoBackSVG from "../../../../Components/GoBackSVG";
+import GoBackSVG from "../../../Components/GoBackSVG";
 
-import { setAuth } from "../../../../Features/auth";
-import { setUserData } from "../../../../Features/userData";
+import { setAuth } from "../../../Features/auth";
+import { setUserData } from "../../../Features/userData";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);

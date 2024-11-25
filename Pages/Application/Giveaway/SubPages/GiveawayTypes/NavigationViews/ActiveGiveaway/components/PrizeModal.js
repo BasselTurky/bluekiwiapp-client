@@ -64,14 +64,6 @@ export default function PrizeModal({ giveawayId }) {
     }
 
     if (isValid) {
-      // Proceed with form submission or dispatch action
-
-      //   console.log(`
-      //     ${selectedGiveaway.giveawayId}
-      //     ${selectedOption}
-      //     ${inputValue}
-      //     `);
-
       if (selectedGiveaway && selectedGiveaway.giveawayId) {
         console.log(`
             emit 
@@ -94,7 +86,6 @@ export default function PrizeModal({ giveawayId }) {
       // Example: dispatch(submitFormAction(inputValue, selectedOption));
     } else {
       console.log("Invalid input. Please check your entry.");
-      //TODO  toast here
       toast.show("Invalid input. Please check your entry.", {
         type: "error",
         duration: 3000,
@@ -175,13 +166,9 @@ export default function PrizeModal({ giveawayId }) {
           {renderInputField()}
           {selectedOption && inputValue ? (
             <PaperButton
-              //  icon={({ size, color }) => (
-              //    <CloseThinSVG width={12} height={12} fill="black" />
-              //  )}
               labelStyle={styles.btnText}
               contentStyle={{
                 flexDirection: "row-reverse",
-                // justifyContent: "space-between",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -189,11 +176,9 @@ export default function PrizeModal({ giveawayId }) {
                 marginTop: 5,
                 marginBottom: 20,
                 borderRadius: 5,
-                //    width: zx(120),
               }}
               mode="elevated"
               buttonColor="#84c4ff"
-              //   buttonColor="#84c4ff"
               onPress={handleSubmit}
             >
               Submit
@@ -235,7 +220,6 @@ const styles = StyleSheet.create({
     height: zx(40),
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "green",
   },
   optionButton: {
     padding: 10,
@@ -264,7 +248,6 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     fontSize: 16,
     letterSpacing: 1,
     color: "white",

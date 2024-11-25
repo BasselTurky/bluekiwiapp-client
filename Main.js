@@ -1,4 +1,4 @@
-import { StyleSheet, ImageBackground, Alert } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import * as NavigationBar from "expo-navigation-bar";
@@ -10,38 +10,22 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
-
 import Application from "./Pages/Application/ApplicationNav/Application";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
-
+import Signin from "./Pages/Signin/Signin";
 import { setAuth } from "./Features/auth";
 import { useFonts } from "expo-font";
-
 import * as SplashScreen from "expo-splash-screen";
 import { z } from "./utils/scaling";
-
-import { handleToken } from "./Pages/Login/utils/handleToken";
 
 NavigationBar.setBackgroundColorAsync("transparent");
 
 const Stack = createNativeStackNavigator();
-
-// async function getData() {
-//   const value = await SecureStore.getItemAsync("myKey");
-//   console.log(value); // Should print 'myValue' if data is persisted
-// }
-
-// Function to save a value to secure storage
-async function saveToSecureStore(key, value) {
-  await SecureStore.setItemAsync(key, value);
-}
 
 // Function to delete a value from secure storage
 async function deleteFromSecureStore(key) {
@@ -64,11 +48,15 @@ export default function Main() {
     MontserratMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
     MontserratSemiBold: require("./assets/fonts/Montserrat-SemiBold.ttf"),
     MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
+    CroissantOne: require("./assets/fonts/CroissantOne-Regular.ttf"),
+    BodoniModa72ptRegular: require("./assets/fonts/BodoniModa_72pt-Regular.ttf"),
+    BodoniModa72ptBold: require("./assets/fonts/BodoniModa_72pt-Bold.ttf"),
+    BodoniModa48ptBold: require("./assets/fonts/BodoniModa_48pt-Bold.ttf"),
+    BodoniModa28ptRegular: require("./assets/fonts/BodoniModa_28pt-Regular.ttf"),
+    BodoniModa28ptBold: require("./assets/fonts/BodoniModa_28pt-Bold.ttf"),
+    BodoniModa18ptRegular: require("./assets/fonts/BodoniModa_18pt-Regular.ttf"),
+    BodoniModa18ptBold: require("./assets/fonts/BodoniModa_18pt-Bold.ttf"),
   });
-
-  // React.useEffect(() => {
-  //   getData();
-  // }, []);
 
   async function checkRefreshToken() {
     const refreshToken = await SecureStore.getItemAsync("refreshToken");
@@ -98,8 +86,6 @@ export default function Main() {
     } else {
       dispatch(setAuth(false));
       resetAuth();
-      Alert.alert("Login error", "Session expired");
-      // toast.show("Login failed!", { type: "error" });
     }
   }
 
@@ -109,119 +95,6 @@ export default function Main() {
       checkRefreshToken();
     }
   }, [fontsLoaded]);
-
-  // Main function to check for an authentication token
-  // async function checkForToken() {
-  //   try {
-  //     // Check if the user is signed in with Google
-  //     const userInfo = await GoogleSignin.getCurrentUser();
-  //     if (userInfo) {
-  //       await handleGoogleSignIn();
-  //     } else {
-  //       // If not signed in with Google, check secure storage for a token
-  //       await handleSecureStoreToken();
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     // Handle errors and reset authentication state
-
-  //     resetAuth();
-  //   }
-  // }
-
-  // Function to handle Google Sign-In
-  // async function handleGoogleSignIn() {
-  //   try {
-  //     const tokens = await GoogleSignin.getTokens(); // Get tokens from Google Sign-In
-  //     const response = await sendGoogleTokenToServer(tokens.idToken); // Send token to server for verification
-  //     const data = await response.json();
-
-  //     if (response.ok && data.token) {
-  //       // Parse response data
-  //       await handleToken(data.token, dispatch, "google");
-  //       //TODO add handleToken function here
-  //       // await saveToSecureStore("token", data.token); // Save token to secure storage
-  //       // dispatch(setAuth("google")); // Set authentication state to Google
-  //     } else {
-  //       resetAuth(); // Reset authentication if response is not OK
-  //     }
-  //   } catch (error) {
-  //     resetAuth(); // Reset authentication on error
-  //   }
-  // }
-
-  // Function to send Google token to server
-  // async function sendGoogleTokenToServer(idToken) {
-  //   return fetch(`${global.server_address}/auth/sign-google-idToken`, {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ idToken }),
-  //   });
-  // }
-
-  // Function to handle token from secure storage
-  // async function handleSecureStoreToken() {
-  //   const token = await SecureStore.getItemAsync("token"); // Get token from secure storage
-
-  //   if (!token) {
-  //     resetAuth(); // Reset authentication if no token found
-  //     return;
-  //   }
-
-  //   const response = await sendTokenToServer(token); // Send token to server for verification
-  //   const jsonData = await response.json(); // Parse response data
-
-  //   if (jsonData === "error") {
-  //     resetAuth(); // Reset authentication on error response
-  //   } else if (jsonData === "pass") {
-  //     await refreshAuthToken(token); // Refresh authentication token if pass response
-  //   } else {
-  //     resetAuth(); // Reset authentication for any other response
-  //   }
-  // }
-
-  // Function to send token to server for verification
-  // async function sendTokenToServer(token) {
-  //   return fetch(`${global.server_address}/auth/check-token`, {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ token }),
-  //   });
-  // }
-
-  // Function to refresh authentication token
-  // async function refreshAuthToken(token) {
-  //   const response = await fetch(
-  //     `${global.server_address}/auth/refresh-token`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ token }),
-  //     }
-  //   );
-
-  //   const data = await response.json(); // Parse response data
-
-  //   if (data.type === "expired" || data.type === "error") {
-  //     resetAuth(); // Reset authentication if token expired or error
-  //   } else if (data.type === "pass") {
-  //     //TODO add handleToken function here
-  //     await saveToSecureStore("token", data.token); // Save new token to secure storage
-  //     dispatch(setAuth("default")); // Set authentication state to default
-  //   } else {
-  //     resetAuth(); // Reset authentication for any other response
-  //   }
-  // }
 
   // Function to reset authentication state
   async function resetAuth() {
@@ -254,20 +127,35 @@ export default function Main() {
         placement="top"
         duration={3000}
       >
-        <ImageBackground
-          source={require("./assets/front1.jpg")}
-          blurRadius={1}
-          resizeMode="cover"
+        <View
           style={{
             flex: 1,
+            zIndex: 10,
           }}
         >
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 0,
+            }}
+          >
+            <Image
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              source={require("./assets/layered-peaks-haikei (1).png")}
+            />
+          </View>
           <NavigationContainer>
             <Stack.Navigator
               screenOptions={{
                 contentStyle: {
-                  backgroundColor: "rgba(131, 196, 255,0.7)",
-                  // backgroundColor: "rgba(110,230,196,0.5)",
+                  backgroundColor: "transparent",
                 },
               }}
             >
@@ -275,7 +163,16 @@ export default function Main() {
                 name="Login"
                 component={Login}
                 options={{
-                  animation: "slide_from_bottom",
+                  animation: "fade",
+                  navigationBarColor: "rgba(0,0,0,0)",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Signin"
+                component={Signin}
+                options={{
+                  animation: "fade",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
@@ -284,7 +181,7 @@ export default function Main() {
                 name="Register"
                 component={Register}
                 options={{
-                  animation: "default",
+                  animation: "fade",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
@@ -293,14 +190,14 @@ export default function Main() {
                 name="ForgotPassword"
                 component={ForgotPassword}
                 options={{
-                  animation: "default",
+                  animation: "fade",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
               />
             </Stack.Navigator>
           </NavigationContainer>
-        </ImageBackground>
+        </View>
       </ToastProvider>
     );
   }
@@ -319,168 +216,12 @@ const styles = StyleSheet.create({
   loading: {
     flex: 1,
   },
+  backgroundSVG: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 0,
+  },
 });
-
-// async function checkForToken() {
-//   try {
-//     // first check if user is signedIn with google:
-//     const isSignedIn = await GoogleSignin.isSignedIn();
-
-//     if (isSignedIn) {
-//       console.log("Main: check isSingedIn value: ", isSignedIn);
-//       try {
-//         const tokens = await GoogleSignin.getTokens();
-//         console.log(`Main: GoogleSignIn token: ${tokens}`);
-//         let response = await fetch(
-//           `${global.server_address}/auth/sign-google-idToken`,
-//           {
-//             method: "POST",
-//             headers: {
-//               Accept: "application/json",
-//               "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({
-//               idToken: tokens.idToken,
-//             }),
-//           }
-//         );
-//         console.log(`Main: Token sent to "/auth/sign-google-idToken"`);
-//         if (!response.ok) {
-//           try {
-//             console.log(`Main: sign-google-idToken response is not Ok`);
-//             const errorData = await response.json();
-//             console.error("Main: Error:", errorData.error);
-
-//             deleteValueFor("token");
-//             await GoogleSignin.signOut();
-//             dispatch(setAuth(false));
-//             await SplashScreen.hideAsync();
-//             console.log(`Main: Token deleted, Google SignOut, Auth set to False, Splash down`);
-//           } catch (error) {
-//             // If parsing fails, log a generic error message
-//             console.error(
-//               "Main: Failed to parse error response:",
-//               response.statusText
-//             );
-//           }
-
-//           deleteValueFor("token");
-//           await GoogleSignin.signOut();
-//           dispatch(setAuth(false));
-//           await SplashScreen.hideAsync();
-
-//         } else {
-//           let data = await response.json();
-//           // token may be expired
-
-//           await save("token", data.token);
-
-//           dispatch(setAuth("google"));
-//         }
-//       } catch (error) {
-//         console.error(error);
-//         dispatch(setAuth(false));
-//       }
-
-//       return;
-
-//     } else {
-//       let result = await SecureStore.getItemAsync("token");
-
-//       if (!result) {
-//         // if False : set 'auth' to false, which means no session available, user will be taken to Login screen.
-
-//         console.log("Token fetch results: ", result, "no token available");
-
-//         dispatch(setAuth(false));
-//         // setLoading(false);
-//         await SplashScreen.hideAsync();
-//         return;
-//       } else {
-//         // if True : send the token to the backend for verification
-
-//         console.log("Token result: ", result);
-
-//         let response = await fetch(
-//           `${global.server_address}/auth/check-token`,
-//           {
-//             method: "POST",
-//             headers: {
-//               Accept: "application/json",
-//               "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({ token: result }),
-//           }
-//         );
-
-//         let jsonData = await response.json();
-//         // remove all but error condition
-//         if (jsonData === "error") {
-//           // Clear session, restart start from login page
-
-//           dispatch(setAuth(false));
-//           await deleteValueFor("token");
-//           // setLoading(false);
-//           await SplashScreen.hideAsync();
-//         } else if (jsonData === "pass") {
-//           // Request refresh token
-
-//           let refresh_token_response = await fetch(
-//             `${global.server_address}/auth/refresh-token`,
-//             {
-//               method: "POST",
-//               headers: {
-//                 Accept: "application/json",
-//                 "Content-Type": "application/json",
-//               },
-//               body: JSON.stringify({ token: result }),
-//             }
-//           );
-
-//           let data = await refresh_token_response.json();
-
-//           // remove error condition
-//           if (data.type === "expired" || data.type === "error") {
-//             console.log("Error ID: E004: ", data.message);
-//             // Clear session, restart start from login page
-
-//             dispatch(setAuth(false));
-//             await deleteValueFor("token");
-//             await SplashScreen.hideAsync();
-//           } else if (data.type === "pass") {
-//             // Save the new generated token, let user it
-
-//             dispatch(setAuth("default"));
-//             await save("token", data.token);
-//           } else {
-//             // Clear session, restart start from login page
-//             console.log("ErrorID E003");
-//             alert("Error ID: E003");
-//             // To do: Edit
-//             dispatch(setAuth(false));
-//             await deleteValueFor("token");
-//             await SplashScreen.hideAsync();
-//           }
-//         } else {
-//           // Clear session, restart start from login page
-//           console.log("ErrorID E002");
-//           alert("Error ID: E002");
-
-//           dispatch(setAuth(false));
-//           await deleteValueFor("token");
-//           await SplashScreen.hideAsync();
-//         }
-//       }
-//     }
-//   } catch (error) {
-//     // Clear session, restart start from login page
-//     console.log("ErrorID E001: ", error);
-//     alert("Error ID: E001");
-
-//     dispatch(setAuth(false));
-//     await deleteValueFor("token");
-//     await SplashScreen.hideAsync();
-//   }
-// }
-
-// Function to check for authentication token

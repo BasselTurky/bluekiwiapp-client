@@ -2,8 +2,8 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import React from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setAvailable } from "../../../Features/available";
-import { setWinner } from "../../../Features/winner";
+import { setAvailable } from "../../Features/available";
+import { setWinner } from "../../Features/winner";
 
 export default function NonWinnerUI() {
   const dispatch = useDispatch();

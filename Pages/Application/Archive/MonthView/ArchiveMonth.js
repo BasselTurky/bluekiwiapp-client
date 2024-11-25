@@ -11,11 +11,8 @@ import {
 import React from "react";
 
 import GoBackSVG from "../../../../Components/GoBackSVG";
-// import ScrollTouch from "../../../../Components/ScrollTouch";
 import Touch from "../../../../Components/Touch";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ErrorView from "../../../Error/ErrorView";
-// import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -65,15 +62,10 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
   const translateX = useSharedValue(0);
 
   const adjustedTranslateX = useDerivedValue(() => {
-    // const adjusted = Math.min(Math.max(translateX.value, 0), width - 100);
-
     const adjusted = Math.min(
       Math.max(translateX.value, 0),
       width - scrollWidth
     );
-    // if (favoCarouselRef.current && ratio) {
-    //   favoCarouselRef.current._scrollTo(adjusted * ratio);
-    // }
     scrollTo(monthCarouselRef, adjusted * ratio, 0, false);
 
     return Math.min(Math.max(translateX.value, 0), width - scrollWidth);
@@ -120,23 +112,19 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
         }}
       >
         <ImageBackground
-          //   source={require("../../../assets/pixel4.jpg")}
           source={require("../../../../assets/blackLayer.png")}
           resizeMode="cover"
           style={[
             {
               flex: 1,
               alignItems: "center",
-              // justifyContent: "center",
               paddingTop:
                 height * 0.04 < 24
                   ? insets.top + height * 0.005
                   : insets.top + height * 0.015,
-              // paddingTop: insets.top,
               paddingBottom: insets.bottom,
               backgroundColor: "#C88781",
             },
-            // styles.container,
           ]}
         >
           <View
@@ -145,16 +133,11 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
               flexDirection: "row",
               justifyContent: "space-between",
               paddingHorizontal: 17,
-              // backgroundColor: "pink",
               alignItems: "center",
             }}
           >
             <TouchableOpacity
               style={{
-                // zIndex: 2,
-                // position: "absolute",
-                // top: 30,
-                // left: 17,
                 width: 40,
                 height: 40,
                 backgroundColor: "rgba(0,0,0,0.3)",
@@ -173,13 +156,10 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                // backgroundColor: "green",
               }}
             >
               <TouchableOpacity
                 style={{
-                  // position: "absolute",
-                  // right: 126,
                   marginRight: 70,
                 }}
                 activeOpacity={0.7}
@@ -205,31 +185,16 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
                 </Text>
               </View>
 
-              <View
-                style={
-                  {
-                    // position: "absolute",
-                    // right: 17,
-                  }
-                }
-              >
+              <View>
                 <CoinsStack height={z(50)} width={z(50)} />
               </View>
             </View>
           </View>
-          {/* <Text> {route.params.month}</Text> */}
-          {/* <Button
-            title="show"
-            onPress={() => {
-              console.log(route.params.images);
-            }}
-          /> */}
           <View
             style={{
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              //   backgroundColor: "pink",
               width: "100%",
             }}
           >
@@ -281,7 +246,6 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
                   justifyContent: "center",
                   height: item_height,
                   width: item_height * (30 / 49),
-                  //   marginHorizontal: 10,
                   paddingHorizontal: 10,
                   paddingVertical: 10 * (49 / 30),
                 }}
@@ -304,30 +268,18 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
             {route.params.images.length ? (
               <View
                 style={{
-                  // width: width - 100,
-                  //   backgroundColor: "yellow",
                   width: "100%",
-                  // alignSelf: "flex-end",
-                  //   borderBottomWidth: StyleSheet.hairlineWidth,
-                  //   borderBottomColor: "#40404033",
                   borderRadius: 20,
                   marginTop: 10,
-                  // borderStyle: "dotted",
-                  // zIndex: 2,
-                  // elevation: 1,
                 }}
               >
                 <PanGestureHandler onGestureEvent={panGestureEvent}>
                   <Animated.View
-                    // onLayout={(event) => {
-                    //   console.log(event.nativeEvent.layout.x);
-                    // }}
                     style={[
                       {
                         width: scrollWidth,
                         height: scrollHeight,
                         backgroundColor: "#af9199",
-                        // backgroundColor: "#C88781",
                         borderRadius: 50,
                         elevation: 8,
                         overflow: "hidden",
@@ -339,15 +291,7 @@ export default function ArchiveMonth({ navigation, data, month, route }) {
                       rStyle,
                     ]}
                   >
-                    {/* <Image
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    source={require("../../../assets/icon.png")}
-                  /> */}
                     <Touch width={20} height={20} fill={"#fff"} />
-                    {/* <ScrollTouch width={38} height={38} fill={"#fff"} /> */}
                   </Animated.View>
                 </PanGestureHandler>
               </View>
@@ -375,18 +319,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     paddingLeft: 10,
-    // elevation: 5,
-    // position: "absolute",
-    // top: 61,
-    // right: 36,
-    // borderColor: "#ffd69e",
   },
   scoreText: {
     fontFamily: "Righteous_400Regular",
     fontSize: 16,
     color: "#36485f",
-    // position: "absolute",
-    // top: -6,
-    // left: 10,
   },
 });

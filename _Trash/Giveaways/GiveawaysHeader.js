@@ -14,7 +14,7 @@ import React, { useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../utils/scaling";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 
 export default function GiveawaysHeader({ index, setIndex, navigation }) {

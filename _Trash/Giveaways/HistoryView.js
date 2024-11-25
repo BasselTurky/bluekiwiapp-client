@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, Button, FlatList } from "react-native";
 import React from "react";
-import { z, zx } from "../../../utils/scaling";
+import { z, zx } from "../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
-import HistoryCard from "../Giveaway/SubPages/History/components/HistoryCard";
+import HistoryCard from "../../Pages/Application/Giveaway/SubPages/History/components/HistoryCard";
 import { Button as PaperButton } from "react-native-paper";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
-import SingleCircleSVG from "../../../Components/SingleCircleSVG";
-import MultiCirclesSVG from "../../../Components/MultiCirclesSVG";
-import WinnerIconSVG from "../../../Components/WinnerIconSVG";
+import SingleCircleSVG from "../../Components/SingleCircleSVG";
+import MultiCirclesSVG from "../../Components/MultiCirclesSVG";
+import WinnerIconSVG from "../../Components/WinnerIconSVG";
 export default function HistoryView() {
   // const giveawayHistory = useSelector((state) => state.giveawayHistory.value);
   const giveawayHistoryRev = useSelector(

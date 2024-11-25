@@ -15,20 +15,9 @@ export default function MonthButton({
   const emptyMonths = Array.from(
     new Array(monthsArray.length - availableMonths.length).keys()
   );
-  //   console.log(emptyMonths);
   const scaleVar = emptyMonths[index - availableMonths.length]
     ? emptyMonths[index - availableMonths.length]
     : 0;
-  //   if (!permanentWallpapers.value[year][month]) {
-  //     console.log("herennn");
-  //     console.log(
-  //       emptyMonths[index - availableMonths.length],
-  //       availableMonths.length,
-  //       emptyMonths.length,
-  //       month,
-  //       index
-  //     );
-  //   }
 
   const animatedScale = React.useRef(new Animated.Value(0)).current;
 
@@ -79,19 +68,12 @@ export default function MonthButton({
         height: 45,
         borderRadius: 45,
         backgroundColor: "#af9199",
-        // justifyContent: "center",
-        // alignItems: "center",
         padding: 0,
         margin: 0,
         minWidth: 0,
-        // elevation: 5,
-
         opacity: permanentWallpapers.value[year][month]
           ? 1
           : 0.5 - scaleVar / 15,
-
-        // Number(month)
-        //(emptyMonths[index - availableMonths.length] + 0.1)
         transform: [
           {
             translateX:
@@ -114,7 +96,6 @@ export default function MonthButton({
       {permanentWallpapers.value[year][month] ? (
         <Text>{monthsArray[Number(month) - 1]}</Text>
       ) : null}
-      {/* <Text>{monthsArray[Number(month) - 1]}</Text> */}
     </PaperButton>
   );
 }

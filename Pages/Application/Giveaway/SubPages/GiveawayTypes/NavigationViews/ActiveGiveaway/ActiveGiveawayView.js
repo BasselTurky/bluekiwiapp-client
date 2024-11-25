@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 import JoinButton from "./components/JoinButton";
 import SingleCircleSVG from "../../../../../../../Components/SingleCircleSVG";
 import MultiCirclesSVG from "../../../../../../../Components/MultiCirclesSVG";
-import TimeAgo from "../../../../../../../CustomComponents/TimeAgo";
 import JoinTime from "../../../../../../../CustomComponents/JoinTime";
 import Timer from "./components/Timer";
 import PrizeInfoModal from "./components/PrizeInfoModal";
@@ -44,7 +43,6 @@ export default function ActiveGiveawayView({
     (state) => state[activeGiveawayString].value
   );
 
-  // let activeGiveaway = null;
   if (activeGiveaway) {
     const giveawayInfo = activeGiveaway.info;
     const isUserParticipant = activeGiveaway.isUserParticipant; // boolean
@@ -333,21 +331,10 @@ const styles = StyleSheet.create({
   subContainer: {
     flex: 1,
     backgroundColor: "#fff9f4",
-    // zIndex: 2,
-    // elevation: 5,
-    // backgroundColor: "yellow",
     width: "100%",
-    // backgroundColor: "#fff9f4",
-    // marginHorizontal: 15,
-    // marginTop: 10,
     elevation: 5,
     borderRadius: 3,
     padding: 15,
-    // overflow: "hidden",
-    // marginBottom: 15,
-    // marginHorizontal: 15,
-    // marginTop: 10,
-    // marginRight: 15,
   },
   tableContainer: {
     flex: 1,
@@ -355,12 +342,10 @@ const styles = StyleSheet.create({
     width: "100%",
     elevation: 1,
     borderRadius: 3,
-    // padding: 15,
   },
   header: {
     height: z(60),
     flexDirection: "row",
-    // elevation: 5,
     borderRadius: 3,
   },
   headerCellRight: {
@@ -388,17 +373,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#ebdece",
   },
   rowCellLeft: {
     flex: 2,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#ebdece",
   },
-  flatlist: {
-    // backgroundColor: "pink",
-  },
+  flatlist: {},
   title: {
     fontFamily: "MontserratRegular",
     color: "#735e4d",
@@ -407,42 +388,34 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratRegular",
     color: "#735e4d",
     fontSize: 11,
-    // flexDirection: "row",
   },
   dateText: {
     fontFamily: "MontserratRegular",
     color: "#735e4d",
     fontSize: 10,
-    // flexDirection: "row",
   },
   prizeText: {
     fontFamily: "MontserratRegular",
     color: "#735e4d",
     fontSize: 16,
     letterSpacing: 1,
-    // borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: "#735e4d",
-    // flexDirection: "row",
   },
   infoContainer: {
     height: z(100),
     flexDirection: "row",
     width: "100%",
     marginTop: z(15),
-    // backgroundColor: "pink",
   },
   infoCell: {
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    // backgroundColor: "yellow",
-    // width: "100%",
   },
   navContainer: {
     justifyContent: "center",
     alignItems: "center",
     height: z(100),
-    // backgroundColor: "green",
     flexDirection: "row",
   },
   navCells: {
@@ -454,7 +427,6 @@ const styles = StyleSheet.create({
     flex: 3,
     justifyContent: "center",
     alignItems: "center",
-    // height: z(60),
   },
   iconContainer: {
     width: zx(40),
@@ -471,60 +443,3 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
-
-{
-  /* <Text>ActiveGiveawayView</Text>
-      <Button
-        title="Go Back"
-        onPress={() => {
-          navigation.goBack();
-        }}
-      /> */
-}
-
-{
-  /* <Button
-        title="Log giveaway info"
-        onPress={() => {
-          console.log(giveawayInfo);
-        }}
-      />
-      <Button
-        title="Total Participants"
-        onPress={() => {
-          console.log(totalParticipants);
-        }}
-      />
-      <Button
-        title="Current Giveaway Id"
-        onPress={() => {
-          console.log(currentGiveawayId);
-        }}
-      />
-      {/* <Button
-        title="Giveaway History IDs"
-        onPress={() => {
-          console.log(giveawayHistoryIDs);
-        }}
-      /> */
-}
-{
-  /* /* <Button
-        title="Can Join"
-        onPress={() => {
-          console.log(isUserParticipant ? false : true);
-        }}
-      />
-      <Button
-        title="log Participants"
-        onPress={() => {
-          // logParticipants(participants);
-          console.log(participantsList);
-        }}
-      />
-      <Button
-        title="Join Giveaway"
-        disabled={isUserParticipant ? true : false}
-        onPress={handleJoinGiveaway}
-      /> */
-}

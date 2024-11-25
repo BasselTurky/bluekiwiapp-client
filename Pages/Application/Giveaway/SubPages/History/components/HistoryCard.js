@@ -4,7 +4,6 @@ import { z, zx } from "../../../../../../utils/scaling";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome6, AntDesign, FontAwesome } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
-import { Button as PaperButton } from "react-native-paper";
 import SingleCircleSVG from "../../../../../../Components/SingleCircleSVG";
 import MultiCirclesSVG from "../../../../../../Components/MultiCirclesSVG";
 import WinnerIconSVG from "../../../../../../Components/WinnerIconSVG";
@@ -12,25 +11,13 @@ import ClaimButton from "./ClaimButton";
 
 import { setIsVisible } from "../state/modalState";
 import { setContent } from "../state/modalState";
-// const mainColor = "#735e4d";
 
 export default function HistoryCard({ item }) {
   const dispatch = useDispatch();
-  // const userData = useSelector((state) => state.userData.value);
 
   return (
     <View style={styles.historyCard}>
       <View style={styles.row}>
-        {/* <View
-          style={{
-            // backgroundColor: "green",
-            flexDirection: "row",
-            // flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            //   height: 50,
-          }}
-        > */}
         <View style={styles.iconContainer}>
           <FontAwesome6 name="user-group" size={zx(16)} color={"#735e4d"} />
         </View>
@@ -42,35 +29,12 @@ export default function HistoryCard({ item }) {
         >
           <Text style={styles.counter}>{item.totalParticipants}</Text>
         </View>
-        {/* </View> */}
-        {/* <View
-          style={{
-            // backgroundColor: "red",
-            flexDirection: "row",
-            // flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            //   height: 50,
-          }}
-        > */}
         <View style={styles.iconContainer}>
           <AntDesign name="gift" size={zx(22)} color={"#735e4d"} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.reward}>$ {item.reward_value_usd}</Text>
         </View>
-        {/* </View> */}
-        {/* <View
-          style={{
-            // backgroundColor: "blue",
-            flexDirection: "row",
-            // flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-
-            //   height: 50,
-          }}
-        > */}
         <View style={styles.iconPosition}>
           <View style={styles.iconMainContainer}>
             {item.type === "z" ? (
@@ -88,11 +52,6 @@ export default function HistoryCard({ item }) {
             )}
           </View>
         </View>
-
-        {/* </View> */}
-        {/* <View style={styles.iconContainer}>
-          <WinnerIconSVG width={zx(24)} height={zx(24)} fill={"#735e4d"} />
-        </View> */}
       </View>
       <View style={[styles.row, { justifyContent: "space-between" }]}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -148,41 +107,29 @@ const styles = StyleSheet.create({
   historyCard: {
     backgroundColor: "#fff9f4",
     paddingVertical: z(5),
-    // flexDirection: "row",
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderRightWidth: StyleSheet.hairlineWidth,
-    // borderLeftWidth: StyleSheet.hairlineWidth,
-    // width: "100%",
     borderColor: "#c4c4c4",
     marginHorizontal: 15,
     marginTop: 10,
     elevation: 5,
     borderRadius: 3,
-    // elevation: 5,
   },
   row: {
     flexDirection: "row",
-    // backgroundColor: "#eeeeee",
     alignItems: "center",
     paddingHorizontal: zx(10),
     height: z(50),
-    // justifyContent: "space-around",
-    // width: "100%",
-    // flex: 1,
   },
   iconContainer: {
     width: zx(40),
     height: zx(40),
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "pink",
   },
   iconMainContainer: {
     width: zx(26),
     height: zx(26),
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "pink",
   },
   iconPosition: {
     position: "absolute",
@@ -190,12 +137,7 @@ const styles = StyleSheet.create({
     right: 5,
   },
   textContainer: {
-    // flex: 1,
-    // flexDirection: "row",
-    // height: "100%",
     paddingHorizontal: zx(10),
-    // alignItems: "center",
-    // justifyContent: "space-between",
   },
   title: {
     fontFamily: "MontserratRegular",
@@ -228,7 +170,6 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     letterSpacing: 1,
     color: "white",
   },
@@ -237,8 +178,6 @@ const styles = StyleSheet.create({
     height: z(34),
     elevation: 5,
     alignSelf: "center",
-    // marginBottom: z(20),
-    // backgroundColor: "#59cbbd",
     backgroundColor: "#84c4ff",
     borderRadius: z(6),
   },
@@ -248,25 +187,9 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "100%",
     width: "100%",
-
-    // backgroundColor: "pink",
   },
   buttonLabel: {
     padding: 0,
     margin: 0,
-    // width: "100%",
-    // backgroundColor: "green",
   },
 });
-
-{
-  /* <View style={styles.iconContainer}></View>
-
-<View style={styles.iconContainer}>
-<FontAwesome6 name="user-group" size={zx(16)} color={mainColor} />
-</View>
-
-<View style={styles.iconContainer}>
-<AntDesign name="gift" size={zx(22)} color={mainColor} />
-</View> */
-}

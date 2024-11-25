@@ -5,19 +5,26 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { logErrorOnServer } from "../../../utils/logErrorFunction";
-
-GoogleSignin.configure({
-  webClientId:
-    "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
-  // "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
-});
+// import { firebase } from "../../../firebaseConfig";
+// GoogleSignin.configure({
+//   webClientId:
+//     "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+//   // "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
+// });
 
 export const googleSignIn = async (dispatch, toast) => {
   try {
     await GoogleSignin.hasPlayServices();
     const userInfo = await GoogleSignin.signIn();
+    // const idToken = userInfo.data.idToken
 
-    const response = await fetchGoogleIdToken(userInfo.idToken);
+    //     const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
+
+    //     const userCredential = await firebase.auth().signInWithCredential(googleCredential);
+    // const idToken_ = await userCredential.user.getIdToken(); // Retrieve the idToken
+    // console.log("userinfo : ", userInfo);
+
+    const response = await fetchGoogleIdToken(userInfo.data.idToken);
     const data = await response.json();
 
     if (response.ok && data.accessToken && data.refreshToken) {
@@ -27,6 +34,8 @@ export const googleSignIn = async (dispatch, toast) => {
       };
       await handleToken(tokens, dispatch);
     } else {
+      console.log("failed");
+
       logErrorOnServer(response);
       toast.show("Login failed!", { type: "error" });
       // throw new Error(`HTTP error! Status: ${response.status}`);
@@ -41,6 +50,8 @@ export const googleSignIn = async (dispatch, toast) => {
 
 // Fetch request to send the Google ID token to your backend
 const fetchGoogleIdToken = async (idToken) => {
+  // console.log("idToken:  ", idToken);
+
   return await fetch(`${global.server_address}/auth/sign-google-idToken`, {
     method: "POST",
     headers: {

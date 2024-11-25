@@ -16,10 +16,8 @@ export default function JoinButton({
     try {
       if (coins >= 10 && !isUserParticipant) {
         // set state isLoading true
-
         dispatch(consumeCoins(10));
         socket.emit("join-giveaway", currentGiveawayId, currentGiveawayType);
-        // console.log(currentGiveawayId, currentGiveawayType);
       } else {
         console.log(`Not enough coins`);
         toast.show(`Not enough coins`, {
@@ -42,19 +40,9 @@ export default function JoinButton({
       contentStyle={{
         flexDirection: "row-reverse",
       }}
-      style={
-        {
-          // width: zx(95),
-          // height: zx(40),
-          // borderRadius: 4,
-        }
-      }
       mode="elevated"
       buttonColor="#d1edc0"
       onPress={() => {
-        // console.log(historyGiveaways);
-        // console.log("item");
-        // console.log(user.received);
         handleJoinGiveaway();
       }}
     >
@@ -66,7 +54,6 @@ export default function JoinButton({
 const styles = StyleSheet.create({
   btnText: {
     fontFamily: "MontserratLight",
-    // color: "#404040",
     letterSpacing: 1,
     color: "#735e4d",
   },

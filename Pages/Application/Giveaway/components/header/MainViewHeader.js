@@ -1,34 +1,16 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  StatusBar,
-  Button,
-  Keyboard,
-  TextInput,
-  TouchableOpacity,
-  TouchableHighlight,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-// import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z, zx } from "../../../../../utils/scaling";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
-import { useNavigationState } from "@react-navigation/native";
 import { setIsVisible } from "../../SubPages/History/state/modalState";
 import { hidePrizeModal } from "../../Redux States/prizeModalState";
 
 import CoinsDisplay from "../../../../../CustomComponents/CoinsDisplay";
-// import { useNavigation } from "@react-navigation/native";
 export default function MainViewHeader({ state, navigation }) {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
-  //   const indexs = useNavigationState((state) => state.index);
-  //   const headerIndex = useSelector((state) => state.headerIndex.value);
-  //   const [indexs, setIndexs] = useState(0);
-  //   const navigation = useNavigation();
   React.useEffect(() => {
     if (state.index === 0) {
       dispatch(setIsVisible(false));
@@ -53,7 +35,6 @@ export default function MainViewHeader({ state, navigation }) {
             flex: 1,
             width: "100%",
             flexDirection: "row",
-            // backgroundColor: "pink",
             paddingHorizontal: zx(8),
             alignItems: "center",
             justifyContent: "space-between",
@@ -63,13 +44,8 @@ export default function MainViewHeader({ state, navigation }) {
             style={{
               justifyContent: "center",
               alignItems: "center",
-              // paddingHorizontal: zx(8),
             }}
             onPress={() => {
-              // navigation.goBack();
-              //   console.log(state.index);
-              //   console.log(state.routes);
-
               if (navigation.isFocused()) {
                 navigation.goBack();
               }
@@ -78,7 +54,6 @@ export default function MainViewHeader({ state, navigation }) {
             <Entypo name="chevron-left" size={z(36)} color="black" />
           </TouchableOpacity>
           <CoinsDisplay coinPosition={"right"} />
-          {/* <View></View> */}
         </View>
 
         <View
@@ -102,7 +77,6 @@ export default function MainViewHeader({ state, navigation }) {
               borderBlockColor: state.index === 0 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
-              //   setIndexs(0);
               navigation.navigate("GiveawaysView");
             }}
           >
@@ -128,7 +102,6 @@ export default function MainViewHeader({ state, navigation }) {
               borderBlockColor: state.index === 1 ? "#a9bac7" : "#f5f0ec",
             }}
             onPress={() => {
-              //   setIndexs(1);
               navigation.navigate("HistoryView");
             }}
           >

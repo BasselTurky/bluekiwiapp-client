@@ -5,8 +5,6 @@ import moment from "moment";
 export default function JoinTime({ date, style }) {
   const localTime = moment.utc(date).local();
   const isToday = localTime.isSame(moment(), "day");
-  //   const now = moment();
-  //   const diffInDays = now.diff(joinTime, "days");
   const formattedDate = isToday
     ? localTime.format("h:mm A")
     : localTime.format("MMM D, h:mm A");

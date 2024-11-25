@@ -26,7 +26,6 @@ export default function CoinsDisplay({ coinPosition }) {
 
       <View
         style={{
-          // flex: 4,
           flexDirection: "row",
           justifyContent: "center",
           backgroundColor: "rgba(0,0,0,0.1)",
@@ -34,18 +33,13 @@ export default function CoinsDisplay({ coinPosition }) {
           alignItems: "center",
           height: zx(40),
           borderRadius: z(6),
-          // paddingHorizontal: z(10),
           width: z(130),
-          // marginLeft: z(18),
-          // paddingLeft: z(20),
         }}
       >
         <Text
           style={{
             fontSize: z(18),
             color: "#5c5c5c",
-            // fontFamily: "RobotoRegular",
-            // fontWeight: "bold",
             textAlign: "center",
             letterSpacing: z(2),
             fontFamily: "MontserratSemiBold",
@@ -53,8 +47,6 @@ export default function CoinsDisplay({ coinPosition }) {
           }}
         >
           {coins}
-          {/* {coins.toString().padStart(4, "0")} */}
-          {/* 0059 */}
         </Text>
       </View>
       {coinPosition === "right" ? (
