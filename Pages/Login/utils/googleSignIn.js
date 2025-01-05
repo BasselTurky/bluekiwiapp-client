@@ -5,17 +5,78 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { logErrorOnServer } from "../../../utils/logErrorFunction";
+// import auth from "@react-native-firebase/auth";
+
+// import * as Google from "expo-auth-session/providers/google";
+// import * as WebBrowser from 'expo-web-browser';
+
+// import * as AuthSession from "expo-auth-session";
+// import * as Linking from "expo-linking";
+// import { useAuthRequest } from "expo-auth-session";
+
+// const GOOGLE_CLIENT_ID =
+//   "109153830656-0u2bb0c7o9dcppqots1i4nn9tq56unok.apps.googleusercontent.com";
+// https://auth.expo.io/@bluekiwi/bluekiwi
+
+// com.basselturky.bluekiwiapp:/oauthredirect
+
+// const redirectUri = AuthSession.makeRedirectUri({
+//   native: "bluekiwi://oauthredirect",
+// });
+
+// const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&scope=profile%20email`;
+
 // import { firebase } from "../../../firebaseConfig";
 // GoogleSignin.configure({
 //   webClientId:
 //     "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
 //   // "525928726797-45m49p0kdbcspgsicp72cl6d67fcabk0.apps.googleusercontent.com",
 // });
+// GoogleSignin.configure({
+//   webClientId:
+//     "109153830656-r8ua27ajsil97jn3smhq75i0q8irooq2.apps.googleusercontent.com",
+//   // androidClientId:
+//   //   "109153830656-vst5eac0hgrkq7499ekbkspk68r2c69t.apps.googleusercontent.com",
+// });
 
-export const googleSignIn = async (dispatch, toast) => {
+// const [req, res, promptAsync] = Google.useAuthRequest({
+//   clientId:'109153830656-0u2bb0c7o9dcppqots1i4nn9tq56unok.apps.googleusercontent.com',
+//   androidClientId:'109153830656-1isvohatbn30rmbtd7q5tdbgib6j6unb.apps.googleusercontent.com'
+
+// });
+
+// const [req, res, promptAsync] = Google.useIdTokenAuthRequest({
+//   clientId:
+//     "109153830656-1isvohatbn30rmbtd7q5tdbgib6j6unb.apps.googleusercontent.com",
+// });
+
+export const googleSignIn = async (dispatch, toast, idToken) => {
   try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
+    // const result = await AuthSession.startAsync({ authUrl });
+
+    // if (result.type === "success") {
+    //   const { access_token } = result.params;
+    //   // Fetch user info
+    //   const response = await fetch(
+    //     "https://www.googleapis.com/userinfo/v2/me",
+    //     {
+    //       headers: { Authorization: `Bearer ${access_token}` },
+    //     }
+    //   );
+    //   const user = await response.json();
+    //   // setUserInfo(user);
+    // }
+
+    // await GoogleSignin.hasPlayServices();
+    // const userInfo = await GoogleSignin.signIn();
+
+    // const googleCredential = auth.GoogleAuthProvider.credential(
+    //   userInfo.data.idToken
+    // );
+
+    // await auth().signInWithCredential(googleCredential);
+    // console.log("Login successful");
+
     // const idToken = userInfo.data.idToken
 
     //     const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
@@ -24,7 +85,8 @@ export const googleSignIn = async (dispatch, toast) => {
     // const idToken_ = await userCredential.user.getIdToken(); // Retrieve the idToken
     // console.log("userinfo : ", userInfo);
 
-    const response = await fetchGoogleIdToken(userInfo.data.idToken);
+    // const response = await fetchGoogleIdToken(userInfo.data.idToken);
+    const response = await fetchGoogleIdToken(idToken);
     const data = await response.json();
 
     if (response.ok && data.accessToken && data.refreshToken) {

@@ -31,6 +31,15 @@ export default function Register({ navigation }) {
   const confirmPasswordInput = useRef();
 
   const handleSignup = () => {
+    // console.log(`
+    //   ${firstname}
+    //   ${lastname}
+    //   ${email}
+    //   ${password}
+    //   ${confirmPassword}
+    //   `);
+    console.log("start");
+
     sendSignupDataToServer(
       toast,
       navigation,
@@ -39,12 +48,12 @@ export default function Register({ navigation }) {
       setEmail,
       setPassword,
       setConfirmPassword,
-      {
-        firstname,
-        lastname,
-        email,
-        password,
-      }
+
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword
     );
   };
 
@@ -66,35 +75,52 @@ export default function Register({ navigation }) {
         <View style={styles.header}>
           <Text style={styles.headerText}>CREATE ACCOUNT</Text>
         </View>
-
-        <TextInput
-          style={styles.textInput}
-          ref={firstnameInput}
-          onSubmitEditing={() => {
-            lastnameInput.current?.focus();
+        <View
+          style={{
+            flexDirection: "row",
+            // backgroundColor: "pink",
+            gap: zx(10),
           }}
-          value={firstname}
-          onChangeText={(val) => {
-            setFirstname(val);
-          }}
-          placeholder="Firstname"
-          placeholderTextColor={"#fff"}
-          returnKeyType="next"
-        />
-        <TextInput
-          style={styles.textInput}
-          ref={lastnameInput}
-          onSubmitEditing={() => {
-            emailInput.current?.focus();
-          }}
-          value={lastname}
-          onChangeText={(val) => {
-            setLastname(val);
-          }}
-          placeholder="Lastname"
-          placeholderTextColor={"#fff"}
-          returnKeyType="next"
-        />
+        >
+          <TextInput
+            style={[
+              styles.textInput,
+              {
+                flex: 1,
+              },
+            ]}
+            ref={firstnameInput}
+            onSubmitEditing={() => {
+              lastnameInput.current?.focus();
+            }}
+            value={firstname}
+            onChangeText={(val) => {
+              setFirstname(val);
+            }}
+            placeholder="Firstname"
+            placeholderTextColor={"#fff"}
+            returnKeyType="next"
+          />
+          <TextInput
+            style={[
+              styles.textInput,
+              {
+                flex: 1,
+              },
+            ]}
+            ref={lastnameInput}
+            onSubmitEditing={() => {
+              emailInput.current?.focus();
+            }}
+            value={lastname}
+            onChangeText={(val) => {
+              setLastname(val);
+            }}
+            placeholder="Lastname"
+            placeholderTextColor={"#fff"}
+            returnKeyType="next"
+          />
+        </View>
 
         <TextInput
           style={styles.textInput}
@@ -246,6 +272,7 @@ const styles = StyleSheet.create({
     marginBottom: z(18),
     borderRadius: 20,
     paddingLeft: zx(18),
+    paddingRight: zx(18),
     fontFamily: "MontserratRegular",
     color: "white",
   },

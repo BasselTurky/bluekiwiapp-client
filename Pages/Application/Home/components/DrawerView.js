@@ -351,9 +351,11 @@ export default function DrawerView() {
                 >
                   <PaperButton
                     onPress={async () => {
+                      console.log("pressed");
+
                       await deleteFromSecureStore("accessToken"); // Delete token from secure storage
                       await deleteFromSecureStore("refreshToken"); // Delete token from secure storage
-                      await GoogleSignin.signOut();
+                      // await GoogleSignin.signOut();
                       dispatch(setAuth(false));
                     }}
                     style={[styles.buttonStyle, { backgroundColor: "#4b6382" }]}

@@ -21,13 +21,6 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 
-GoogleSignin.configure({
-  webClientId:
-    "109153830656-hqrkl6hfddqqid703qvbni9afjk6ld43.apps.googleusercontent.com",
-  // androidClientId:
-  //   "109153830656-vst5eac0hgrkq7499ekbkspk68r2c69t.apps.googleusercontent.com",
-});
-
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -44,15 +37,60 @@ import { s, z } from "../../utils/scaling";
 import GoogleSignInButton from "./components/GoogleSignInButton";
 
 import Fontisto from "@expo/vector-icons/Fontisto";
+import { logErrorOnServer } from "../../utils/logErrorFunction";
+
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri } from "expo-auth-session";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Login({ navigation }) {
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const handleGoogleSignIn = () => {
-    googleSignIn(dispatch, toast);
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    // clientId:
+    //   "109153830656-0u2bb0c7o9dcppqots1i4nn9tq56unok.apps.googleusercontent.com",
+    androidClientId:
+      "109153830656-1isvohatbn30rmbtd7q5tdbgib6j6unb.apps.googleusercontent.com",
+    // webClientId:
+    //   "109153830656-0u2bb0c7o9dcppqots1i4nn9tq56unok.apps.googleusercontent.com",
+    // androidClientId:
+    //   "109153830656-hge71eln0qk4a8m59o3rns68f2to1pjt.apps.googleusercontent.com",
+    // redirectUri: "https://auth.expo.io/@bluekiwi/bluekiwi",
+    redirectUri: "com.basselturky.bluekiwiapp:/oauthredirect",
+    // redirectUri: makeRedirectUri({
+    //   native: "com.basselturky.bluekiwiapp.auth://",
+    // }),
+  });
+  //"com.basselturky.bluekiwiapp:/oauthredirect"
+  useEffect(() => {
+    if (hasLoggedIn && response?.type === "success") {
+      const { id_token } = response.params;
+      // logErrorOnServer(`ID Token: ${id_token}`);
+      console.log("ID Token:", id_token);
+      googleSignIn(dispatch, toast, id_token);
+    } else if (hasLoggedIn && response?.type === "error") {
+      // logErrorOnServer(`Auth Error: ${response.error}`);
+      console.error("Auth Error:", response.error);
+    } else if (hasLoggedIn) {
+      // logErrorOnServer(`Error auth session`);
+      console.error("Error auth session");
+    }
+  }, [response, hasLoggedIn]);
+
+  const handleLoginPress = async () => {
+    setHasLoggedIn(true);
+    await promptAsync();
   };
+
+  // const handleGoogleSignIn = () => {
+  //   googleSignIn(dispatch, toast);
+  // };
 
   return (
     <TouchableWithoutFeedback
@@ -111,7 +149,7 @@ export default function Login({ navigation }) {
               textAlign: "center",
             }}
           >
-            Blue Kiwi
+            Blue Kiwiz
           </Text>
         </View>
 
@@ -146,7 +184,7 @@ export default function Login({ navigation }) {
             </Text>
           </PaperButton>
 
-          <GoogleSignInButton handleGoogleSignIn={handleGoogleSignIn} />
+          <GoogleSignInButton handleGoogleSignIn={handleLoginPress} />
 
           <PaperButton
             mode="outlined"

@@ -34,6 +34,33 @@ export default React.memo(function HomeView({ navigation }) {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);
 
+  async function sendmail() {
+    try {
+      const response = await fetch(`${global.server_address}/auth/sendmail`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "basselturky101@gmail.com",
+          host: "smtp-relay.brevo.com",
+          port: 587,
+          user: "80fd60001@smtp-brevo.com",
+          pass: "zg6cvGXkMpjs195P",
+        }),
+      });
+
+      if (response.ok) {
+        console.log("response is Ok");
+      } else {
+        console.log("response is not ok!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   try {
     return (
       <DrawerLayout
@@ -131,6 +158,7 @@ export default React.memo(function HomeView({ navigation }) {
                 navigation.navigate("AdsView");
               }}
             />
+            <Button title="Sendmail" onPress={sendmail} />
           </View>
 
           <View

@@ -2,10 +2,14 @@
   "expo": {
     "name": "Blue Kiwi",
     "slug": "BlueKiwi",
-    "version": "1.2.15",
+    "version": "1.2.20",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "bluekiwi",
+    "authSession": {
+      "redirectUrl": "bluekiwi:/oauthredirect"
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -39,8 +43,15 @@
         "WRITE_EXTERNAL_STORAGE",
         "com.google.android.gms.permission.AD_ID"
       ],
-      "versionCode": 37,
-      "runtimeVersion": "1.2.15"
+      "versionCode": 42,
+      "runtimeVersion": "1.2.20",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyDZmYLK6LqTEQ5rNn-Z0kC-5M-PSwieb9Y",
+          "certificateHash": "06:16:46:70:D2:29:B3:91:F2:64:D4:9E:BA:5B:FD:36:47:20:5F:A5"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,10 +61,7 @@
         "projectId": "a4c72648-0f2a-4523-bdb9-a4861f797947"
       }
     },
-    "plugins": [
-      "@react-native-google-signin/google-signin",
-      "expo-build-properties"
-    ]
+    "plugins": ["@react-native-google-signin/google-signin"]
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4213110958189376~3405929057",

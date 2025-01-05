@@ -29,6 +29,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.basselturky.bluekiwiapp"/>
         <data android:scheme="exp+bluekiwi"/>
+        <data android:scheme="bluekiwi"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
