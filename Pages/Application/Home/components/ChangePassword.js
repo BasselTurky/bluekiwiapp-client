@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { z, zx } from "../../../../utils/scaling";
 import { setAuth } from "../../../../Features/auth";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
+import { useSocket } from "../../../SocketContext/SocketContext";
+import { handlePasswordUpdate } from "../utils/handleChangePassword";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -23,6 +25,7 @@ async function deleteValueFor(key) {
 export default function ChangePassword({ setShowChangePass, light }) {
   const insets = useSafeAreaInsets();
   const toast = useToast();
+  const socket = useSocket();
   const dispatch = useDispatch();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -31,71 +34,138 @@ export default function ChangePassword({ setShowChangePass, light }) {
   const passwordInput = React.useRef();
   const confirmPasswordInput = React.useRef();
 
-  async function handleSubmit() {
-    try {
-      if (
-        currentPassword === "" ||
-        newPassword === "" ||
-        confirmPassword === ""
-      ) {
-        toast.show("Fields can't be empty", { type: "error" });
-      } else if (newPassword !== confirmPassword) {
-        toast.show("Password is not matching", { type: "error" });
-      } else if (
-        currentPassword.length < 8 ||
-        currentPassword.length > 16 ||
-        newPassword.length < 8 ||
-        newPassword.length > 16
-      ) {
-        toast.show("Password should be between 8-16 characters", {
-          type: "error",
-        });
-      } else {
-        let currentToken = await SecureStore.getItemAsync("token");
-
-        let response = await fetch(
-          `${global.server_address}/auth/update-password`,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: currentToken,
-              currentPassword,
-              newPassword,
-            }),
-          }
-        );
-
-        let data = await response.json();
-
-        if (data.type === "wrong-device") {
-          deleteValueFor("token");
-          dispatch(setAuth(false));
-        } else if (data.type === "wrong-password" || data.type === "error") {
-          toast.show(data.message, { type: "error" });
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-        } else if (data.type === "success") {
-          toast.show(data.message, {
-            type: "success",
-          });
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-        } else {
-          toast.show("ErrorID: E030", { type: "error" });
-        }
-        // }
-      }
-    } catch (error) {
-      console.log("ErrorID: E029: ", error);
-      toast.show("ErrorID: E029", { type: "error" });
+  const validatePasswordInput = (
+    currentPassword,
+    newPassword,
+    confirmPassword
+  ) => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return { valid: false, message: "Fields can't be empty!" };
     }
-  }
+    if (newPassword === currentPassword) {
+      return {
+        valid: false,
+        message: "New password cannot be the same as the current password!",
+      };
+    }
+    if (newPassword !== confirmPassword) {
+      return { valid: false, message: "Passwords do not match!" };
+    }
+    if (
+      currentPassword.length < 8 ||
+      currentPassword.length > 16 ||
+      newPassword.length < 8 ||
+      newPassword.length > 16
+    ) {
+      return {
+        valid: false,
+        message: "Password should be between 8-16 characters",
+      };
+    }
+    return { valid: true };
+  };
+
+  const handlePasswordUpdate = async () => {
+    try {
+      const { valid, message } = validatePasswordInput(
+        currentPassword,
+        newPassword,
+        confirmPassword
+      );
+
+      // If input validation fails, show a toast message and exit
+      if (!valid) {
+        toast.show(message, { type: "error" });
+        return;
+      }
+
+      socket.emit(
+        "update-password",
+        {
+          currentPassword,
+          newPassword,
+        },
+        (response) => {
+          if (response.type === "success") {
+            toast.show(response.message, { type: "success" });
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+          } else {
+            toast.show(response.message, { type: "error" });
+          }
+        }
+      );
+    } catch (error) {
+      logErrorOnServer(error);
+    }
+  };
+
+  // async function handleSubmit() {
+  //   try {
+  //     if (
+  //       currentPassword === "" ||
+  //       newPassword === "" ||
+  //       confirmPassword === ""
+  //     ) {
+  //       toast.show("Fields can't be empty", { type: "error" });
+  //     } else if (newPassword !== confirmPassword) {
+  //       toast.show("Password is not matching", { type: "error" });
+  //     } else if (
+  //       currentPassword.length < 8 ||
+  //       currentPassword.length > 16 ||
+  //       newPassword.length < 8 ||
+  //       newPassword.length > 16
+  //     ) {
+  //       toast.show("Password should be between 8-16 characters", {
+  //         type: "error",
+  //       });
+  //     } else {
+  //       let currentToken = await SecureStore.getItemAsync("token");
+
+  //       let response = await fetch(
+  //         `${global.server_address}/auth/update-password`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             Accept: "application/json",
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             token: currentToken,
+  //             currentPassword,
+  //             newPassword,
+  //           }),
+  //         }
+  //       );
+
+  //       let data = await response.json();
+
+  //       if (data.type === "wrong-device") {
+  //         deleteValueFor("token");
+  //         dispatch(setAuth(false));
+  //       } else if (data.type === "wrong-password" || data.type === "error") {
+  //         toast.show(data.message, { type: "error" });
+  //         setCurrentPassword("");
+  //         setNewPassword("");
+  //         setConfirmPassword("");
+  //       } else if (data.type === "success") {
+  //         toast.show(data.message, {
+  //           type: "success",
+  //         });
+  //         setCurrentPassword("");
+  //         setNewPassword("");
+  //         setConfirmPassword("");
+  //       } else {
+  //         toast.show("ErrorID: E030", { type: "error" });
+  //       }
+  //       // }
+  //     }
+  //   } catch (error) {
+  //     console.log("ErrorID: E029: ", error);
+  //     toast.show("ErrorID: E029", { type: "error" });
+  //   }
+  // }
 
   return (
     <View
@@ -218,7 +288,7 @@ export default function ChangePassword({ setShowChangePass, light }) {
           </KeyboardAvoidingView>
 
           <PaperButton
-            onPress={handleSubmit}
+            onPress={handlePasswordUpdate}
             style={styles.buttonStyle}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
