@@ -136,7 +136,7 @@ export default function WallpaperCard({
                 alignItems: "center",
               }}
             >
-              <Text
+              {/* <Text
                 style={{
                   color: "#fff",
                   fontFamily: "Graduate_400Regular",
@@ -145,7 +145,7 @@ export default function WallpaperCard({
                 {type === "archive"
                   ? permanentWallpapers.value[year][month][index].downloads
                   : item.downloads}
-              </Text>
+              </Text> */}
             </View>
             <TouchableOpacity
               style={{
@@ -156,7 +156,7 @@ export default function WallpaperCard({
                 flexDirection: "row",
                 paddingHorizontal: z(10),
               }}
-              onPress={checkPermissionsAndDownload}
+              // onPress={checkPermissionsAndDownload}
             >
               <DownloadIcon fill={"#fff"} width={z(24)} height={z(24)} />
               <View
