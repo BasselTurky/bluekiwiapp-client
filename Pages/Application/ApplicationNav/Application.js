@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Home from "../Home/Home";
+import HomeView from "../Home/HomeView";
 import AdsView from "../AdsView/AdsView";
 import MainView from "../Giveaway/MainView";
 import KeepAwake from "react-native-keep-awake";
@@ -81,11 +82,11 @@ export default function Application() {
   return (
     <ImageBackground
       source={require("../../../assets/001.jpg")}
-      blurRadius={2}
+      // blurRadius={2}
       resizeMode="cover"
       style={{
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
       }}
     >
       <NavigationContainer>
@@ -98,7 +99,7 @@ export default function Application() {
         >
           <Stack.Screen
             name="Home"
-            component={Home}
+            component={HomeView}
             options={{
               // animation: "slide_from_bottom",
               navigationBarColor: "rgba(0,0,0,0)",

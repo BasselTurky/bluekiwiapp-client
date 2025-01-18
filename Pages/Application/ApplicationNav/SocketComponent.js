@@ -28,6 +28,8 @@ import { addParticipantsZ } from "../Giveaway/Redux States/participantsGiveawayZ
 import { setHistoryGiveaways } from "../Giveaway/Redux States/historyGiveaways";
 import { addHistoryGiveaaway } from "../Giveaway/Redux States/historyGiveaways";
 import { updateHistoryGiveaway } from "../Giveaway/Redux States/historyGiveaways";
+import { setDailyWallpapers } from "../../../Features/dailyWallpapers";
+import { setColorsArray } from "../../../Features/colorsArray";
 
 async function deleteValueFor(key) {
   await SecureStore.deleteItemAsync(key);
@@ -261,6 +263,23 @@ export default function SocketComponent() {
         }
 
         dispatch(updateHistoryGiveaway(payload));
+      });
+
+      socket.on("daily-wallpapers", (data) => {
+        console.log(data);
+
+        const images_array = data.result;
+        const extracted_colores = [];
+        for (let i = 0; i < images_array.length; i++) {
+          extracted_colores.push(images_array[i].average_color);
+        }
+        dispatch(setColorsArray(extracted_colores));
+        dispatch(
+          setDailyWallpapers({
+            date: data.date,
+            value: data.result,
+          })
+        );
       });
 
       socket.on(

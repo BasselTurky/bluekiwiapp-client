@@ -77,7 +77,7 @@ export default React.memo(function HomeView({ navigation }) {
             Keyboard.dismiss();
           }
         }}
-        overlayColor="transparent"
+        overlayColor="rgba(0,0,0,0.1)"
         drawerWidth={z(320)}
         drawerPosition="left"
         drawerType="front"
@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    opacity: 1,
   },
   profileIcon: {
     borderRadius: 50,

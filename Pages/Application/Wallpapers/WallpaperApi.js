@@ -101,31 +101,33 @@ export default function WallpaperApi({ navigation }) {
   }, [iniColor]);
 
   function fetchWallpapers() {
+    console.log("here in fetch");
+
     socket.emit("get-daily-wallpapers");
   }
 
-  useEffect(() => {
-    socket.on("daily-wallpapers", (data) => {
-      const images_array = data.result;
-      console.log(
-        "🚀 ~ file: WallpaperApi.js:116 ~ socket.on ~ images_array:",
-        images_array
-      );
-      const extracted_colores = [];
-      for (let i = 0; i < images_array.length; i++) {
-        extracted_colores.push(images_array[i].average_color);
-      }
-      dispatch(setColorsArray(extracted_colores));
-      dispatch(
-        setDailyWallpapers({
-          date: data.date,
-          value: data.result,
-        })
-      );
-    });
+  // useEffect(() => {
+  //   socket.on("daily-wallpapers", (data) => {
+  //     const images_array = data.result;
+  //     console.log(
+  //       "🚀 ~ file: WallpaperApi.js:116 ~ socket.on ~ images_array:",
+  //       images_array
+  //     );
+  //     const extracted_colores = [];
+  //     for (let i = 0; i < images_array.length; i++) {
+  //       extracted_colores.push(images_array[i].average_color);
+  //     }
+  //     dispatch(setColorsArray(extracted_colores));
+  //     dispatch(
+  //       setDailyWallpapers({
+  //         date: data.date,
+  //         value: data.result,
+  //       })
+  //     );
+  //   });
 
-    return () => {};
-  }, []);
+  //   return () => {};
+  // }, []);
 
   async function getDailyWallpapers() {
     try {
