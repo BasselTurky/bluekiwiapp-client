@@ -13,7 +13,7 @@ import * as Updates from "expo-updates";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
-
+import * as NavigationBar from "expo-navigation-bar";
 global.server_address = "https://bluekiwiapp.com";
 
 LogBox.ignoreAllLogs();
@@ -21,6 +21,22 @@ LogBox.ignoreAllLogs();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  useEffect(() => {
+    const setNavigationBar = async () => {
+      try {
+        // Set the navigation bar color to transparent
+        await NavigationBar.setBackgroundColorAsync("transparent");
+
+        // Set the navigation bar position to absolute
+        await NavigationBar.setPositionAsync("absolute");
+      } catch (error) {
+        console.error("Error setting navigation bar properties:", error);
+      }
+    };
+
+    setNavigationBar();
+  }, []);
+
   async function onFetchUpdateAsync() {
     try {
       const update = await Updates.checkForUpdateAsync();
@@ -31,11 +47,13 @@ export default function App() {
       }
     } catch (error) {
       // You can also add an alert() to see the error message in case of an error when fetching updates.
-      alert(`Error fetching latest Expo update: ${error}`);
+      // alert(`Error fetching latest Expo update: ${error}`);
     }
   }
 
   useEffect(() => {
+    // NavigationBar.setBackgroundColorAsync("transparent");
+    // NavigationBar.setPositionAsync("absolute");
     onFetchUpdateAsync();
   }, []);
 

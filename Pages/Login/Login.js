@@ -132,6 +132,7 @@ export default function Login({ navigation }) {
               style={{
                 width: "100%",
                 height: "100%",
+                // resizeMode: "cover",
               }}
               source={require("../../assets/icon.png")}
             />

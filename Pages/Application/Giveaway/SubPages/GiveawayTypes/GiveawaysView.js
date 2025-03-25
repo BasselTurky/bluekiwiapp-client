@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import FrontView from "./NavigationViews/FrontView/FrontView";
 import ActiveGiveawayView from "./NavigationViews/ActiveGiveaway/ActiveGiveawayView";
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 export default function GiveawaysView() {
   const screens = [
     {

@@ -12,7 +12,7 @@ export const SocketProvider = ({ children }) => {
       console.log("socket test");
 
       const accessToken = await SecureStore.getItemAsync("accessToken");
-      console.log(accessToken);
+      console.log("access Token sent to socket connection:", accessToken);
 
       if (accessToken) {
         const socketInstance = io("https://bluekiwiapp.com", {

@@ -19,10 +19,14 @@ import Carousel from "react-native-snap-carousel";
 import { setColorsArray } from "../../../Features/colorsArray";
 import WallpaperCard from "./components/WallpaperCard";
 import ErrorView from "../../Error/ErrorView";
-import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
+import { Ionicons, Entypo, AntDesign, FontAwesome } from "@expo/vector-icons";
 import PlusIconSVG from "../../../Components/PlusIconSVG";
 import SingleKiwiCoin from "../../../Components/SingleKiwiCoin";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CoinsDisplay from "../../../CustomComponents/CoinsDisplay";
+import DownloadIcon from "../../../Components/DownloadIcon";
+
+import { Button as PaperButton } from "react-native-paper";
 
 const AnimatedImageBackground =
   Animated.createAnimatedComponent(ImageBackground);
@@ -30,8 +34,8 @@ const AnimatedImageBackground =
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-const viewHeight = height * 0.7;
-const item_height = height * 0.7;
+const viewHeight = height * 0.8;
+const item_height = height * 0.74;
 
 const xInt = -(width * 0.9);
 const yInt = height * 0.28;
@@ -56,7 +60,7 @@ export default function WallpaperApi({ navigation }) {
   );
   const [nextColor, setNextColor] = React.useState({ color: "grey", index: 1 });
   const animateMenuX = React.useRef(new Animated.Value(xInt)).current;
-
+  const [currentIndex, setCurrentIndex] = useState(0);
   function toggleMenu() {}
   Animated.timing(animateMenuX, {
     toValue: tipsMenuWallpaper ? xInt : 0,
@@ -174,9 +178,9 @@ export default function WallpaperApi({ navigation }) {
           flex: 1,
         }}
       >
-        <AnimatedImageBackground
-          source={require("../../../assets/blackLayer.png")}
-          resizeMode="cover"
+        <View
+          // source={require("../../../assets/blackLayer.png")}
+          // resizeMode="cover"
           style={[
             {
               flex: 1,
@@ -186,11 +190,12 @@ export default function WallpaperApi({ navigation }) {
                   ? insets.top + height * 0.005
                   : insets.top + height * 0.015,
               paddingBottom: insets.bottom,
-              backgroundColor: colorRange,
+              backgroundColor: "#fff3e8",
+              // backgroundColor: colorRange,
             },
           ]}
         >
-          <View
+          {/* <View
             style={{
               width: "100%",
               flexDirection: "row",
@@ -268,13 +273,40 @@ export default function WallpaperApi({ navigation }) {
                 </Text>
               </View>
             </View>
+          </View> */}
+          <View
+            style={{
+              // flex: 1,
+              width: "100%",
+              flexDirection: "row",
+              paddingHorizontal: zx(8),
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                if (navigation.isFocused()) {
+                  navigation.goBack();
+                }
+              }}
+            >
+              <Entypo name="chevron-left" size={z(36)} color="black" />
+            </TouchableOpacity>
+            <CoinsDisplay coinPosition={"right"} />
           </View>
 
           <View
             style={{
               flex: 1,
-              justifyContent: "center",
+              // justifyContent: "center",
               alignItems: "center",
+              // backgroundColor: "pink",
+              paddingTop: z(40),
             }}
           >
             <View
@@ -283,6 +315,8 @@ export default function WallpaperApi({ navigation }) {
                 justifyContent: "center",
                 height: viewHeight,
                 width: width,
+
+                // backgroundColor: "yellow",
               }}
             >
               <Carousel
@@ -294,6 +328,7 @@ export default function WallpaperApi({ navigation }) {
                 enableMomentum={true}
                 onSnapToItem={(index) => {
                   setNextColor({ color: colorsArray[index], index: index });
+                  setCurrentIndex(index);
                 }}
                 containerCustomStyle={{
                   width: width,
@@ -313,15 +348,65 @@ export default function WallpaperApi({ navigation }) {
                       key={index}
                       index={index}
                       item={item}
-                      type={"daily"}
+                      // type={"daily"}
                       required_coins={1}
                     />
                   );
                 }}
               />
             </View>
+            {/* <View
+              style={{
+                height: 30,
+                backgroundColor: "green",
+                width: "100%",
+              }}
+            > */}
+            {/* <View
+              style={{
+                alignSelf: "flex-end",
+                paddingHorizontal: zx(25),
+                paddingTop: z(30),
+              }}
+            >
+              <PaperButton
+                icon={({ size, color }) => (
+                  <SingleKiwiCoin height={z(30)} width={z(30)} />
+                )}
+                labelStyle={styles.btnText}
+                contentStyle={{
+                  flexDirection: "row-reverse",
+                  // borderColor: "yellow",
+                }}
+                style={{
+                  borderColor: "black",
+                }}
+                mode="outlined"
+                buttonColor="transparent"
+                onPress={() => {
+                  console.log("downloading: ", currentIndex);
+                }}
+              >
+                Download
+              </PaperButton>
+            </View> */}
+
+            {/* <TouchableOpacity
+              // onPress={}
+              style={{
+                // backgroundColor: "red",
+                height: z(50),
+                width: z(50),
+                borderRadius: z(20),
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <DownloadIcon fill={"#000000"} height={z(36)} width={z(36)} />
+            </TouchableOpacity> */}
+            {/* </View> */}
           </View>
-        </AnimatedImageBackground>
+        </View>
       </GestureHandlerRootView>
     );
   } catch (error) {
@@ -409,5 +494,10 @@ const styles = StyleSheet.create({
     fontFamily: "Righteous_400Regular",
     fontSize: 16,
     color: "#36485f",
+  },
+  btnText: {
+    fontFamily: "MontserratLight",
+    letterSpacing: 1,
+    color: "black",
   },
 });

@@ -9,19 +9,22 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSocket } from "../../../SocketContext/SocketContext";
-import { z } from "../../../../utils/scaling";
+import { z, zx } from "../../../../utils/scaling";
 import SingleKiwiCoin from "../../../../Components/SingleKiwiCoin";
 import DownloadIcon from "../../../../Components/DownloadIcon";
 import { BlurView, VibrancyView } from "@react-native-community/blur";
+import { Button as PaperButton } from "react-native-paper";
+
+import DownloadWallpaperBtn from "./DownloadWallpaperBtn";
 
 export default function WallpaperCard({
   index,
   item,
-  type,
+  // type,
   required_coins,
-  year,
-  month,
-  wallpaper_id_,
+  // year,
+  // month,
+  // wallpaper_id_,
 }) {
   const socket = useSocket();
   const dispatch = useDispatch();
@@ -36,11 +39,11 @@ export default function WallpaperCard({
       "download-wallpaper",
       required_coins,
       item.wallpaper_id,
-      type,
-      item,
-      year,
-      month,
-      wallpaper_id_
+      // type,
+      item
+      // year,
+      // month,
+      // wallpaper_id_
     );
   }
 
@@ -57,35 +60,35 @@ export default function WallpaperCard({
   }
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => {
-        if (showLayer) {
-          setShowLayer(false);
-        } else {
-          setShowLayer(true);
-        }
-      }}
+    <View
+      // activeOpacity={0.9}
+      // onPress={() => {
+      //   if (showLayer) {
+      //     setShowLayer(false);
+      //   } else {
+      //     setShowLayer(true);
+      //   }
+      // }}
       style={{
         backgroundColor: "black",
         height: "100%",
         width: "100%",
-        borderRadius: z(30),
+        borderRadius: z(10),
         overflow: "hidden",
-        elevation: 10,
+        elevation: 5,
       }}
     >
       <Image
         style={{
           width: "100%",
-          height: "100%",
+          height: "90%",
         }}
         resizeMode="cover"
         source={{
           uri: item.img_link,
         }}
       />
-      {showLayer ? (
+      {/* {showLayer ? (
         <View
           style={{
             position: "absolute",
@@ -108,7 +111,10 @@ export default function WallpaperCard({
             <BlurView
               style={[
                 StyleSheet.absoluteFill,
-                { backgroundColor: "rgba(255,255,255,0.1)" },
+                {
+                  // backgroundColor: "#fff",
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                },
               ]}
               blurAmount={2}
               blurType={"dark"}
@@ -136,16 +142,7 @@ export default function WallpaperCard({
                 alignItems: "center",
               }}
             >
-              {/* <Text
-                style={{
-                  color: "#fff",
-                  fontFamily: "Graduate_400Regular",
-                }}
-              >
-                {type === "archive"
-                  ? permanentWallpapers.value[year][month][index].downloads
-                  : item.downloads}
-              </Text> */}
+
             </View>
             <TouchableOpacity
               style={{
@@ -179,9 +176,85 @@ export default function WallpaperCard({
             </TouchableOpacity>
           </View>
         </View>
-      ) : null}
-    </TouchableOpacity>
+      ) : null} */}
+      <View
+        style={{
+          flex: 1,
+          // height: 80,
+          // width: 100,
+          backgroundColor: "#ebdece",
+          justifyContent: "center",
+          alignItems: "flex-end",
+          paddingHorizontal: zx(10),
+        }}
+      >
+        {/* <PaperButton
+          icon={({ size, color }) => (
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <SingleKiwiCoin height={z(30)} width={z(30)} />
+              <SingleKiwiCoin height={z(30)} width={z(30)} />
+            </View>
+          )}
+          labelStyle={styles.btnText}
+          contentStyle={{
+            // flexDirection: "row-reverse",
+            // borderColor: "yellow",
+            // justifyContent: "center",
+            // alignItems: "center",
+            width: "100%",
+            padding: 0,
+            margin: 0,
+          }}
+          style={{
+            borderColor: "black",
+            width: 100,
+            padding: 0,
+            margin: 0,
+          }}
+          mode="outlined"
+          buttonColor="transparent"
+          // onPress={() => {
+          //   console.log("downloading: ", currentIndex);
+          // }}
+        >
+      
+        </PaperButton> */}
+        {/* <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            // backgroundColor: "green",
+            alignItems: "center",
+            justifyContent: "space-around",
+            width: zx(80),
+            padding: 5,
+            // borderWidth: 1,
+            // borderRadius: 50,
+          }}
+          onPress={() => {
+            console.log(item);
+          }}
+        >
+          <DownloadIcon fill={"#735e4d"} height={z(36)} width={z(36)} />
+
+          <SingleKiwiCoin height={z(30)} width={z(30)} />
+        </TouchableOpacity> */}
+        <DownloadWallpaperBtn item={item} />
+      </View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  btnText: {
+    fontFamily: "MontserratLight",
+    letterSpacing: 1,
+    color: "black",
+    // width: "100%",
+    padding: 0,
+    margin: 0,
+  },
+});

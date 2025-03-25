@@ -5,16 +5,18 @@ import { Button as PaperButton } from "react-native-paper";
 import CloseThinSVG from "../../../../../../../../Components/CloseThinSVG";
 import { z, zx } from "../../../../../../../../utils/scaling";
 import { hideInfoModal } from "../../../../../Redux States/prizeInfoModalState";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PrizeInfoModal() {
   const prizeInfoModalState = useSelector(
     (state) => state.prizeInfoModalState.value
   );
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   return (
     <>
       {prizeInfoModalState ? (
-        <View style={styles.overlay}>
+        <View style={[styles.overlay, { paddingBottom: 25 + insets.bottom }]}>
           <View style={styles.tableContainer}>
             <View style={{ flex: 1 }}></View>
             <View
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 25,
+    // paddingBottom: 25,
     paddingHorizontal: 25,
     paddingTop: 20,
   },

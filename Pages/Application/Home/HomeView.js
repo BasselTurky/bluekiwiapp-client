@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { DrawerLayout } from "react-native-gesture-handler";
 import DrawerView from "./components/DrawerView";
-
+import { Button as PaperButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useToast } from "react-native-toast-notifications";
@@ -86,7 +86,14 @@ export default React.memo(function HomeView({ navigation }) {
           return <DrawerView />;
         }}
       >
-        <View style={styles.container}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "flex-end",
+            paddingBottom: z(80) + insets.bottom,
+          }}
+        >
           <View
             style={{
               width: "100%",
@@ -135,8 +142,8 @@ export default React.memo(function HomeView({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.row]}>
-            <ApiButton
+          {/* <View style={[styles.row]}> */}
+          {/* <ApiButton
               navigation={navigation}
               api={"wallpaper_api"}
               apiText={"Wallpapers"}
@@ -150,26 +157,184 @@ export default React.memo(function HomeView({ navigation }) {
                   width: "90%",
                 }}
               />
-            </ApiButton>
+            </ApiButton> */}
+          {/* <PaperButton
+              onPress={() =>
+                // sendLoginDataToServer(email, password, dispatch, toast)
+                console.log("pressed")
+              }
+              style={styles.buttonStyle}
+              contentStyle={styles.buttonContent}
+              labelStyle={styles.buttonLabel}
+              mode="contained"
+              uppercase={false}
+            >
+              <Text
+                style={{
+                  fontSize: z(17),
+                  color: "white",
+                  fontFamily: "MontserratRegular",
+                  width: "100%",
+                }}
+              >
+                Sign in
+              </Text>
+            </PaperButton> */}
+          {/* <TouchableOpacity
+              onPress={() => {
+                console.log("press");
+              }}
+            >
+              <View style={styles.halfCircle}>
+                <Text style={styles.buttonText}>Click Me</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("press");
+              }}
+            >
+              <View style={styles.halfCircleDown}>
+                <Text style={styles.buttonText}>Click Me</Text>
+              </View>
+            </TouchableOpacity> */}
+          <View
+            style={{
+              flexDirection: "column",
+              gap: 3,
+            }}
+          >
+            <PaperButton
+              // icon={({ size, color }) => (
+              //   <View
+              //     style={{
+              //       height: z(100),
+              //       zIndex: 4,
+              //       alignItems: "center",
+              //       justifyContent: "center",
+              //       width: "100%",
+              //     }}
+              //   >
+              //     <Image
+              //       source={require("../../../assets/frame26.png")}
+              //       resizeMode="contain"
+              //       style={{
+              //         width: "90%",
+              //       }}
+              //     />
+              //   </View>
+              // )}
+              style={{
+                width: 200, // Adjust the width as needed
+                height: 100, // Half of the width to create a half-circle
+                borderBottomLeftRadius: 5,
+                borderBottomRightRadius: 5,
+                borderTopLeftRadius: 100,
+                borderTopRightRadius: 100,
+                justifyContent: "center", // Center the text vertically
+                alignItems: "center",
+                // marginBottom: 1,
+              }}
+              labelStyle={{
+                fontFamily: "MontserratSemiBold",
+                letterSpacing: 1,
+                color: "white",
+                fontSize: 16,
+              }}
+              contentStyle={{
+                width: 200, // Adjust the width as needed
+                height: 100, // Half of the width to create a half-circle
+                borderBottomLeftRadius: 5,
+                borderBottomRightRadius: 5,
+                borderTopLeftRadius: 100,
+                borderTopRightRadius: 100,
+                justifyContent: "center", // Center the text vertically
+                alignItems: "center",
+              }}
+              mode="elevated"
+              buttonColor="#4f5980"
+              onPress={() => {
+                console.log("pressed");
+                navigation.navigate("WallpaperApi");
+              }}
+            >
+              Wallpapers
+            </PaperButton>
+            <PaperButton
+              // icon={({ size, color }) => (
+              //   <View
+              //     style={{
+              //       height: z(100),
+              //       zIndex: 4,
+              //       alignItems: "center",
+              //       justifyContent: "center",
+              //       width: "100%",
+              //     }}
+              //   >
+              //     <Image
+              //       source={require("../../../assets/frame26.png")}
+              //       resizeMode="contain"
+              //       style={{
+              //         width: "90%",
+              //       }}
+              //     />
+              //   </View>
+              // )}
+              style={{
+                width: 200, // Adjust the width as needed
+                height: 100, // Half of the width to create a half-circle
+                borderBottomLeftRadius: 100,
+                borderBottomRightRadius: 100,
+                borderTopLeftRadius: 5,
+                borderTopRightRadius: 5,
+                justifyContent: "center", // Center the text vertically
+                alignItems: "center",
+              }}
+              labelStyle={{
+                fontFamily: "MontserratSemiBold",
+                letterSpacing: 1,
+                color: "white",
+                fontSize: 16,
+              }}
+              contentStyle={{
+                width: 200, // Adjust the width as needed
+                height: 100, // Half of the width to create a half-circle
+                borderBottomLeftRadius: 100,
+                borderBottomRightRadius: 100,
+                borderTopLeftRadius: 5,
+                borderTopRightRadius: 5,
+                justifyContent: "center", // Center the text vertically
+                alignItems: "center",
+              }}
+              mode="elevated"
+              buttonColor="#4f5980"
+              onPress={() => {
+                console.log("pressed");
+                navigation.navigate("Giveaways");
+              }}
+            >
+              Giveaways
+            </PaperButton>
+          </View>
 
-            <Button
+          {/* <Button
               title="ADS"
               onPress={() => {
                 navigation.navigate("AdsView");
               }}
             />
-            <Button title="Sendmail" onPress={sendmail} />
-          </View>
+            <Button title="Sendmail" onPress={sendmail} /> */}
+          {/* </View> */}
 
-          <View
+          {/* <View
             style={[
               {
                 marginTop: 20,
               },
               styles.row,
             ]}
-          >
-            <ApiButton
+          > */}
+          {/* <ApiButton
               navigation={navigation}
               api={"archive_api"}
               apiText={"Archive"}
@@ -183,9 +348,9 @@ export default React.memo(function HomeView({ navigation }) {
                   width: "70%",
                 }}
               />
-            </ApiButton>
+            </ApiButton> */}
 
-            <ApiButton
+          {/* <ApiButton
               navigation={navigation}
               api={"giveaways"}
               apiText={"Giveaways"}
@@ -193,8 +358,8 @@ export default React.memo(function HomeView({ navigation }) {
               requiredCoins={5}
             >
               <MyNoteIcon width={z(42)} height={z(42)} fill={"white"} />
-            </ApiButton>
-          </View>
+            </ApiButton> */}
+          {/* </View> */}
         </View>
       </DrawerLayout>
     );
@@ -208,8 +373,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    opacity: 1,
+    justifyContent: "flex-end",
+    paddingBottom: z(80),
+
+    // opacity: 1,
+    // backgroundColor: "#fff3e8",
   },
   profileIcon: {
     borderRadius: 50,
@@ -252,5 +420,51 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-evenly",
+  },
+  buttonStyle: {
+    width: "100%",
+    height: z(55),
+    elevation: 5,
+    marginTop: z(20),
+    marginBottom: z(15),
+    backgroundColor: "#84c4ff",
+    borderRadius: z(6),
+  },
+
+  buttonContent: {
+    padding: 0,
+    margin: 0,
+    height: "100%",
+    width: "100%",
+  },
+  buttonLabel: {
+    padding: 0,
+    margin: 0,
+  },
+  halfCircle: {
+    width: 100, // Adjust the width as needed
+    height: 50, // Half of the width to create a half-circle
+    backgroundColor: "blue", // Button color
+    borderBottomLeftRadius: 50, // Radius to create the half-circle
+    borderBottomRightRadius: 50, // Radius to create the half-circle
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    justifyContent: "center", // Center the text vertically
+    alignItems: "center", // Center the text horizontally
+  },
+  buttonText: {
+    color: "white", // Text color
+    fontSize: 16, // Text size
+  },
+  halfCircleDown: {
+    width: 100, // Adjust the width as needed
+    height: 50, // Half of the width to create a half-circle
+    backgroundColor: "blue", // Button color
+    borderTopLeftRadius: 50, // Radius to create the half-circle
+    borderTopRightRadius: 50, // Radius to create the half-circle
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    justifyContent: "center", // Center the text vertically
+    alignItems: "center", // Center the text horizontally
   },
 });

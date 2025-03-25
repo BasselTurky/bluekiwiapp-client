@@ -1,7 +1,7 @@
 import { StyleSheet, View, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import * as NavigationBar from "expo-navigation-bar";
+// import * as NavigationBar from "expo-navigation-bar";
 
 import { SocketProvider } from "./Pages/SocketContext/SocketContext";
 import { ToastProvider } from "react-native-toast-notifications";
@@ -12,6 +12,7 @@ import {
 } from "react-native-safe-area-context";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import * as SecureStore from "expo-secure-store";
 import Application from "./Pages/Application/ApplicationNav/Application";
 import Login from "./Pages/Login/Login";
@@ -23,9 +24,13 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { z } from "./utils/scaling";
 
-NavigationBar.setBackgroundColorAsync("transparent");
+// import * as NavigationBar from "expo-navigation-bar";
+// NavigationBar.setBackgroundColorAsync("transparent");
+// NavigationBar.setPositionAsync("absolute");
 
-const Stack = createNativeStackNavigator();
+// NavigationBar.setBackgroundColorAsync("transparent");
+
+const Stack = createStackNavigator();
 
 // Function to delete a value from secure storage
 async function deleteFromSecureStore(key) {
@@ -81,6 +86,7 @@ export default function Main() {
       const accessToken = data.accessToken;
 
       await SecureStore.setItemAsync("accessToken", accessToken);
+      console.log("new Access Token: ", accessToken);
 
       dispatch(setAuth(true));
     } else {
@@ -149,21 +155,29 @@ export default function Main() {
                 height: "100%",
               }}
               source={require("./assets/layered-peaks-haikei (1).png")}
+              onLoad={() => console.log("Image loaded successfully!")}
+              onError={(e) =>
+                console.log("Error loading image:", e.nativeEvent.error)
+              }
             />
           </View>
           <NavigationContainer>
             <Stack.Navigator
               screenOptions={{
-                contentStyle: {
+                // contentStyle: {
+                //   backgroundColor: "transparent",
+                // },
+                cardStyle: {
                   backgroundColor: "transparent",
                 },
+                cardOverlayEnabled: true,
               }}
             >
               <Stack.Screen
                 name="Login"
                 component={Login}
                 options={{
-                  animation: "fade",
+                  animation: "none",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
@@ -172,7 +186,7 @@ export default function Main() {
                 name="Signin"
                 component={Signin}
                 options={{
-                  animation: "fade",
+                  animation: "none",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
@@ -181,7 +195,7 @@ export default function Main() {
                 name="Register"
                 component={Register}
                 options={{
-                  animation: "fade",
+                  animation: "none",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}
@@ -190,7 +204,7 @@ export default function Main() {
                 name="ForgotPassword"
                 component={ForgotPassword}
                 options={{
-                  animation: "fade",
+                  animation: "none",
                   navigationBarColor: "rgba(0,0,0,0)",
                   headerShown: false,
                 }}

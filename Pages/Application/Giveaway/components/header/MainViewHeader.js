@@ -28,6 +28,7 @@ export default function MainViewHeader({ state, navigation }) {
           width: "100%",
           paddingTop: insets.top + z(6),
           justifyContent: "space-between",
+          // backgroundColor: "pink",
         }}
       >
         <View

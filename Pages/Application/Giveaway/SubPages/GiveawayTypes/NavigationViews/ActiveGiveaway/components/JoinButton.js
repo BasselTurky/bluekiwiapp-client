@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Button as PaperButton } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
-
+import { useSocket } from "../../../../../../../SocketContext/SocketContext";
 export default function JoinButton({
   children,
   isUserParticipant,
@@ -10,7 +10,7 @@ export default function JoinButton({
   currentGiveawayType,
 }) {
   const coins = useSelector((state) => state.coins.value);
-
+  const socket = useSocket();
   function handleJoinGiveaway() {
     // check coins frontend
     try {

@@ -127,6 +127,7 @@ const persistConfig = {
     "participantsGiveawayX",
     "participantsGiveawayZ",
     "historyGiveaways",
+    "auth",
   ],
 };
 

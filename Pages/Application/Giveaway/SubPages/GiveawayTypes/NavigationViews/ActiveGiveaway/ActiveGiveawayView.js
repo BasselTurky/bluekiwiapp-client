@@ -13,6 +13,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useSocket } from "../../../../../../SocketContext/SocketContext";
 import { consumeCoins } from "../../../../../../../Features/coins";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import JoinButton from "./components/JoinButton";
 import SingleCircleSVG from "../../../../../../../Components/SingleCircleSVG";
@@ -38,6 +39,7 @@ export default function ActiveGiveawayView({
   const dispatch = useDispatch();
   const socket = useSocket();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const activeGiveaway = useSelector(
     (state) => state[activeGiveawayString].value
@@ -169,7 +171,7 @@ export default function ActiveGiveawayView({
       }
     }
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: 15 + insets.bottom }]}>
         <View style={styles.subContainer}>
           <View style={styles.tableContainer}>
             <View style={styles.header}>
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 15,
+
     paddingHorizontal: 15,
     paddingTop: 10,
     backgroundColor: "#fff",

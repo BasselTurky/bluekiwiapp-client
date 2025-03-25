@@ -52,6 +52,8 @@ export const sendLoginDataToServer = async (
 
     const data = await response.json();
     // logErrorOnServer(data);
+    console.log(response);
+
     // Handle the response
     if (response.ok && data.accessToken && data.refreshToken) {
       const tokens = {

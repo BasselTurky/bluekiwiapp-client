@@ -52,4 +52,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# @end expo-cli
+# @end expo-
+
+pc-api-5679197225760885144-473-4117cca0dacd.json
+my-release-key.keystore
+credentials.json
+bluekiwi-project-c77c0929255f.json

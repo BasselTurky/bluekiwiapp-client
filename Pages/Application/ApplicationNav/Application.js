@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image,
+  Dimensions,
+} from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Home from "../Home/Home";
@@ -12,10 +19,11 @@ import SocketComponent from "./SocketComponent";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { setAuth } from "../../../Features/auth";
 import { resetTokens } from "../../../utils/resetTokens";
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 export default function Application() {
   const dispatch = useDispatch();
@@ -81,7 +89,7 @@ export default function Application() {
 
   return (
     <ImageBackground
-      source={require("../../../assets/001.jpg")}
+      source={require("../../../assets/6.jpg")}
       // blurRadius={2}
       resizeMode="cover"
       style={{
@@ -89,12 +97,35 @@ export default function Application() {
         backgroundColor: "#ffffff",
       }}
     >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // backgroundColor: "#rgba(255,243,232,0.30)",
+        }}
+      >
+        <Image
+          source={require("../../../assets/wavesLayer2.png")}
+          style={{
+            width: Dimensions.get("screen").width, // Full width of the screen
+            height: Dimensions.get("screen").height, // Full height of the screen
+          }}
+          resizeMode="stretch"
+        />
+      </View>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            contentStyle: {
+            // contentStyle: {
+            //   backgroundColor: "transparent",
+            // },
+            cardStyle: {
               backgroundColor: "transparent",
             },
+            cardOverlayEnabled: true,
           }}
         >
           <Stack.Screen
@@ -103,26 +134,26 @@ export default function Application() {
             options={{
               // animation: "slide_from_bottom",
               navigationBarColor: "rgba(0,0,0,0)",
-              animation: "fade",
+              animation: "none",
               headerShown: false,
             }}
           ></Stack.Screen>
-          <Stack.Screen
+          {/* <Stack.Screen
             name="ArchiveApiPage"
             component={ArchiveApiPage}
             options={{
               navigationBarColor: "rgba(0,0,0,0)",
-              animation: "fade",
+              animation: "none",
               headerShown: false,
             }}
-          ></Stack.Screen>
+          ></Stack.Screen> */}
 
           <Stack.Screen
             name="WallpaperApi"
             component={WallpaperApi}
             options={{
               navigationBarColor: "rgba(0,0,0,0)",
-              animation: "fade",
+              animation: "slide_from_bottom",
               headerShown: false,
             }}
           ></Stack.Screen>
@@ -132,7 +163,7 @@ export default function Application() {
             component={MainView}
             options={{
               navigationBarColor: "rgba(0,0,0,0)",
-              animation: "fade",
+              animation: "slide_from_bottom",
               headerShown: false,
             }}
           ></Stack.Screen>
@@ -141,7 +172,7 @@ export default function Application() {
             name="AdsView"
             component={AdsView}
             options={{
-              animation: "fade",
+              animation: "none",
               navigationBarColor: "rgba(0,0,0,0)",
               headerShown: false,
             }}
